@@ -19,8 +19,10 @@ Princípios:
 - Monitorar/fechar posições existentes nunca fica refém do preflight:
   fechar uma posição vencida/stopada não é uma ação arriscada.
 - Nunca executa V9.17 se o preflight encontrar sinais acionáveis
-  semanticamente duplicados (símbolo + entry_time + timeframe) ou mais
-  de 10 sinais acionáveis.
+  semanticamente duplicados (símbolo + entry_time + timeframe) ou um
+  volume de sinais muito acima da capacidade do sistema (20x
+  MAX_POSITIONS - teto de sanidade, não limite de vagas). O V9.17 já
+  limita quantas posições realmente abre por ciclo às vagas livres.
 - Sinais já associados a posição aberta ou trade fechado, ou com
   entry_time mais velho que MAX_SIGNAL_AGE_HOURS (24h), não contam
   como acionáveis.
@@ -36,6 +38,8 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+from paper_trading_v9_17 import MAX_POSITIONS
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -199,11 +203,20 @@ def preflight() -> tuple[bool, str]:
             "\n  - ".join(details)
         )
 
-    # Um limite defensivo para impedir uma explosão acidental de entradas.
-    if len(actionable) > 10:
+    # Limite defensivo: não é sobre quantos sinais existem no total (isso é
+    # esperado crescer organicamente sempre que o mercado gera mais sinais
+    # do que vagas livres), e sim sobre uma explosão anormal de entradas
+    # (ex: bug gerando sinais espúrios). O V9.17 já só abre até as vagas
+    # realmente livres (MAX_POSITIONS - posições abertas) a cada ciclo, e
+    # candidatos excedentes seguem elegíveis nos próximos ciclos até serem
+    # abertos ou expirarem (MAX_SIGNAL_AGE_HOURS). Um total muito acima da
+    # capacidade do sistema (aqui, 20x MAX_POSITIONS) é que indica anomalia.
+    sanity_ceiling = MAX_POSITIONS * 20
+    if len(actionable) > sanity_ceiling:
         return False, (
-            f"{len(actionable)} sinais acionáveis excedem o limite "
-            "defensivo de 10 neste orquestrador."
+            f"{len(actionable)} sinais acionáveis excedem o teto de "
+            f"sanidade ({sanity_ceiling}, 20x MAX_POSITIONS={MAX_POSITIONS}) "
+            "neste orquestrador - possível anomalia na geração de sinais."
         )
 
     return True, f"{len(actionable)} sinais acionáveis sem duplicidade"
