@@ -40,8 +40,13 @@ LEDGER_FILE = DATA / "paper_trading_v9_financial_trades.csv"
 
 FEE_RATE = 0.001
 SLIPPAGE_PCT = 0.001
-STOP_PCT = 0.04
-TARGET_PCT = 0.08
+
+# STOP_PCT/TARGET_PCT importados de paper_trading_v9_17.py (fonte
+# única) - antes eram duplicados aqui com valor próprio, o que já
+# causou divergência real entre os dois monitores. Ver STOP_PCT em
+# v9_17.py para o histórico da mudança de 4%/8% para 5%/6%.
+from paper_trading_v9_17 import STOP_PCT, TARGET_PCT
+
 MAX_HOURS = 24.0
 
 

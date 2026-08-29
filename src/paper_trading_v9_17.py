@@ -42,9 +42,14 @@ EXIT_FEE_RATE = 0.001
 SLIPPAGE_ENTRY_PCT = 0.001
 SLIPPAGE_EXIT_PCT = 0.001
 
-# Saídas iniciais conservadoras. Não são derivadas do V8.
-STOP_PCT = 0.04
-TARGET_PCT = 0.08
+# Atualizado em 2026-08-29 via src/v9_parameter_walkforward.py: grade
+# treino/teste com embargo mostrou que 4%/8% mantinha mediana negativa
+# no teste fora da amostra (-1.06%), enquanto 5%/6% virou positiva
+# (+1.16%, win rate 43.6%->54%). Decisão consciente do usuário após
+# ver o resultado do teste - não é ajuste feito sem validação.
+# Resultado completo em data/v9_parameter_walkforward_results.csv.
+STOP_PCT = 0.05
+TARGET_PCT = 0.06
 MAX_HOLD_HOURS = 24
 
 SIGNAL_FIELDS = {
