@@ -61,6 +61,13 @@ CANDLES = 240
 TOP_MARKETS = 50
 MIN_VOLUME_USDT = 1_000_000
 
+# Idade mínima de listagem na Binance para um símbolo ser analisado.
+# Justificado por dado real: no backtest histórico das regras da V9
+# (src/v9_backtest_listing_age_analysis.py), símbolos com < 90 dias de
+# listagem tiveram profit factor 0.86 (deficitário sozinho) contra 1.22
+# dos símbolos com >= 365 dias - gradiente consistente em toda métrica.
+MIN_LISTING_AGE_DAYS = 90
+
 NETWORK_TIMEOUT_MS = 15_000
 OHLCV_RETRIES = 3
 
@@ -974,6 +981,66 @@ def select_markets(
     ]
 
 
+def listing_age_days(
+    exchange: ccxt.binance,
+    symbol: str,
+) -> float | None:
+    """Idade (em dias) do candle diário mais antigo disponível.
+
+    Usado como proxy da data de listagem do par spot, já que a
+    Binance não expõe isso em load_markets(). Retorna None se não
+    for possível determinar (erro de rede, símbolo sem histórico).
+    """
+    try:
+        candles = exchange.fetch_ohlcv(
+            symbol,
+            timeframe="1d",
+            since=0,
+            limit=1,
+        )
+    except Exception:
+        return None
+
+    if not candles:
+        return None
+
+    first_ms = candles[0][0]
+    age = (
+        datetime.now(timezone.utc)
+        - datetime.fromtimestamp(first_ms / 1000, tz=timezone.utc)
+    )
+    return age.total_seconds() / 86400.0
+
+
+def filter_by_listing_age(
+    exchange: ccxt.binance,
+    markets: list[str],
+    min_days: int = MIN_LISTING_AGE_DAYS,
+) -> list[str]:
+    """Remove símbolos listados há menos de min_days dias.
+
+    Roda só sobre os mercados já pré-selecionados (não sobre todos os
+    candidatos), então é uma chamada leve (1 candle diário) por
+    símbolo, não uma busca completa de histórico.
+    """
+    kept = []
+    for symbol in markets:
+        age = listing_age_days(exchange, symbol)
+        if age is None:
+            # Não deu pra confirmar a idade - mantém por segurança
+            # (não penaliza um símbolo por falha de rede transitória).
+            kept.append(symbol)
+            continue
+        if age < min_days:
+            print(
+                f"  Ignorando {symbol}: listado há "
+                f"{age:.0f}d (< {min_days}d mínimo)"
+            )
+            continue
+        kept.append(symbol)
+    return kept
+
+
 # ============================================================
 # IMPRESSÃO
 # ============================================================
@@ -1324,6 +1391,22 @@ def main() -> None:
             f"{type(exc).__name__}: {exc}"
         )
         return
+
+    # --------------------------------------------------------
+    # Filtro de idade de listagem
+    # --------------------------------------------------------
+
+    print()
+    print(f"Filtrando por idade de listagem (mín. {MIN_LISTING_AGE_DAYS}d)...")
+
+    try:
+        markets = filter_by_listing_age(exchange, markets)
+        print(f"Mercados após filtro de idade: {len(markets)}")
+    except Exception as exc:
+        print(
+            f"✗ Erro filtro de idade: "
+            f"{type(exc).__name__}: {exc} - seguindo sem filtrar"
+        )
 
     # --------------------------------------------------------
     # Análise
