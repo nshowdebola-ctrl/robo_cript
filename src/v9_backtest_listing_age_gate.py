@@ -22,16 +22,26 @@ from pathlib import Path
 
 import pandas as pd
 
+from paper_trading_v9_17 import (
+    ENTRY_FEE_RATE,
+    EXIT_FEE_RATE,
+    NOTIONAL,
+    SLIPPAGE_ENTRY_PCT,
+    SLIPPAGE_EXIT_PCT,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 INPUT_CSV = ROOT / "data" / "v9_backtest_listing_age.csv"
 
 MIN_LISTING_AGE_DAYS = 90
 NEW_LISTING_BUCKET = "< 90 dias (recém-listada)"
 
-# Mesmas hipóteses de custo de paper_trading_v9_17.py (fee + slippage,
-# entrada + saída), usadas no teste de sensibilidade a custo 2x.
-ROUND_TRIP_COST_PCT = (0.001 + 0.001 + 0.001 + 0.001) * 100.0
-NOTIONAL = 100.0
+# Hipóteses de custo importadas de paper_trading_v9_17.py (não
+# duplicadas) - se a V9.17 mudar fee/slippage, este gate acompanha
+# automaticamente em vez de silenciosamente usar valores desatualizados.
+ROUND_TRIP_COST_PCT = (
+    ENTRY_FEE_RATE + EXIT_FEE_RATE + SLIPPAGE_ENTRY_PCT + SLIPPAGE_EXIT_PCT
+) * 100.0
 
 
 def report(name: str, sub: pd.DataFrame) -> bool:

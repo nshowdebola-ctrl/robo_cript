@@ -158,8 +158,10 @@ function renderSparkline(array $prices): string
     $range = $max - $min;
 
     // Série flat (sem variação) - desenha uma linha reta no meio em vez
-    // de dividir por zero.
-    if ($range <= 0.0) {
+    // de dividir por zero (e de cair no fundo do gráfico).
+    $isFlat = $range <= 0.0;
+
+    if ($isFlat) {
         $range = 1.0;
     }
 
@@ -168,7 +170,7 @@ function renderSparkline(array $prices): string
     $points = [];
     foreach ($prices as $index => $price) {
         $x = $padding + $index * $stepX;
-        $normalized = ($price - $min) / $range;
+        $normalized = $isFlat ? 0.5 : ($price - $min) / $range;
         $y = $height - $padding - ($normalized * ($height - $padding * 2));
         $points[] = sprintf('%.2f,%.2f', $x, $y);
     }

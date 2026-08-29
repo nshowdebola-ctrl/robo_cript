@@ -185,7 +185,16 @@ def init_database() -> None:
 
         for column, definition in additions.items():
             if column not in existing:
-                db.execute(f"ALTER TABLE scanner_v3_results ADD COLUMN {column} {definition}")
+                try:
+                    db.execute(f"ALTER TABLE scanner_v3_results ADD COLUMN {column} {definition}")
+                except sqlite3.OperationalError as exc:
+                    # Duas execuções podem correr a mesma migração ao
+                    # mesmo tempo (ex: cron sobreposto por um scan
+                    # lento). Se a coluna já foi adicionada pela outra
+                    # execução entre o PRAGMA acima e este ALTER, isso
+                    # não é erro real - o estado final é o mesmo.
+                    if "duplicate column" not in str(exc).lower():
+                        raise
 
         db.commit()
     finally:
@@ -322,8 +331,13 @@ def calculate_relative_volume(
 
     current_volume = float(df["volume"].iloc[-1])
 
+    # shift(1) exclui a própria barra atual da baseline - sem isso, um
+    # pico real de volume infla sua própria média de comparação (ex:
+    # um pico de 3x arrasta a média de 20 períodos ~1/20 pra cima),
+    # subestimando o relative_volume de todo pico genuíno.
     average_volume = (
         df["volume"]
+        .shift(1)
         .rolling(period)
         .mean()
         .iloc[-1]

@@ -107,10 +107,12 @@ def load_candidates(conn: sqlite3.Connection) -> list[Candidate]:
 
     out = []
     for ts, symbol, score, confidence in rows:
+        entry_time = datetime.fromisoformat(ts)
+        if entry_time.tzinfo is None:
+            entry_time = entry_time.replace(tzinfo=timezone.utc)
+
         out.append(Candidate(
-            entry_time=datetime.fromisoformat(ts).replace(tzinfo=timezone.utc)
-            if datetime.fromisoformat(ts).tzinfo is None
-            else datetime.fromisoformat(ts),
+            entry_time=entry_time,
             symbol=symbol,
             score=float(score or 0),
             confidence=float(confidence or 0),
@@ -189,11 +191,42 @@ def simulate(
                 if len(match):
                     bar = match.iloc[0]
 
+            age_hours = (hour - pos.entry_time).total_seconds() / 3600.0
+
             if bar is None:
+                # Falha de dado (gap no histórico da Binance) não pode
+                # significar "ignora o tempo máximo de holding" - senão
+                # a posição fica presa indefinidamente (nunca sai das
+                # estatísticas) ou só fecha bem depois do tempo real,
+                # com um preço fora de hora. Busca o último candle
+                # disponível <= esta hora pra fechar por TIME mesmo
+                # sem dado exato desta hora.
+                if age_hours >= MAX_HOLD_HOURS and df is not None and len(df):
+                    prior = df[df["timestamp"] <= hour]
+                    if len(prior):
+                        last_known = prior.iloc[-1]
+                        effective_exit = float(last_known["close"]) * (1.0 - SLIPPAGE_EXIT_PCT)
+                        gross_pnl = pos.quantity * (effective_exit - pos.entry_price)
+                        exit_fee = (pos.quantity * effective_exit) * EXIT_FEE_RATE
+                        net_pnl = gross_pnl - pos.entry_fee - exit_fee
+                        net_return_pct = (net_pnl / NOTIONAL) * 100.0
+
+                        closed_trades.append(Trade(
+                            symbol=pos.symbol,
+                            entry_time=pos.entry_time,
+                            exit_time=hour,
+                            entry_price=pos.entry_price,
+                            exit_price=effective_exit,
+                            net_pnl=net_pnl,
+                            net_return_pct=net_return_pct,
+                            exit_reason="TIME_GAP",
+                            holding_hours=age_hours,
+                        ))
+                        continue
+
                 still_open.append(pos)
                 continue
 
-            age_hours = (hour - pos.entry_time).total_seconds() / 3600.0
             low = float(bar["low"])
             high = float(bar["high"])
             close = float(bar["close"])
