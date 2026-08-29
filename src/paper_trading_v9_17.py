@@ -294,12 +294,32 @@ def main():
     slots = max(0, MAX_POSITIONS - len(remaining))
     opened_now = 0
 
+    expired_now = 0
+
     for signal in signals:
         sid = signal["signal_id"]
         if sid in open_ids or sid in closed_ids:
             continue
         if slots <= 0:
             break
+
+        # Um sinal cujo entry_time já passou de MAX_HOLD_HOURS nunca
+        # deveria virar posição nova: ela "nasceria" já além do tempo
+        # máximo de holding, e o próximo monitor a fecharia por TIME
+        # usando um preço de entrada de dias atrás como se fosse uma
+        # decisão tomada agora. Isso já aconteceu de verdade (backlog
+        # de sinais represado pelo bug do preflight, corrigido depois,
+        # mas os sinais antigos continuaram elegíveis pra abrir aqui).
+        try:
+            signal_age_hours = (
+                now_utc() - parse_dt(signal["entry_time"])
+            ).total_seconds() / 3600.0
+        except Exception:
+            signal_age_hours = 0.0
+
+        if signal_age_hours >= MAX_HOLD_HOURS:
+            expired_now += 1
+            continue
 
         try:
             pos = open_trade(signal)
@@ -321,6 +341,7 @@ def main():
     print(f"Sinais válidos:         {len(signals)}")
     print(f"Posições antes:         {len(open_rows)}")
     print(f"Novos OPEN:             {opened_now}")
+    print(f"Sinais expirados (>={MAX_HOLD_HOURS}h, não abertos): {expired_now}")
     print(f"Novos CLOSE:            {closed_now}")
     print(f"Posições abertas agora: {len(remaining)}")
     print(f"Trades no ledger:       {len(read_csv(LEDGER))}")
