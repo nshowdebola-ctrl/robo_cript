@@ -1,0 +1,11 @@
+metric,value
+valid_trades,31749
+parse_errors,0
+scenarios,104
+physical_line_inversions,7104
+chronologically_invalid_trades,0
+same_scenario_symbol_overlaps,0
+max_concurrency_same_scenario_symbol,1
+real_data_issues,0
+attention_findings,0
+verdict,SEM_FALHA_TEMPORAL_REAL

@@ -1,0 +1,1 @@
+trade_id,scenario,symbol,entry_time,exit_time,entry_price,exit_price,quantity,notional,entry_fee,exit_fee,fee_rate,slippage_entry,slippage_exit,gross_pnl,gross_return_pct,net_pnl,net_return_pct,capital_before,capital_after,position_id,exit_reason,holding_hours

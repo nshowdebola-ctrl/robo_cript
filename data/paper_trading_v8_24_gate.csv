@@ -1,0 +1,9 @@
+check,value
+dataset_integrity,True
+no_duplicate_trade_key,True
+average_positive,True
+median_positive,False
+compound_equity_positive,True
+drawdown_below_50pct,False
+historical_financial_fields,False
+new_optimization,False

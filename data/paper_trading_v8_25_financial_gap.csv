@@ -1,0 +1,6 @@
+field,present
+entry_fee,False
+exit_fee,False
+gross_return_pct,False
+net_return_pct,False
+notional,False

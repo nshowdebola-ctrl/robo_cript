@@ -1,0 +1,12 @@
+metric,value
+valid_trades,31749
+parse_errors,0
+scenarios,104
+symbols,82
+scenario_order_inversions,7104
+duplicate_signature_groups,0
+same_scenario_same_symbol_overlaps,0
+cross_scenario_same_symbol_overlaps,1040383
+max_same_scenario_same_symbol_concurrency,1
+real_failures,7104
+verdict,FALHA_REAL_TEMPORAL

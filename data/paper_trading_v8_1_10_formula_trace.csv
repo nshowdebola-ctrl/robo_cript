@@ -1,0 +1,1611 @@
+file,line,kind,score,text
+src/paper_trading_v2.py,382,ECONOMIC_EXPRESSION,5,"con.execute( f"""""" CREATE TABLE IF NOT EXISTS {PAPER_TABLE} ( id INTEGER PRIMARY KEY AUTOINCREMENT, rule TEXT NOT NULL, symbol TEXT NOT NULL, entry_time TEXT NOT NULL, exit_time TEXT, entry_price REAL NOT NULL, exit_price REAL, score REAL NOT NULL, confidence REAL NOT NULL DEFAULT 0, quantity REAL NOT NULL, nominal_value REAL NOT NULL, entry_fee REAL NOT NULL DEFAULT 0, exit_fee REAL NOT NULL DEFAULT 0, gross_pnl REAL, net_pnl REAL, return_pct REAL, capital_before REAL, capital_after REAL, status"
+src/paper_trading_v2.py,428,ECONOMIC_EXPRESSION,5,"con.execute( f"""""" INSERT OR REPLACE INTO {PAPER_TABLE} ( id, rule, symbol, entry_time, exit_time, entry_price, exit_price, score, confidence, quantity, nominal_value, entry_fee, exit_fee, gross_pnl, net_pnl, return_pct, capital_before, capital_after, status, created_at ) VALUES ( ?, ?, ?, ?, NULL, ?, NULL, ?, ?, ?, ?, ?, 0, NULL, NULL, NULL, NULL, NULL, 'OPEN', ? ) """""", ( position.trade_id, RULE_NAME, position.symbol, format_dt(position.entry_time), position.entry_price, position.score, position"
+src/paper_trading_v2.py,495,ECONOMIC_EXPRESSION,5,"con.execute( f"""""" UPDATE {PAPER_TABLE} SET exit_time = ?, exit_price = ?, exit_fee = ?, gross_pnl = ?, net_pnl = ?, return_pct = ?, capital_before = ?, capital_after = ?, status = 'CLOSED' WHERE id = ? AND rule = ? """""", ( format_dt(trade.exit_time), trade.exit_price, trade.exit_fee, trade.gross_pnl, trade.net_pnl, trade.return_pct, trade.capital_before, trade.capital_after, trade.trade_id, RULE_NAME, ), )"
+src/paper_trading_v2.py,955,ECONOMIC_EXPRESSION,5,gross_pnl - position.entry_fee - exit_fee
+src/paper_trading_v2.py,955,ECONOMIC_EXPRESSION,5,gross_pnl - position.entry_fee
+src/paper_trading_v2.py,980,ECONOMIC_EXPRESSION,5,"ClosedTrade( trade_id=position.trade_id, symbol=position.symbol, entry_time=position.entry_time, exit_time=exit_time, entry_price=position.entry_price, exit_price=exit_price, score=position.score, confidence=position.confidence, quantity=position.quantity, nominal_value=position.nominal_value, entry_fee=position.entry_fee, exit_fee=exit_fee, gross_pnl=gross_pnl, net_pnl=net_pnl, return_pct=return_pct, capital_before=capital_before, capital_after=capital_after, )"
+src/paper_trading_v2.py,1635,ECONOMIC_EXPRESSION,5,"writer.writerow( { ""trade_id"": trade.trade_id, ""rule"": RULE_NAME, ""symbol"": trade.symbol, ""entry_time"": format_dt( trade.entry_time ), ""exit_time"": format_dt( trade.exit_time ), ""entry_price"": trade.entry_price, ""exit_price"": trade.exit_price, ""score"": trade.score, ""confidence"": trade.confidence, ""quantity"": trade.quantity, ""nominal_value"": trade.nominal_value, ""entry_fee"": trade.entry_fee, ""exit_fee"": trade.exit_fee, ""gross_pnl"": trade.gross_pnl, ""net_pnl"": trade.net_pnl, ""return_pct"": trade.re"
+src/paper_trading_v4.py,284,ECONOMIC_EXPRESSION,5,"trades.append(Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason ))"
+src/paper_trading_v4.py,284,ECONOMIC_EXPRESSION,5,"Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason )"
+src/paper_trading_v4.py,428,ECONOMIC_EXPRESSION,5,"w.writerow({ ""scenario"": t.scenario, ""symbol"": t.symbol, ""entry_time"": t.entry_time.isoformat(), ""exit_time"": t.exit_time.isoformat(), ""entry_price"": f""{t.entry_price:.12g}"", ""exit_price"": f""{t.exit_price:.12g}"", ""score"": f""{t.score:.8f}"", ""confidence"": """" if t.confidence is None else f""{t.confidence:.8f}"", ""notional"": f""{t.notional:.8f}"", ""entry_fee"": f""{t.entry_fee:.8f}"", ""exit_fee"": f""{t.exit_fee:.8f}"", ""gross_return_pct"": f""{t.gross_return_pct:.8f}"", ""net_return_pct"": f""{t.net_return_pct:.8f"
+src/paper_trading_v5.py,281,ECONOMIC_EXPRESSION,5,"trades.append(Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason ))"
+src/paper_trading_v5.py,281,ECONOMIC_EXPRESSION,5,"Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason )"
+src/paper_trading_v5.py,359,ECONOMIC_EXPRESSION,5,"Trade( scenario_name, t.symbol, t.entry_time, t.exit_time, t.entry_price, t.exit_price, t.score, t.confidence, t.notional, t.entry_fee, t.exit_fee, t.gross_return_pct, net_pct, pnl, t.exit_reason )"
+src/paper_trading_v5.py,381,ECONOMIC_EXPRESSION,5,"Result( Scenario(name, base_result.scenario.position_size, base_result.scenario.max_positions, base_result.scenario.entry_cost, base_result.scenario.exit_cost, base_result.scenario.score_min, base_result.scenario.stop_loss_pct, base_result.scenario.take_profit_pct), trades, base_result.open_positions, base_result.rejected_limit, base_result.rejected_duplicate, peak, max_dd, max_dd_usd, )"
+src/paper_trading_v5.py,382,ECONOMIC_EXPRESSION,5,"Scenario(name, base_result.scenario.position_size, base_result.scenario.max_positions, base_result.scenario.entry_cost, base_result.scenario.exit_cost, base_result.scenario.score_min, base_result.scenario.stop_loss_pct, base_result.scenario.take_profit_pct)"
+src/paper_trading_v5.py,518,ECONOMIC_EXPRESSION,5,"w.writerow({ ""scenario"": t.scenario, ""symbol"": t.symbol, ""entry_time"": t.entry_time.isoformat(), ""exit_time"": t.exit_time.isoformat(), ""entry_price"": f""{t.entry_price:.12g}"", ""exit_price"": f""{t.exit_price:.12g}"", ""score"": f""{t.score:.8f}"", ""confidence"": """" if t.confidence is None else f""{t.confidence:.8f}"", ""notional"": f""{t.notional:.8f}"", ""entry_fee"": f""{t.entry_fee:.8f}"", ""exit_fee"": f""{t.exit_fee:.8f}"", ""gross_return_pct"": f""{t.gross_return_pct:.8f}"", ""net_return_pct"": f""{t.net_return_pct:.8f"
+src/paper_trading_v6.py,320,ECONOMIC_EXPRESSION,5,"trades.append( Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason, ) )"
+src/paper_trading_v6.py,321,ECONOMIC_EXPRESSION,5,"Trade( scenario.name, symbol, pos.entry_time, now, pos.entry_price, o.price, pos.score, pos.confidence, pos.notional, pos.entry_fee, exit_fee, gross_pct, net_pct, pnl, reason, )"
+src/paper_trading_v6.py,487,ECONOMIC_EXPRESSION,5,"Trade( scenario_name, t.symbol, t.entry_time, t.exit_time, t.entry_price, t.exit_price, t.score, t.confidence, t.notional, t.entry_fee, t.exit_fee, t.gross_return_pct, pnl / t.notional * 100.0, pnl, t.exit_reason, )"
+src/paper_trading_v6.py,520,ECONOMIC_EXPRESSION,5,"Result( Scenario( name, base.scenario.position_size, base.scenario.max_positions, base.scenario.entry_cost, base.scenario.exit_cost, base.scenario.score_min, base.scenario.stop_loss_pct, base.scenario.take_profit_pct, ), trades, base.open_positions, base.rejected_limit, base.rejected_duplicate, base.rejected_cooldown, base.rejected_symbol_24h, peak, max_dd_pct, max_dd_usd, )"
+src/paper_trading_v6.py,521,ECONOMIC_EXPRESSION,5,"Scenario( name, base.scenario.position_size, base.scenario.max_positions, base.scenario.entry_cost, base.scenario.exit_cost, base.scenario.score_min, base.scenario.stop_loss_pct, base.scenario.take_profit_pct, )"
+src/paper_trading_v6.py,678,ECONOMIC_EXPRESSION,5,"w.writerow( { ""scenario"": t.scenario, ""symbol"": t.symbol, ""entry_time"": t.entry_time.isoformat(), ""exit_time"": t.exit_time.isoformat(), ""entry_price"": f""{t.entry_price:.12g}"", ""exit_price"": f""{t.exit_price:.12g}"", ""score"": f""{t.score:.8f}"", ""confidence"": ( """" if t.confidence is None else f""{t.confidence:.8f}"" ), ""notional"": f""{t.notional:.8f}"", ""entry_fee"": f""{t.entry_fee:.8f}"", ""exit_fee"": f""{t.exit_fee:.8f}"", ""gross_return_pct"": f""{t.gross_return_pct:.8f}"", ""net_return_pct"": f""{t.net_return_pc"
+src/paper_trading_v7.py,720,ECONOMIC_EXPRESSION,5,"Position( symbol=symbol, entry_time=snapshot.timestamp, entry_price=snapshot.price, score=snapshot.score, quantity=quantity, cost_rate=cost_rate, stop_loss=stop_loss, take_profit=take_profit, )"
+src/paper_trading_v7.py,1507,ECONOMIC_EXPRESSION,5,"simulate( snapshots, name=""V7_BASE"", min_score=BASE_SCORE, stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=BASE_COST, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v7.py,1541,ECONOMIC_EXPRESSION,5,"simulate( snapshots, name=name, min_score=float(score), stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=BASE_COST, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v7.py,1588,ECONOMIC_EXPRESSION,5,"simulate( snapshots, name=name, min_score=BASE_SCORE, stop_loss=sl, take_profit=tp, cost_rate=BASE_COST, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v7.py,1636,ECONOMIC_EXPRESSION,5,"simulate( snapshots, name=name, min_score=BASE_SCORE, stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=BASE_COST, cooldown_hours=cooldown, max_entries_24h=entries, max_positions=max_positions, )"
+src/paper_trading_v7.py,1758,ECONOMIC_EXPRESSION,5,"simulate( snapshots, name=name, min_score=BASE_SCORE, stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=cost, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v7.py,1807,ECONOMIC_EXPRESSION,5,"simulate( first_half, name=""FIRST_HALF"", min_score=BASE_SCORE, stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=BASE_COST, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v7.py,1830,ECONOMIC_EXPRESSION,5,"simulate( second_half, name=""SECOND_HALF"", min_score=BASE_SCORE, stop_loss=BASE_STOP_LOSS, take_profit=BASE_TAKE_PROFIT, cost_rate=BASE_COST, cooldown_hours=DEFAULT_COOLDOWN_HOURS, max_entries_24h=DEFAULT_MAX_ENTRIES_24H, max_positions=DEFAULT_MAX_POSITIONS, )"
+src/paper_trading_v8.py,1569,ECONOMIC_EXPRESSION,5,"RobustnessResult( name=name, score=config.score, sl=config.sl, tp=config.tp, cooldown_hours=config.cooldown_hours, max_entries_24h=config.max_entries_24h, max_positions=config.max_positions, cost=config.cost, trades=base.trades, win_rate=base.win_rate, return_pct=base.return_pct, median_pct=base.median_pct, profit_factor=( base.profit_factor if math.isfinite(base.profit_factor) else 999.0 ), drawdown_pct=base.max_drawdown_pct, remove_top10_return=remove10.return_pct, remove_top20_return=remove20"
+src/paper_trading_v8_1.bak.py,49,ECONOMIC_EXPRESSION,5,"out.append(Trade(n,r[""scenario""],r[""symbol""].strip().upper(),dt(r[""entry_time""]), dt(r[""exit_time""]),float(r[""entry_price""]),float(r[""exit_price""]), num(r.get(""score"")),num(r.get(""confidence"")),float(r[""notional""]), float(r[""entry_fee""]),float(r[""exit_fee""]),float(r[""gross_return_pct""]), float(r[""net_return_pct""]),float(r[""pnl""]),r.get(""exit_reason"","""")))"
+src/paper_trading_v8_1.bak.py,49,ECONOMIC_EXPRESSION,5,"Trade(n,r[""scenario""],r[""symbol""].strip().upper(),dt(r[""entry_time""]), dt(r[""exit_time""]),float(r[""entry_price""]),float(r[""exit_price""]), num(r.get(""score"")),num(r.get(""confidence"")),float(r[""notional""]), float(r[""entry_fee""]),float(r[""exit_fee""]),float(r[""gross_return_pct""]), float(r[""net_return_pct""]),float(r[""pnl""]),r.get(""exit_reason"",""""))"
+src/paper_trading_v8_1.py,127,ECONOMIC_EXPRESSION,5,"out.append( Trade( n, r[""scenario""], r[""symbol""].strip().upper(), dt(r[""entry_time""]), dt(r[""exit_time""]), ep, xp, num(r.get(""score"")), num(r.get(""confidence"")), notional, entry_fee, exit_fee, gross, net, pnl, r.get(""exit_reason"", """"), legacy_flag, ) )"
+src/paper_trading_v8_1.py,128,ECONOMIC_EXPRESSION,5,"Trade( n, r[""scenario""], r[""symbol""].strip().upper(), dt(r[""entry_time""]), dt(r[""exit_time""]), ep, xp, num(r.get(""score"")), num(r.get(""confidence"")), notional, entry_fee, exit_fee, gross, net, pnl, r.get(""exit_reason"", """"), legacy_flag, )"
+src/paper_trading_v8_1_2.py,205,ECONOMIC_EXPRESSION,5,"add_finding( findings, ""WARNING"", ""IMPLICIT_COST_NEGATIVE"", t.scenario, t.row, f""retorno registrado {t.return_pct:.6f}% supera retorno bruto "" f""{gross:.6f}% em {-implicit:.6f} p.p."" )"
+src/paper_trading_v8_1_2.py,214,ECONOMIC_EXPRESSION,5,"add_finding( findings, ""WARNING"", ""IMPLICIT_COST_HIGH"", t.scenario, t.row, f""custo implícito={implicit:.6f} p.p.; "" f""gross={gross:.6f}%, net registrado={t.return_pct:.6f}%."" )"
+src/paper_trading_v8_1_5.py,114,ECONOMIC_EXPRESSION,5,"valid.append({ ""line"": line, ""scenario"": scenario, ""symbol"": symbol, ""entry"": entry, ""exit"": exit_, ""gross_return"": gross_return, ""recorded_return"": recorded_return, ""implicit_cost"": implicit_cost, ""pnl"": pnl, })"
+src/paper_trading_v8_1_6.py,182,ECONOMIC_EXPRESSION,5,"detail_rows.append({ ""csv_row"": line_no, ""scenario"": scenario, ""symbol"": symbol, ""side"": side, ""entry_time"": entry_ts, ""exit_time"": exit_ts, ""entry_price"": entry, ""exit_price"": exit_, ""price_return_pct"": price_return, ""return_pct"": ret, ""implicit_cost_pp"": implicit_cost, ""pnl"": pnl, ""classification"": classification, })"
+src/paper_trading_v8_1_6.py,285,ECONOMIC_EXPRESSION,5,"print( f""row={d['csv_row']} "" f""scenario={d['scenario']} "" f""symbol={d['symbol']} "" f""entry={d['entry_price']} "" f""exit={d['exit_price']} "" f""price_ret={d['price_return_pct']:+.6f}% "" f""return={d['return_pct']:+.6f}% "" f""implicit_cost={d['implicit_cost_pp']:+.6f} pp "" f""class={d['classification']}"" )"
+src/paper_trading_v8_1_7.py,143,ECONOMIC_EXPRESSION,5,"details.append({ ""row"": i, ""scenario"": scenario, ""symbol"": symbol, ""classification"": ""PARSE_ERROR"", ""raw_return_pct"": recorded, ""price_return_pct"": None, ""implicit_cost_pct"": None, ""pnl"": pnl, ""message"": ""Preço/retorno ausente ou inválido."" })"
+src/paper_trading_v8_1_7.py,206,ECONOMIC_EXPRESSION,5,"details.append({ ""row"": i, ""scenario"": scenario, ""symbol"": symbol, ""entry_price"": entry, ""exit_price"": exit_, ""price_return_pct"": price_ret, ""recorded_return_pct"": recorded, ""implicit_cost_pct"": implicit_cost, ""pnl"": pnl, ""classification"": classification, ""message"": message, })"
+src/paper_trading_v8_1_8.py,218,ECONOMIC_EXPRESSION,5,"detail.append({ ""row"": row_num, ""scenario"": scenario, ""symbol"": symbol, ""side"": side, ""entry_price"": entry, ""exit_price"": exit_price, ""gross_price_return_pct"": gross, ""recorded_return_pct"": recorded, ""implicit_cost_pct"": implicit_cost, ""pnl"": """" if pnl is None else pnl, ""best_cost_hypothesis_pp"": best_hyp, ""best_hypothesis_residual_pp"": best_residual, ""classification"": classification, ""message"": message, })"
+src/paper_trading_v8_1_9.py,178,ECONOMIC_EXPRESSION,5,"w.writerow({ ""row"": r[""_row""], ""scenario"": r.get(""scenario"", """"), ""symbol"": r.get(""symbol"", """"), ""entry_price"": r[""_entry""], ""exit_price"": r[""_exit""], ""return_pct"": r[""_ret""], ""pnl"": """" if r[""_pnl""] is None else r[""_pnl""], ""gross_return_pct"": """" if r[""_gross""] is None else f""{r['_gross']:.8f}"", ""implicit_cost_pp"": """" if c is None else f""{c:.8f}"", ""nearest_simple_cost"": nearest, ""nearest_distance_pp"": dist, })"
+src/paper_trading_v8_1_9.py,308,ECONOMIC_EXPRESSION,5,"write_summary([ (""trades_validos"", len(rows)), (""erros_parsing"", errors), (""custo_020pp"", buckets[""COST_0.20pp""]), (""custo_030pp"", buckets[""COST_0.30pp""]), (""outros"", buckets[""OTHER""]), (""arquivos_python_examinados"", files_scanned), (""linhas_custo_taxa"", len(fee_hits)), (""linhas_retorno_pnl"", len(return_hits)), (""veredito"", verdict), ])"
+src/backtest_v3_analysis.py,320,RETURN_OR_PNL_ASSIGNMENT,4,ret = None if base is None or future is None else (future / base - 1.0) * 100
+src/backtest_v3_optimizer.py,486,RETURN_OR_PNL_ASSIGNMENT,4,ret = obs.returns.get(horizon)
+src/backtest_v3_optimizer.py,643,RETURN_OR_PNL_ASSIGNMENT,4,ret = obs.returns.get(horizon)
+src/backtest_v3_optimizer.py,1006,RETURN_OR_PNL_ASSIGNMENT,4,ret = obs.returns.get(horizon)
+src/backtest_v4_validator.py,197,RETURN_OR_PNL_ASSIGNMENT,4,ret=f'ret_{h.lower()}'
+src/paper_trading_v1.py,551,RETURN_OR_PNL_ASSIGNMENT,4,net_pnl = position_size * net_return
+src/paper_trading_v1.py,857,RETURN_OR_PNL_ASSIGNMENT,4,pnl = row[3] or 0.0
+src/paper_trading_v1.py,1148,RETURN_OR_PNL_ASSIGNMENT,4,pnl = position_size * net_return
+src/paper_trading_v2.py,954,RETURN_OR_PNL_ASSIGNMENT,4,net_pnl = ( gross_pnl - position.entry_fee - exit_fee )
+src/paper_trading_v2.py,965,RETURN_OR_PNL_ASSIGNMENT,4,return_pct = 0.0
+src/paper_trading_v2.py,968,RETURN_OR_PNL_ASSIGNMENT,4,return_pct = ( net_pnl / invested * 100.0 )
+src/paper_trading_v4.py,281,RETURN_OR_PNL_ASSIGNMENT,4,pnl = value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v5.py,278,RETURN_OR_PNL_ASSIGNMENT,4,pnl = value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v6.py,317,RETURN_OR_PNL_ASSIGNMENT,4,pnl = value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v6.py,486,RETURN_OR_PNL_ASSIGNMENT,4,pnl = t.pnl
+src/paper_trading_v7.py,450,RETURN_OR_PNL_ASSIGNMENT,4,pnl = sum(trade.pnl for trade in trades)
+src/paper_trading_v7.py,567,RETURN_OR_PNL_ASSIGNMENT,4,return_pct = ( snapshot.price / position.entry_price ) - 1.0
+src/paper_trading_v7.py,591,RETURN_OR_PNL_ASSIGNMENT,4,pnl = ( gross_value - exit_cost - position.quantity * position.entry_price )
+src/paper_trading_v7.py,764,RETURN_OR_PNL_ASSIGNMENT,4,pnl = ( gross_value - exit_cost - position.quantity * position.entry_price )
+src/paper_trading_v7.py,928,RETURN_OR_PNL_ASSIGNMENT,4,pnl = trade.pnl
+src/paper_trading_v7.py,930,RETURN_OR_PNL_ASSIGNMENT,4,pnl = trade.pnl * ( capped_pct / trade.return_pct )
+src/paper_trading_v8.py,600,RETURN_OR_PNL_ASSIGNMENT,4,pnl = capital * (net_return / 100.0)
+src/paper_trading_v8_1.bak.py,156,RETURN_OR_PNL_ASSIGNMENT,4,pnl=sum(t.pnl for t in ts)
+src/paper_trading_v8_1.py,103,RETURN_OR_PNL_ASSIGNMENT,4,"pnl = float(r[""pnl""])"
+src/paper_trading_v8_1.py,117,RETURN_OR_PNL_ASSIGNMENT,4,"ret = float(r[""return_pct""])"
+src/paper_trading_v8_1.py,318,RETURN_OR_PNL_ASSIGNMENT,4,pnl = sum(t.pnl for t in ts)
+src/paper_trading_v8_1_1.py,404,RETURN_OR_PNL_ASSIGNMENT,4,pnl = sum(t.pnl for t in ts)
+src/paper_trading_v8_1_2.py,128,RETURN_OR_PNL_ASSIGNMENT,4,"ret = required_float(r, ""return_pct"", line)"
+src/paper_trading_v8_1_2.py,129,RETURN_OR_PNL_ASSIGNMENT,4,"pnl = required_float(r, ""pnl"", line)"
+src/paper_trading_v8_1_5.py,106,RETURN_OR_PNL_ASSIGNMENT,4,"pnl = num(row[""pnl""])"
+src/paper_trading_v8_1_6.py,156,RETURN_OR_PNL_ASSIGNMENT,4,"ret = fnum(get(row, ""return_pct"", ""return"", ""ret""))"
+src/paper_trading_v8_1_6.py,157,RETURN_OR_PNL_ASSIGNMENT,4,"pnl = fnum(get(row, ""pnl"", ""profit_loss"", ""profit"", ""p&l""))"
+src/paper_trading_v8_1_7.py,137,RETURN_OR_PNL_ASSIGNMENT,4,pnl = num(row.get(pnl_col)) if pnl_col else None
+src/paper_trading_v8_1_8.py,146,RETURN_OR_PNL_ASSIGNMENT,4,pnl = num(row.get(pnl_col)) if pnl_col else None
+src/paper_trading_v8_1_9.py,75,RETURN_OR_PNL_ASSIGNMENT,4,"ret = fnum(r.get(""return_pct""))"
+src/paper_trading_v8_1_9.py,76,RETURN_OR_PNL_ASSIGNMENT,4,"pnl = fnum(r.get(""pnl""))"
+src/backtest_v3.py,911,ECONOMIC_EXPRESSION,3,"print( f"" Taxa de acerto: "" f""{stats['accuracy']:.2f}%"" )"
+src/backtest_v3.py,1088,ECONOMIC_EXPRESSION,3,"print( f"" Taxa de acerto: "" f""{stats['accuracy']:.2f}%"" )"
+src/backtest_v3_analysis.py,224,ECONOMIC_EXPRESSION,3,"r.get(""return_pct"")"
+src/backtest_v3_analysis.py,227,ECONOMIC_EXPRESSION,3,"safe_float(r[""return_pct""])"
+src/backtest_v3_analysis.py,321,ECONOMIC_EXPRESSION,3,"observations.append({ **a, ""horizon"": horizon, ""future_timestamp_ms"": future_ts, ""return_pct"": ret, })"
+src/backtest_v3_analysis.py,407,ECONOMIC_EXPRESSION,3,"print(""\nIMPORTANTE: correlação e taxa de acerto não provam causalidade. Use o resultado para ajustar o V3 e depois valide em dados novos (out-of-sample)."")"
+src/backtest_v4_walkforward_v3.py,338,ECONOMIC_EXPRESSION,3,values - cost_pct
+src/backtest_v4_walkforward_v3.py,402,ECONOMIC_EXPRESSION,3,"evaluate( train, rule, return_column, cost_pct=0.0, )"
+src/backtest_v4_walkforward_v3.py,429,ECONOMIC_EXPRESSION,3,"evaluate( train, rule, return_column, cost_pct=0.0, )"
+src/backtest_v4_walkforward_v3.py,594,ECONOMIC_EXPRESSION,3,"evaluate( train, rule, return_column, cost_pct, )"
+src/backtest_v4_walkforward_v3.py,600,ECONOMIC_EXPRESSION,3,"evaluate( test, rule, return_column, cost_pct, )"
+src/backtest_v4_walkforward_v3.py,636,ECONOMIC_EXPRESSION,3,"item[""test_pf""].append(test_stats[""profit_factor""])"
+src/backtest_v4_walkforward_v3.py,700,ECONOMIC_EXPRESSION,3,"parser.add_argument(""--cost"", type=float, default=DEFAULT_COST_PCT)"
+src/backtest_v4_walkforward_v3.py,732,ECONOMIC_EXPRESSION,3,"print(f""Custo: {args.cost:.3f}%"")"
+src/backtest_v4_walkforward_v3.py,770,ECONOMIC_EXPRESSION,3,"all_results.extend( run_horizon( df=df, horizon=horizon, train_hours=args.train_hours, test_hours=args.test_hours, step_hours=args.step_hours, min_train=args.min_train, min_test=args.min_test, top_rules=args.top_rules, cost_pct=args.cost, ) )"
+src/backtest_v4_walkforward_v3.py,771,ECONOMIC_EXPRESSION,3,"run_horizon( df=df, horizon=horizon, train_hours=args.train_hours, test_hours=args.test_hours, step_hours=args.step_hours, min_train=args.min_train, min_test=args.min_test, top_rules=args.top_rules, cost_pct=args.cost, )"
+src/backtest_v5_discovery.py,170,ECONOMIC_EXPRESSION,3,r - cost_pct
+src/backtest_v5_discovery.py,188,ECONOMIC_EXPRESSION,3,gross_profit / gross_loss
+src/backtest_v5_discovery.py,193,ECONOMIC_EXPRESSION,3,"Metrics( n=len(net), hit_rate=hit, mean_return=mean, median_return=median, std_return=std, total_return=total, max_drawdown=max_dd, profit_factor=pf, avg_win=avg_win, avg_loss=avg_loss, )"
+src/backtest_v5_discovery.py,274,ECONOMIC_EXPRESSION,3,"calculate_metrics(selected, cost_pct)"
+src/backtest_v5_discovery.py,286,ECONOMIC_EXPRESSION,3,"evaluate_rule(rule, train, return_col, cost_pct)"
+src/backtest_v5_discovery.py,345,ECONOMIC_EXPRESSION,3,"evaluate_rule(rule, train, return_col, cost_pct)"
+src/backtest_v5_discovery.py,384,ECONOMIC_EXPRESSION,3,"print( f""{label:<9} "" f""N={m.n:<4d} "" f""AC={m.hit_rate:6.2f}% "" f""MED={pct(m.median_return):>9} "" f""MÉD={pct(m.mean_return):>9} "" f""TOTAL={pct(m.total_return):>10} "" f""DD={pct(m.max_drawdown):>9} "" f""PF={m.profit_factor:>6.2f}"" )"
+src/backtest_v5_discovery.py,433,ECONOMIC_EXPRESSION,3,"print(f""Custo aplicado: {cost_pct:.3f}% por operação"")"
+src/backtest_v5_discovery.py,435,ECONOMIC_EXPRESSION,3,"rank_discovery(train, return_col, cost_pct)"
+src/backtest_v5_discovery.py,445,ECONOMIC_EXPRESSION,3,"evaluate_rule(rule, test, return_col, cost_pct)"
+src/backtest_v5_discovery.py,453,ECONOMIC_EXPRESSION,3,"discover_pairs(train, return_col, cost_pct, top_rules)"
+src/backtest_v5_discovery.py,464,ECONOMIC_EXPRESSION,3,"evaluate_rule(rule, test, return_col, cost_pct)"
+src/backtest_v5_discovery.py,495,ECONOMIC_EXPRESSION,3,"print( f""{idx:02d}. [{status}] {rule.text} | "" f""TESTE N={test_m.n} "" f""AC={test_m.hit_rate:.2f}% "" f""RET={pct(test_m.mean_return)} "" f""MED={pct(test_m.median_return)} "" f""DD={pct(test_m.max_drawdown)} "" f""PF={test_m.profit_factor:.2f}"" )"
+src/backtest_v5_discovery.py,523,ECONOMIC_EXPRESSION,3,"parser.add_argument( ""--cost"", type=float, default=DEFAULT_COST_PCT, help=""custo total por operação em pontos percentuais (default: 0.10)"", )"
+src/backtest_v5_discovery.py,541,ECONOMIC_EXPRESSION,3,"print(f""Custo: {args.cost:.3f}%"")"
+src/backtest_v5_discovery.py,554,ECONOMIC_EXPRESSION,3,"run_horizon(df, horizon, args.cost)"
+src/backtest_v5_discovery_v2.py,357,ECONOMIC_EXPRESSION,3,values - COST_PCT
+src/backtest_v5_discovery_v2.py,637,ECONOMIC_EXPRESSION,3,"print( f""Custo: {COST_PCT:.3f}%"" )"
+src/backtest_v5_discovery_v3.py,356,ECONOMIC_EXPRESSION,3,values - COST_PCT
+src/backtest_v5_discovery_v3.py,636,ECONOMIC_EXPRESSION,3,"print( f""Custo: {COST_PCT:.3f}%"" )"
+src/backtest_v5_final_validation.py,302,ECONOMIC_EXPRESSION,3,x - cost
+src/backtest_v5_final_validation.py,349,ECONOMIC_EXPRESSION,3,"metrics(selected[col], cost)"
+src/backtest_v5_final_validation.py,354,ECONOMIC_EXPRESSION,3,"metrics(group[col], cost)"
+src/backtest_v5_final_validation.py,367,ECONOMIC_EXPRESSION,3,"metrics(group[col], cost)"
+src/backtest_v5_final_validation.py,439,ECONOMIC_EXPRESSION,3,"parser.add_argument(""--cost"", type=float, default=DEFAULT_COST)"
+src/backtest_v5_final_validation.py,489,ECONOMIC_EXPRESSION,3,"print(f""Custo: {args.cost:.3f}%"")"
+src/backtest_v5_final_validation.py,568,ECONOMIC_EXPRESSION,3,"metrics( holdout[ f""future_return_{horizon.lower()}"" ], args.cost, )"
+src/backtest_v5_final_validation.py,624,ECONOMIC_EXPRESSION,3,"evaluate( holdout, horizon, rule, args.cost, )"
+src/paper_trading_v1.py,169,ECONOMIC_EXPRESSION,3,"con.execute( f"""""" CREATE TABLE IF NOT EXISTS {PAPER_TABLE} ( id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, rule_name TEXT NOT NULL, scanner_timestamp TEXT NOT NULL, entry_timestamp TEXT NOT NULL, exit_timestamp TEXT, entry_price REAL NOT NULL, exit_price REAL, score REAL, confidence REAL, position_size REAL NOT NULL, gross_return_pct REAL, net_return_pct REAL, gross_pnl REAL, net_pnl REAL, status TEXT NOT NULL, close_reason TEXT, max_price REAL, min_price REAL, updated_at TEXT NOT "
+src/paper_trading_v1.py,528,ECONOMIC_EXPRESSION,3,gross_factor * (1.0 - COST_RATE) ** 2
+src/paper_trading_v1.py,528,ECONOMIC_EXPRESSION,3,(1.0 - COST_RATE) ** 2
+src/paper_trading_v1.py,528,ECONOMIC_EXPRESSION,3,1.0 - COST_RATE
+src/paper_trading_v1.py,555,ECONOMIC_EXPRESSION,3,"con.execute( f"""""" UPDATE {PAPER_TABLE} SET exit_timestamp = ?, exit_price = ?, gross_return_pct = ?, net_return_pct = ?, gross_pnl = ?, net_pnl = ?, status = 'CLOSED', close_reason = ?, updated_at = ? WHERE id = ? """""", ( exit_timestamp, exit_price, gross_return * 100.0, net_return * 100.0, gross_pnl, net_pnl, reason, exit_timestamp, row[""id""], ), )"
+src/paper_trading_v1.py,823,ECONOMIC_EXPRESSION,3,"con.execute( f"""""" SELECT COUNT(*) AS total, SUM(CASE WHEN status = 'OPEN' THEN 1 ELSE 0 END) AS abertas, SUM(CASE WHEN status = 'CLOSED' THEN 1 ELSE 0 END) AS fechadas, COALESCE(SUM(net_pnl), 0) AS pnl, COALESCE(AVG(net_return_pct), 0) AS avg_ret, COALESCE(AVG( CASE WHEN status = 'CLOSED' THEN net_return_pct END ), 0) AS avg_closed_ret, SUM( CASE WHEN status = 'CLOSED' AND net_return_pct > 0 THEN 1 ELSE 0 END ) AS wins, SUM( CASE WHEN status = 'CLOSED' AND net_return_pct <= 0 THEN 1 ELSE 0 END )"
+src/paper_trading_v1.py,880,ECONOMIC_EXPRESSION,3,"print(f""Taxa de acerto: {accuracy:.2f}%"")"
+src/paper_trading_v1.py,883,ECONOMIC_EXPRESSION,3,"print(f""P&L virtual: ${pnl:+.2f}"")"
+src/paper_trading_v1.py,884,ECONOMIC_EXPRESSION,3,"print(f""Custo por lado: {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v1.py,884,ECONOMIC_EXPRESSION,3,COST_RATE * 100
+src/paper_trading_v1.py,1018,ECONOMIC_EXPRESSION,3,"print(f""Custo por lado: {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v1.py,1018,ECONOMIC_EXPRESSION,3,COST_RATE * 100
+src/paper_trading_v1.py,1147,ECONOMIC_EXPRESSION,3,gross_return - (2.0 * COST_RATE)
+src/paper_trading_v1.py,1147,ECONOMIC_EXPRESSION,3,2.0 * COST_RATE
+src/paper_trading_v1.py,1150,ECONOMIC_EXPRESSION,3,"trades.append({ ""symbol"": symbol, ""entry_ts"": position[""entry_ts""], ""exit_ts"": exit_ts, ""entry_price"": position[""entry_price""], ""exit_price"": exit_price, ""score"": position[""score""], ""gross_return"": gross_return, ""net_return"": net_return, ""pnl"": pnl, })"
+src/paper_trading_v1.py,1187,ECONOMIC_EXPRESSION,3,"print( f""{n:04d} {trade['symbol']:<18} "" f""ENT {trade['entry_ts']} "" f""${trade['entry_price']:.12g} "" f""SAI {trade['exit_ts']} "" f""${trade['exit_price']:.12g} "" f""SCORE {trade['score']:>5.1f} "" f""RET {trade['net_return'] * 100:+8.3f}% "" f""P&L ${trade['pnl']:+9.2f}"" )"
+src/paper_trading_v1.py,1200,ECONOMIC_EXPRESSION,3,"sum(t[""pnl""] for t in trades)"
+src/paper_trading_v1.py,1220,ECONOMIC_EXPRESSION,3,"print( f""Taxa de acerto: "" f""{(wins / len(trades) * 100) if trades else 0:.2f}%"" )"
+src/paper_trading_v1.py,1226,ECONOMIC_EXPRESSION,3,"print(f""P&L virtual: ${total_pnl:+.2f}"")"
+src/paper_trading_v1.py,1289,ECONOMIC_EXPRESSION,3,"print(f""Custo por lado: {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v1.py,1289,ECONOMIC_EXPRESSION,3,COST_RATE * 100
+src/paper_trading_v2.py,729,ECONOMIC_EXPRESSION,3,"defaultdict( lambda: { ""trades"": 0, ""wins"": 0, ""losses"": 0, ""pnl"": 0.0, ""return_sum"": 0.0, } )"
+src/paper_trading_v2.py,826,ECONOMIC_EXPRESSION,3,self.position_size * self.entry_cost
+src/paper_trading_v2.py,831,ECONOMIC_EXPRESSION,3,self.position_size + total_entry_cost
+src/paper_trading_v2.py,863,ECONOMIC_EXPRESSION,3,nominal * self.entry_cost
+src/paper_trading_v2.py,869,ECONOMIC_EXPRESSION,3,self.cash -= ( nominal + fee )
+src/paper_trading_v2.py,870,ECONOMIC_EXPRESSION,3,nominal + fee
+src/paper_trading_v2.py,877,ECONOMIC_EXPRESSION,3,"Position( trade_id=trade_id, symbol=candidate.symbol, entry_time=candidate.timestamp, entry_price=price, score=candidate.score, confidence=candidate.confidence, quantity=quantity, nominal_value=nominal, entry_fee=fee, )"
+src/paper_trading_v2.py,940,ECONOMIC_EXPRESSION,3,proceeds * self.exit_cost
+src/paper_trading_v2.py,945,ECONOMIC_EXPRESSION,3,proceeds - exit_fee
+src/paper_trading_v2.py,961,ECONOMIC_EXPRESSION,3,position.nominal_value + position.entry_fee
+src/paper_trading_v2.py,969,ECONOMIC_EXPRESSION,3,net_pnl / invested * 100.0
+src/paper_trading_v2.py,969,ECONOMIC_EXPRESSION,3,net_pnl / invested
+src/paper_trading_v2.py,1011,ECONOMIC_EXPRESSION,3,"stats[""pnl""] += net_pnl"
+src/paper_trading_v2.py,1012,ECONOMIC_EXPRESSION,3,"stats[""return_sum""] += return_pct"
+src/paper_trading_v2.py,1029,ECONOMIC_EXPRESSION,3,"print( f"" SAÍDA {position.symbol:<16} "" f""{format_dt(exit_time)} "" f""price={exit_price:.10g} "" f""ret={return_pct:+.4f}% "" f""pnl={net_pnl:+.2f} "" f""cash={self.cash:.2f}"" )"
+src/paper_trading_v2.py,1188,ECONOMIC_EXPRESSION,3,sum( 1 for trade in self.closed_trades if trade.net_pnl >= 0 )
+src/paper_trading_v2.py,1196,ECONOMIC_EXPRESSION,3,sum( 1 for trade in self.closed_trades if trade.net_pnl < 0 )
+src/paper_trading_v2.py,1219,ECONOMIC_EXPRESSION,3,sum( trade.net_pnl for trade in self.closed_trades )
+src/paper_trading_v2.py,1230,ECONOMIC_EXPRESSION,3,sum( trade.return_pct for trade in self.closed_trades ) / len(self.closed_trades)
+src/paper_trading_v2.py,1230,ECONOMIC_EXPRESSION,3,sum( trade.return_pct for trade in self.closed_trades )
+src/paper_trading_v2.py,1265,ECONOMIC_EXPRESSION,3,sum( trade.net_pnl for trade in self.closed_trades if trade.net_pnl > 0 )
+src/paper_trading_v2.py,1271,ECONOMIC_EXPRESSION,3,abs( sum( trade.net_pnl for trade in self.closed_trades if trade.net_pnl < 0 ) )
+src/paper_trading_v2.py,1272,ECONOMIC_EXPRESSION,3,sum( trade.net_pnl for trade in self.closed_trades if trade.net_pnl < 0 )
+src/paper_trading_v2.py,1286,ECONOMIC_EXPRESSION,3,gross_profit / gross_loss
+src/paper_trading_v2.py,1295,ECONOMIC_EXPRESSION,3,max( trade.return_pct for trade in self.closed_trades )
+src/paper_trading_v2.py,1305,ECONOMIC_EXPRESSION,3,min( trade.return_pct for trade in self.closed_trades )
+src/paper_trading_v2.py,1313,ECONOMIC_EXPRESSION,3,self.initial_capital + self.total_pnl
+src/paper_trading_v2.py,1330,ECONOMIC_EXPRESSION,3,"sorted( self.symbol_stats.items(), key=lambda item: ( -item[1][""pnl""], -item[1][""trades""], item[0], ), )"
+src/paper_trading_v2.py,1378,ECONOMIC_EXPRESSION,3,"print( f""{index:>3} "" f""{symbol:<18} "" f""{trades:>7} "" f""{wins:>6} "" f""{losses:>6} "" f""{accuracy:>7.2f}% "" f""${stats['pnl']:>+11.2f}"" )"
+src/paper_trading_v2.py,1441,ECONOMIC_EXPRESSION,3,"print( f""Custo entrada: {self.entry_cost * 100:.3f}%"" )"
+src/paper_trading_v2.py,1442,ECONOMIC_EXPRESSION,3,self.entry_cost * 100
+src/paper_trading_v2.py,1445,ECONOMIC_EXPRESSION,3,"print( f""Custo saída: {self.exit_cost * 100:.3f}%"" )"
+src/paper_trading_v2.py,1446,ECONOMIC_EXPRESSION,3,self.exit_cost * 100
+src/paper_trading_v2.py,1487,ECONOMIC_EXPRESSION,3,"print( f""Taxa de acerto: {self.win_rate:.2f}%"" )"
+src/paper_trading_v2.py,1514,ECONOMIC_EXPRESSION,3,"print( f""Profit Factor: {pf_text}"" )"
+src/paper_trading_v2.py,1528,ECONOMIC_EXPRESSION,3,"print( f""P&L realizado: ${self.total_pnl:+,.2f}"" )"
+src/paper_trading_v2.py,1751,ECONOMIC_EXPRESSION,3,"print( f""Custo entrada: {ENTRY_COST * 100:.3f}%"" )"
+src/paper_trading_v2.py,1752,ECONOMIC_EXPRESSION,3,ENTRY_COST * 100
+src/paper_trading_v2.py,1755,ECONOMIC_EXPRESSION,3,"print( f""Custo saída: {EXIT_COST * 100:.3f}%"" )"
+src/paper_trading_v2.py,1756,ECONOMIC_EXPRESSION,3,EXIT_COST * 100
+src/paper_trading_v2.py,1887,ECONOMIC_EXPRESSION,3,"PaperTradingEngine( con=con, initial_capital=INITIAL_CAPITAL, position_size=POSITION_SIZE, max_open_positions=MAX_OPEN_POSITIONS, horizon_hours=HORIZON_HOURS, entry_cost=ENTRY_COST, exit_cost=EXIT_COST, verbose=verbose, )"
+src/paper_trading_v2.py,1906,ECONOMIC_EXPRESSION,3,"print( f""\r[{index:>6}/{len(snapshots):<6}] "" f""{format_dt(timestamp)} "" f""abertas={len(engine.open_positions):>2} "" f""cash=${engine.cash:>9.2f} "" f""pnl=${engine.total_pnl:>+10.2f}"", end="""", flush=True, )"
+src/paper_trading_v3.py,394,ECONOMIC_EXPRESSION,3,self.scenario.position_size * self.scenario.cost
+src/paper_trading_v3.py,398,ECONOMIC_EXPRESSION,3,self.scenario.position_size + self.entry_total_cost()
+src/paper_trading_v3.py,399,ECONOMIC_EXPRESSION,3,self.entry_total_cost()
+src/paper_trading_v3.py,447,ECONOMIC_EXPRESSION,3,size * (1.0 + gross_return) * self.scenario.cost
+src/paper_trading_v3.py,451,ECONOMIC_EXPRESSION,3,gross_value - exit_cost
+src/paper_trading_v3.py,459,ECONOMIC_EXPRESSION,3,cash_return - position.entry_cost
+src/paper_trading_v3.py,462,ECONOMIC_EXPRESSION,3,( position.pnl / size ) * 100.0
+src/paper_trading_v3.py,463,ECONOMIC_EXPRESSION,3,position.pnl / size
+src/paper_trading_v3.py,473,ECONOMIC_EXPRESSION,3,"print( f"" EXIT {position.symbol:<15} "" f""{timestamp.isoformat()} "" f""RET={position.return_pct:+.4f}% "" f""P&L={fmt_money(position.pnl)}"" )"
+src/paper_trading_v3.py,477,ECONOMIC_EXPRESSION,3,fmt_money(position.pnl)
+src/paper_trading_v3.py,505,ECONOMIC_EXPRESSION,3,size * self.scenario.cost
+src/paper_trading_v3.py,507,ECONOMIC_EXPRESSION,3,self.cash -= size + entry_cost
+src/paper_trading_v3.py,507,ECONOMIC_EXPRESSION,3,size + entry_cost
+src/paper_trading_v3.py,509,ECONOMIC_EXPRESSION,3,"Position( symbol=symbol, entry_time=observation.timestamp, entry_price=observation.price, score=observation.score, confidence=observation.confidence, size=size, entry_cost=entry_cost, )"
+src/paper_trading_v3.py,550,ECONOMIC_EXPRESSION,3,gross_value * self.scenario.cost
+src/paper_trading_v3.py,553,ECONOMIC_EXPRESSION,3,equity += ( gross_value - estimated_exit_cost )
+src/paper_trading_v3.py,554,ECONOMIC_EXPRESSION,3,gross_value - estimated_exit_cost
+src/paper_trading_v3.py,615,ECONOMIC_EXPRESSION,3,sum( 1 for p in self.closed_positions if (p.pnl or 0.0) > 0 )
+src/paper_trading_v3.py,621,ECONOMIC_EXPRESSION,3,sum( 1 for p in self.closed_positions if (p.pnl or 0.0) <= 0 )
+src/paper_trading_v3.py,645,ECONOMIC_EXPRESSION,3,sum( p.pnl or 0.0 for p in self.closed_positions )
+src/paper_trading_v3.py,651,ECONOMIC_EXPRESSION,3,realized_pnl / self.initial_capital * 100.0
+src/paper_trading_v3.py,651,ECONOMIC_EXPRESSION,3,realized_pnl / self.initial_capital
+src/paper_trading_v3.py,656,ECONOMIC_EXPRESSION,3,sum( p.pnl for p in self.closed_positions if (p.pnl or 0.0) > 0 )
+src/paper_trading_v3.py,662,ECONOMIC_EXPRESSION,3,abs( sum( p.pnl for p in self.closed_positions if (p.pnl or 0.0) < 0 ) )
+src/paper_trading_v3.py,663,ECONOMIC_EXPRESSION,3,sum( p.pnl for p in self.closed_positions if (p.pnl or 0.0) < 0 )
+src/paper_trading_v3.py,672,ECONOMIC_EXPRESSION,3,positive_pnl / negative_pnl
+src/paper_trading_v3.py,695,ECONOMIC_EXPRESSION,3,"ScenarioResult( name=self.scenario.name, initial_capital=self.initial_capital, final_cash=self.cash, realized_pnl=realized_pnl, trades=trades, wins=wins, losses=losses, win_rate=win_rate, avg_return_pct=avg_return, total_return_pct=total_return, profit_factor=profit_factor, best_trade_pct=best_trade, worst_trade_pct=worst_trade, max_drawdown_pct=max_drawdown_pct, max_drawdown_usd=max_drawdown_usd, entries=self.entries, rejected_limit=self.rejected_limit, rejected_duplicate=self.rejected_duplicat"
+src/paper_trading_v3.py,749,ECONOMIC_EXPRESSION,3,"ScenarioResult( name=self.scenario.name, initial_capital=INITIAL_CAPITAL, final_cash=INITIAL_CAPITAL, realized_pnl=0.0, trades=0, wins=0, losses=0, win_rate=0.0, avg_return_pct=0.0, total_return_pct=0.0, profit_factor=0.0, best_trade_pct=0.0, worst_trade_pct=0.0, max_drawdown_pct=0.0, max_drawdown_usd=0.0, entries=0, rejected_limit=0, rejected_duplicate=0, invalid_entries=0, open_positions=0, )"
+src/paper_trading_v3.py,782,ECONOMIC_EXPRESSION,3,"Scenario( name=f""SCORE_GE_{custom_score:g}"", position_size=100.0, max_positions=10, cost=0.001, min_score=custom_score, )"
+src/paper_trading_v3.py,792,ECONOMIC_EXPRESSION,3,"Scenario( name=""V2_BASE"", position_size=100.0, max_positions=10, cost=0.001, min_score=70.0, )"
+src/paper_trading_v3.py,799,ECONOMIC_EXPRESSION,3,"Scenario( name=""MAX5"", position_size=100.0, max_positions=5, cost=0.001, min_score=70.0, )"
+src/paper_trading_v3.py,806,ECONOMIC_EXPRESSION,3,"Scenario( name=""POSITION50"", position_size=50.0, max_positions=10, cost=0.001, min_score=70.0, )"
+src/paper_trading_v3.py,813,ECONOMIC_EXPRESSION,3,"Scenario( name=""COST015"", position_size=100.0, max_positions=10, cost=0.0015, min_score=70.0, )"
+src/paper_trading_v3.py,820,ECONOMIC_EXPRESSION,3,"Scenario( name=""COST020"", position_size=100.0, max_positions=10, cost=0.0020, min_score=70.0, )"
+src/paper_trading_v3.py,827,ECONOMIC_EXPRESSION,3,"Scenario( name=""SCORE72"", position_size=100.0, max_positions=10, cost=0.001, min_score=72.0, )"
+src/paper_trading_v3.py,834,ECONOMIC_EXPRESSION,3,"Scenario( name=""SCORE75"", position_size=100.0, max_positions=10, cost=0.001, min_score=75.0, )"
+src/paper_trading_v3.py,894,ECONOMIC_EXPRESSION,3,"writer.writerow( { ""scenario"": result.name, ""initial_capital"": f""{result.initial_capital:.2f}"", ""final_cash"": f""{result.final_cash:.2f}"", ""realized_pnl"": f""{result.realized_pnl:.8f}"", ""trades"": result.trades, ""wins"": result.wins, ""losses"": result.losses, ""win_rate_pct"": f""{result.win_rate:.8f}"", ""avg_return_pct"": f""{result.avg_return_pct:.8f}"", ""total_return_pct"": f""{result.total_return_pct:.8f}"", ""profit_factor"": ( f""{result.profit_factor:.8f}"" if result.profit_factor != float(""inf"") else ""INF"""
+src/paper_trading_v3.py,968,ECONOMIC_EXPRESSION,3,"print( f"" {scenario.name:<15} "" f""pos=${scenario.position_size:>6.2f} "" f""max={scenario.max_positions:>2} "" f""custo={scenario.cost * 100:.3f}% "" f""score>={scenario.min_score:.0f}"" )"
+src/paper_trading_v3.py,972,ECONOMIC_EXPRESSION,3,scenario.cost * 100
+src/paper_trading_v3.py,986,ECONOMIC_EXPRESSION,3,"print( f""{result.name:<15} "" f""TRADES={result.trades:>5} "" f""AC={result.win_rate:>6.2f}% "" f""RET={result.total_return_pct:>+10.4f}% "" f""PF={pf:>8} "" f""DD={result.max_drawdown_pct:>+9.4f}% "" f""P&L={fmt_money(result.realized_pnl):>12}"" )"
+src/paper_trading_v3.py,993,ECONOMIC_EXPRESSION,3,fmt_money(result.realized_pnl)
+src/paper_trading_v3.py,1025,ECONOMIC_EXPRESSION,3,"print( f""{result.name:<15} "" f""{result.trades:>7} "" f""{result.win_rate:>7.2f}% "" f""{result.total_return_pct:>+11.4f}% "" f""{result.avg_return_pct:>+9.4f}% "" f""{pf:>8} "" f""{result.max_drawdown_pct:>+9.2f}% "" f""{fmt_money(result.realized_pnl):>14}"" )"
+src/paper_trading_v3.py,1033,ECONOMIC_EXPRESSION,3,fmt_money(result.realized_pnl)
+src/paper_trading_v3.py,1076,ECONOMIC_EXPRESSION,3,"print( f""P&L base: {fmt_money(base.realized_pnl)}"" )"
+src/paper_trading_v3.py,1077,ECONOMIC_EXPRESSION,3,fmt_money(base.realized_pnl)
+src/paper_trading_v3.py,1079,ECONOMIC_EXPRESSION,3,"print( f""Retorno base: {base.total_return_pct:+.4f}%"" )"
+src/paper_trading_v3.py,1082,ECONOMIC_EXPRESSION,3,"print( f""Profit Factor base: {base.profit_factor:.4f}"" )"
+src/paper_trading_v3.py,1096,ECONOMIC_EXPRESSION,3,sum( 1 for r in results if r.realized_pnl > 0 )
+src/paper_trading_v3.py,1102,ECONOMIC_EXPRESSION,3,"print( f""Cenários com P&L positivo: {profitable}/{len(results)}"" )"
+src/paper_trading_v3.py,1114,ECONOMIC_EXPRESSION,3,"print( "" cenários de custo, posição, limite e score."" )"
+src/paper_trading_v3.py,1235,ECONOMIC_EXPRESSION,3,"build_scenarios( custom_score=args.score, )"
+src/paper_trading_v3.py,1290,ECONOMIC_EXPRESSION,3,"print( f"" posição=${scenario.position_size:.2f} "" f""max={scenario.max_positions} "" f""custo={scenario.cost * 100:.3f}% "" f""score>={scenario.min_score:.0f}"" )"
+src/paper_trading_v3.py,1293,ECONOMIC_EXPRESSION,3,scenario.cost * 100
+src/paper_trading_v3.py,1330,ECONOMIC_EXPRESSION,3,"print( f"" Taxa de acerto: {result.win_rate:.2f}%"" )"
+src/paper_trading_v3.py,1333,ECONOMIC_EXPRESSION,3,"print( f"" Retorno médio/trade: {result.avg_return_pct:+.4f}%"" )"
+src/paper_trading_v3.py,1336,ECONOMIC_EXPRESSION,3,"print( f"" Retorno total realizado: {result.total_return_pct:+.4f}%"" )"
+src/paper_trading_v3.py,1339,ECONOMIC_EXPRESSION,3,"print( f"" P&L realizado: {fmt_money(result.realized_pnl)}"" )"
+src/paper_trading_v3.py,1340,ECONOMIC_EXPRESSION,3,fmt_money(result.realized_pnl)
+src/paper_trading_v3.py,1342,ECONOMIC_EXPRESSION,3,"print( f"" Profit Factor: {result.profit_factor:.4f}"" if result.profit_factor != float(""inf"") else "" Profit Factor: INF"" )"
+src/paper_trading_v4.py,89,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades)
+src/paper_trading_v4.py,93,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v4.py,97,ECONOMIC_EXPRESSION,3,sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v4.py,105,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades) / len(self.trades)
+src/paper_trading_v4.py,105,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades)
+src/paper_trading_v4.py,109,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v4.py,113,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v4.py,113,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl < 0)
+src/paper_trading_v4.py,119,ECONOMIC_EXPRESSION,3,self.gross_profit / self.gross_loss
+src/paper_trading_v4.py,123,ECONOMIC_EXPRESSION,3,"max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v4.py,127,ECONOMIC_EXPRESSION,3,"min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v4.py,242,ECONOMIC_EXPRESSION,3,total += value - value * exit_cost
+src/paper_trading_v4.py,242,ECONOMIC_EXPRESSION,3,value - value * exit_cost
+src/paper_trading_v4.py,242,ECONOMIC_EXPRESSION,3,value * exit_cost
+src/paper_trading_v4.py,271,ECONOMIC_EXPRESSION,3,abs(scenario.take_profit_pct)
+src/paper_trading_v4.py,280,ECONOMIC_EXPRESSION,3,value * scenario.exit_cost
+src/paper_trading_v4.py,281,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v4.py,281,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional
+src/paper_trading_v4.py,281,ECONOMIC_EXPRESSION,3,value - exit_fee
+src/paper_trading_v4.py,282,ECONOMIC_EXPRESSION,3,pnl / pos.notional * 100.0
+src/paper_trading_v4.py,282,ECONOMIC_EXPRESSION,3,pnl / pos.notional
+src/paper_trading_v4.py,291,ECONOMIC_EXPRESSION,3,cash += pos.notional + pnl
+src/paper_trading_v4.py,291,ECONOMIC_EXPRESSION,3,pos.notional + pnl
+src/paper_trading_v4.py,295,ECONOMIC_EXPRESSION,3,"print( f""{now.isoformat()} SAI {symbol:<16} "" f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"" )"
+src/paper_trading_v4.py,314,ECONOMIC_EXPRESSION,3,scenario.position_size * scenario.entry_cost
+src/paper_trading_v4.py,315,ECONOMIC_EXPRESSION,3,scenario.position_size + fee
+src/paper_trading_v4.py,320,ECONOMIC_EXPRESSION,3,"Position( o.symbol, now, o.price, o.score, o.confidence, scenario.position_size, fee )"
+src/paper_trading_v4.py,333,ECONOMIC_EXPRESSION,3,"equity(cash, positions, prices, scenario.exit_cost)"
+src/paper_trading_v4.py,369,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<16} "" f""TRADES={len(r.trades):4d} "" f""AC={r.win_rate:6.2f}% "" f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""AVG={r.avg_return:+8.4f}% "" f""PF={pf_text(r.profit_factor):>7} "" f""DD={r.max_dd_pct:+9.4f}% "" f""P&L=${r.pnl:10.2f}"" )"
+src/paper_trading_v4.py,373,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v4.py,373,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v4.py,375,ECONOMIC_EXPRESSION,3,pf_text(r.profit_factor)
+src/paper_trading_v4.py,394,ECONOMIC_EXPRESSION,3,"w.writerow({ ""scenario"": r.scenario.name, ""trades"": len(r.trades), ""wins"": r.wins, ""losses"": r.losses, ""win_rate_pct"": f""{r.win_rate:.8f}"", ""avg_return_pct"": f""{r.avg_return:.8f}"", ""pnl"": f""{r.pnl:.8f}"", ""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"", ""profit_factor"": ""inf"" if math.isinf(r.profit_factor) else f""{r.profit_factor:.8f}"", ""best_trade_pct"": f""{r.best_trade:.8f}"", ""worst_trade_pct"": f""{r.worst_trade:.8f}"", ""max_drawdown_pct"": f""{r.max_dd_pct:.8f}"", ""max_drawdown_usd"": f""{r.max_d"
+src/paper_trading_v4.py,402,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v4.py,402,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v4.py,403,ECONOMIC_EXPRESSION,3,math.isinf(r.profit_factor)
+src/paper_trading_v4.py,509,ECONOMIC_EXPRESSION,3,"print( f""{s.name:<18} pos=${s.position_size:6.2f} "" f""max={s.max_positions:2d} score>={s.score_min:.0f} "" f""custo={s.entry_cost * 100:.3f}% SL={sl:<4} TP={tp}"" )"
+src/paper_trading_v4.py,512,ECONOMIC_EXPRESSION,3,s.entry_cost * 100
+src/paper_trading_v4.py,539,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<18} {len(r.trades):7d} "" f""{r.win_rate:7.2f}% {r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""{r.avg_return:+8.4f}% {pf_text(r.profit_factor):>7} "" f""{r.max_dd_pct:+9.4f}% ${r.pnl:11.2f}"" )"
+src/paper_trading_v4.py,541,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v4.py,541,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v4.py,542,ECONOMIC_EXPRESSION,3,pf_text(r.profit_factor)
+src/paper_trading_v4.py,556,ECONOMIC_EXPRESSION,3,"print(f"" Taxa de acerto: {r.win_rate:.2f}%"")"
+src/paper_trading_v4.py,558,ECONOMIC_EXPRESSION,3,"print(f"" P&L realizado: ${r.pnl:+.2f}"")"
+src/paper_trading_v4.py,559,ECONOMIC_EXPRESSION,3,"print(f"" Capital final realizado: ${CAPITAL_INITIAL + r.pnl:,.2f}"")"
+src/paper_trading_v4.py,559,ECONOMIC_EXPRESSION,3,CAPITAL_INITIAL + r.pnl
+src/paper_trading_v4.py,560,ECONOMIC_EXPRESSION,3,"print(f"" Profit Factor: {pf_text(r.profit_factor)}"")"
+src/paper_trading_v4.py,560,ECONOMIC_EXPRESSION,3,pf_text(r.profit_factor)
+src/paper_trading_v4.py,592,ECONOMIC_EXPRESSION,3,"print(f""P&L base: ${base.pnl:+.2f}"")"
+src/paper_trading_v4.py,593,ECONOMIC_EXPRESSION,3,"print(f""Retorno base: {base.pnl / CAPITAL_INITIAL * 100:+.4f}%"")"
+src/paper_trading_v4.py,593,ECONOMIC_EXPRESSION,3,base.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v4.py,593,ECONOMIC_EXPRESSION,3,base.pnl / CAPITAL_INITIAL
+src/paper_trading_v4.py,594,ECONOMIC_EXPRESSION,3,"print(f""Profit Factor base: {pf_text(base.profit_factor)}"")"
+src/paper_trading_v4.py,594,ECONOMIC_EXPRESSION,3,pf_text(base.profit_factor)
+src/paper_trading_v4.py,604,ECONOMIC_EXPRESSION,3,"max(eligible, key=lambda r: r.profit_factor)"
+src/paper_trading_v4.py,605,ECONOMIC_EXPRESSION,3,"max(eligible, key=lambda r: r.pnl)"
+src/paper_trading_v4.py,607,ECONOMIC_EXPRESSION,3,"print(f""Melhor PF: {best_pf.scenario.name} ({best_pf.profit_factor:.3f})"")"
+src/paper_trading_v4.py,608,ECONOMIC_EXPRESSION,3,"print(f""Maior P&L: {best_pnl.scenario.name} (${best_pnl.pnl:+.2f})"")"
+src/paper_trading_v5.py,84,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades)
+src/paper_trading_v5.py,88,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v5.py,92,ECONOMIC_EXPRESSION,3,sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v5.py,100,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades) / len(self.trades)
+src/paper_trading_v5.py,100,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades)
+src/paper_trading_v5.py,104,ECONOMIC_EXPRESSION,3,sorted(t.net_return_pct for t in self.trades)
+src/paper_trading_v5.py,112,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v5.py,116,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v5.py,116,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl < 0)
+src/paper_trading_v5.py,122,ECONOMIC_EXPRESSION,3,self.gross_profit / self.gross_loss
+src/paper_trading_v5.py,126,ECONOMIC_EXPRESSION,3,"max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v5.py,130,ECONOMIC_EXPRESSION,3,"min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v5.py,241,ECONOMIC_EXPRESSION,3,total += value - value * exit_cost
+src/paper_trading_v5.py,241,ECONOMIC_EXPRESSION,3,value - value * exit_cost
+src/paper_trading_v5.py,241,ECONOMIC_EXPRESSION,3,value * exit_cost
+src/paper_trading_v5.py,268,ECONOMIC_EXPRESSION,3,abs(scenario.take_profit_pct)
+src/paper_trading_v5.py,277,ECONOMIC_EXPRESSION,3,value * scenario.exit_cost
+src/paper_trading_v5.py,278,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v5.py,278,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional
+src/paper_trading_v5.py,278,ECONOMIC_EXPRESSION,3,value - exit_fee
+src/paper_trading_v5.py,279,ECONOMIC_EXPRESSION,3,pnl / pos.notional * 100.0
+src/paper_trading_v5.py,279,ECONOMIC_EXPRESSION,3,pnl / pos.notional
+src/paper_trading_v5.py,288,ECONOMIC_EXPRESSION,3,cash += pos.notional + pnl
+src/paper_trading_v5.py,288,ECONOMIC_EXPRESSION,3,pos.notional + pnl
+src/paper_trading_v5.py,292,ECONOMIC_EXPRESSION,3,"print( f""{now.isoformat()} SAI {symbol:<16} "" f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"" )"
+src/paper_trading_v5.py,310,ECONOMIC_EXPRESSION,3,scenario.position_size * scenario.entry_cost
+src/paper_trading_v5.py,311,ECONOMIC_EXPRESSION,3,scenario.position_size + fee
+src/paper_trading_v5.py,316,ECONOMIC_EXPRESSION,3,"Position( o.symbol, now, o.price, o.score, o.confidence, scenario.position_size, fee )"
+src/paper_trading_v5.py,329,ECONOMIC_EXPRESSION,3,"equity(cash, positions, prices, scenario.exit_cost)"
+src/paper_trading_v5.py,349,ECONOMIC_EXPRESSION,3,"Scenario(name, 100, 10, cost, cost, score, 5, 10)"
+src/paper_trading_v5.py,358,ECONOMIC_EXPRESSION,3,pnl / t.notional * 100.0
+src/paper_trading_v5.py,358,ECONOMIC_EXPRESSION,3,pnl / t.notional
+src/paper_trading_v5.py,373,ECONOMIC_EXPRESSION,3,equity_value += t.pnl
+src/paper_trading_v5.py,399,ECONOMIC_EXPRESSION,3,"sorted(base_result.trades, key=lambda t: t.pnl, reverse=True)"
+src/paper_trading_v5.py,402,ECONOMIC_EXPRESSION,3,"clone_trade_with_pnl(t, t.pnl, f""REMOVE_TOP{n}"")"
+src/paper_trading_v5.py,412,ECONOMIC_EXPRESSION,3,"min(t.pnl, t.notional * cap_pct / 100.0)"
+src/paper_trading_v5.py,413,ECONOMIC_EXPRESSION,3,"trades.append(clone_trade_with_pnl(t, cap_pnl, name))"
+src/paper_trading_v5.py,413,ECONOMIC_EXPRESSION,3,"clone_trade_with_pnl(t, cap_pnl, name)"
+src/paper_trading_v5.py,419,ECONOMIC_EXPRESSION,3,by_symbol[t.symbol] += t.pnl
+src/paper_trading_v5.py,424,ECONOMIC_EXPRESSION,3,"clone_trade_with_pnl(t, t.pnl, f""REMOVE_SYMBOL_TOP{n}"")"
+src/paper_trading_v5.py,441,ECONOMIC_EXPRESSION,3,by_symbol[t.symbol] += t.pnl
+src/paper_trading_v5.py,457,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<22} "" f""TRADES={len(r.trades):4d} "" f""WIN={r.win_rate:6.2f}% "" f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""AVG={r.avg_return:+8.4f}% "" f""MED={r.median_return:+8.4f}% "" f""PF={fmt_pf(r.profit_factor):>7} "" f""DD={r.max_dd_pct:+9.4f}% "" f""P&L=${r.pnl:10.2f}"" )"
+src/paper_trading_v5.py,461,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v5.py,461,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v5.py,464,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v5.py,483,ECONOMIC_EXPRESSION,3,"w.writerow({ ""scenario"": r.scenario.name, ""category"": category, ""trades"": len(r.trades), ""wins"": r.wins, ""losses"": r.losses, ""win_rate_pct"": f""{r.win_rate:.8f}"", ""avg_return_pct"": f""{r.avg_return:.8f}"", ""median_return_pct"": f""{r.median_return:.8f}"", ""pnl"": f""{r.pnl:.8f}"", ""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"", ""profit_factor"": ""inf"" if math.isinf(r.profit_factor) else f""{r.profit_factor:.8f}"", ""best_trade_pct"": f""{r.best_trade:.8f}"", ""worst_trade_pct"": f""{r.worst_trade:.8f}"", ""max"
+src/paper_trading_v5.py,493,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v5.py,493,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v5.py,494,ECONOMIC_EXPRESSION,3,math.isinf(r.profit_factor)
+src/paper_trading_v5.py,589,ECONOMIC_EXPRESSION,3,"print(""4. Testar custos de 0.10%, 0.15%, 0.20% e 0.30%."")"
+src/paper_trading_v5.py,608,ECONOMIC_EXPRESSION,3,"print(""2) CUSTOS"")"
+src/paper_trading_v5.py,615,ECONOMIC_EXPRESSION,3,"run(cost_scenario(name, cost, a.score), smap, snapshots, a.verbose)"
+src/paper_trading_v5.py,615,ECONOMIC_EXPRESSION,3,"cost_scenario(name, cost, a.score)"
+src/paper_trading_v5.py,655,ECONOMIC_EXPRESSION,3,"print(f""Top 5 símbolos P&L: ${c['top5_pnl']:+.2f} ({c['top5_pct_total']:.2f}% do P&L)"")"
+src/paper_trading_v5.py,656,ECONOMIC_EXPRESSION,3,"print(f""Top 10 símbolos P&L: ${c['top10_pnl']:+.2f} ({c['top10_pct_total']:.2f}% do P&L)"")"
+src/paper_trading_v5.py,660,ECONOMIC_EXPRESSION,3,"print(f"" {symbol:<18} ${pnl:+10.2f}"")"
+src/paper_trading_v5.py,705,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<22} {len(r.trades):7d} "" f""{r.win_rate:7.2f}% {r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""{r.avg_return:+8.4f}% {r.median_return:+8.4f}% "" f""{fmt_pf(r.profit_factor):>7} {r.max_dd_pct:+9.4f}% "" f""${r.pnl:11.2f}"" )"
+src/paper_trading_v5.py,707,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v5.py,707,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v5.py,709,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v5.py,719,ECONOMIC_EXPRESSION,3,"print( f""Sem top {n:2d} trades: "" f""P&L=${r.pnl:+9.2f} RET={r.pnl / CAPITAL_INITIAL * 100:+8.3f}% "" f""PF={fmt_pf(r.profit_factor):>6} DD={r.max_dd_pct:+8.3f}%"" )"
+src/paper_trading_v5.py,721,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v5.py,721,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v5.py,722,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v5.py,738,ECONOMIC_EXPRESSION,3,"next(x for x in results if x.scenario.name == ""COST_030"")"
+src/paper_trading_v5.py,765,ECONOMIC_EXPRESSION,3,"print("" de outliers, concentração, tempo e custos."")"
+src/paper_trading_v6.py,95,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades)
+src/paper_trading_v6.py,99,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v6.py,103,ECONOMIC_EXPRESSION,3,sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v6.py,112,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades) / len(self.trades)
+src/paper_trading_v6.py,112,ECONOMIC_EXPRESSION,3,sum(t.net_return_pct for t in self.trades)
+src/paper_trading_v6.py,118,ECONOMIC_EXPRESSION,3,sorted(t.net_return_pct for t in self.trades)
+src/paper_trading_v6.py,126,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v6.py,130,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v6.py,130,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in self.trades if t.pnl < 0)
+src/paper_trading_v6.py,136,ECONOMIC_EXPRESSION,3,self.gross_profit / self.gross_loss
+src/paper_trading_v6.py,140,ECONOMIC_EXPRESSION,3,"max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v6.py,144,ECONOMIC_EXPRESSION,3,"min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v6.py,265,ECONOMIC_EXPRESSION,3,total += value - value * exit_cost
+src/paper_trading_v6.py,265,ECONOMIC_EXPRESSION,3,value - value * exit_cost
+src/paper_trading_v6.py,265,ECONOMIC_EXPRESSION,3,value * exit_cost
+src/paper_trading_v6.py,306,ECONOMIC_EXPRESSION,3,abs(scenario.take_profit_pct)
+src/paper_trading_v6.py,316,ECONOMIC_EXPRESSION,3,value * scenario.exit_cost
+src/paper_trading_v6.py,317,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional - pos.entry_fee
+src/paper_trading_v6.py,317,ECONOMIC_EXPRESSION,3,value - exit_fee - pos.notional
+src/paper_trading_v6.py,317,ECONOMIC_EXPRESSION,3,value - exit_fee
+src/paper_trading_v6.py,318,ECONOMIC_EXPRESSION,3,pnl / pos.notional * 100.0
+src/paper_trading_v6.py,318,ECONOMIC_EXPRESSION,3,pnl / pos.notional
+src/paper_trading_v6.py,340,ECONOMIC_EXPRESSION,3,cash += pos.notional + pnl
+src/paper_trading_v6.py,340,ECONOMIC_EXPRESSION,3,pos.notional + pnl
+src/paper_trading_v6.py,345,ECONOMIC_EXPRESSION,3,"print( f""{now.isoformat()} SAI {symbol:<16} "" f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"" )"
+src/paper_trading_v6.py,391,ECONOMIC_EXPRESSION,3,scenario.position_size * scenario.entry_cost
+src/paper_trading_v6.py,392,ECONOMIC_EXPRESSION,3,scenario.position_size + fee
+src/paper_trading_v6.py,398,ECONOMIC_EXPRESSION,3,"Position( o.symbol, now, o.price, o.score, o.confidence, scenario.position_size, fee, )"
+src/paper_trading_v6.py,419,ECONOMIC_EXPRESSION,3,"equity(cash, positions, prices, scenario.exit_cost)"
+src/paper_trading_v6.py,466,ECONOMIC_EXPRESSION,3,"Scenario( name, position_size, max_positions, entry_cost, exit_cost, score, 5.0, 10.0, cooldown, max_entries_24h, )"
+src/paper_trading_v6.py,500,ECONOMIC_EXPRESSION,3,pnl / t.notional * 100.0
+src/paper_trading_v6.py,500,ECONOMIC_EXPRESSION,3,pnl / t.notional
+src/paper_trading_v6.py,513,ECONOMIC_EXPRESSION,3,equity_value += t.pnl
+src/paper_trading_v6.py,546,ECONOMIC_EXPRESSION,3,by_symbol[t.symbol] += t.pnl
+src/paper_trading_v6.py,563,ECONOMIC_EXPRESSION,3,"sorted(base.trades, key=lambda t: t.pnl, reverse=True)"
+src/paper_trading_v6.py,576,ECONOMIC_EXPRESSION,3,by_symbol[t.symbol] += t.pnl
+src/paper_trading_v6.py,594,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<24} "" f""TRADES={len(r.trades):4d} "" f""WIN={r.win_rate:6.2f}% "" f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""AVG={r.avg_return:+8.4f}% "" f""MED={r.median_return:+8.4f}% "" f""PF={fmt_pf(r.profit_factor):>7} "" f""DD={r.max_dd_pct:+9.4f}% "" f""P&L=${r.pnl:10.2f}"" )"
+src/paper_trading_v6.py,598,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v6.py,598,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v6.py,601,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v6.py,626,ECONOMIC_EXPRESSION,3,"w.writerow( { ""scenario"": s.name, ""category"": getattr(r, ""category"", ""simulation""), ""trades"": len(r.trades), ""wins"": r.wins, ""losses"": r.losses, ""win_rate_pct"": f""{r.win_rate:.8f}"", ""avg_return_pct"": f""{r.avg_return:.8f}"", ""median_return_pct"": f""{r.median_return:.8f}"", ""pnl"": f""{r.pnl:.8f}"", ""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"", ""profit_factor"": ( ""inf"" if math.isinf(r.profit_factor) else f""{r.profit_factor:.8f}"" ), ""best_trade_pct"": f""{r.best_trade:.8f}"", ""worst_trade_pct"": f""{r"
+src/paper_trading_v6.py,637,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v6.py,637,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v6.py,639,ECONOMIC_EXPRESSION,3,math.isinf(r.profit_factor)
+src/paper_trading_v6.py,850,ECONOMIC_EXPRESSION,3,"print( f""Top 5 símbolos P&L: "" f""${c['top5_pnl']:+.2f} ({c['top5_pct']:.2f}% do P&L)"" )"
+src/paper_trading_v6.py,854,ECONOMIC_EXPRESSION,3,"print( f""Top 10 símbolos P&L: "" f""${c['top10_pnl']:+.2f} ({c['top10_pct']:.2f}% do P&L)"" )"
+src/paper_trading_v6.py,861,ECONOMIC_EXPRESSION,3,"print(f"" {symbol:<18} ${pnl:+10.2f}"")"
+src/paper_trading_v6.py,890,ECONOMIC_EXPRESSION,3,"print(""5) SENSIBILIDADE A CUSTOS"")"
+src/paper_trading_v6.py,898,ECONOMIC_EXPRESSION,3,"scenario_variant( name, a.score, entry_cost=cost, exit_cost=cost, )"
+src/paper_trading_v6.py,972,ECONOMIC_EXPRESSION,3,"print( f""{r.scenario.name:<24} "" f""{len(r.trades):7d} "" f""{r.win_rate:7.2f}% "" f""{r.pnl / CAPITAL_INITIAL * 100:+9.4f}% "" f""{r.avg_return:+8.4f}% "" f""{r.median_return:+8.4f}% "" f""{fmt_pf(r.profit_factor):>7} "" f""{r.max_dd_pct:+9.4f}% "" f""${r.pnl:11.2f}"" )"
+src/paper_trading_v6.py,976,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v6.py,976,ECONOMIC_EXPRESSION,3,r.pnl / CAPITAL_INITIAL
+src/paper_trading_v6.py,979,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v6.py,994,ECONOMIC_EXPRESSION,3,"sorted( eligible, key=lambda r: ( r.profit_factor, r.pnl, r.max_dd_pct, ), reverse=True, )"
+src/paper_trading_v6.py,1010,ECONOMIC_EXPRESSION,3,"print( f""{i:2d}. {r.scenario.name:<24} "" f""PF={fmt_pf(r.profit_factor):>6} "" f""P&L=${r.pnl:+9.2f} "" f""DD={r.max_dd_pct:+8.3f}% "" f""MED={r.median_return:+7.3f}%"" )"
+src/paper_trading_v6.py,1012,ECONOMIC_EXPRESSION,3,fmt_pf(r.profit_factor)
+src/paper_trading_v6.py,1039,ECONOMIC_EXPRESSION,3,"next( r for r in results if r.scenario.name == ""COST030"" )"
+src/paper_trading_v6.py,1084,ECONOMIC_EXPRESSION,3,"print("" de concentração, reentrada, custos, outliers e tempo."")"
+src/paper_trading_v7.py,331,ECONOMIC_EXPRESSION,3,sum( trade.pnl for trade in trades if trade.pnl > 0 )
+src/paper_trading_v7.py,335,ECONOMIC_EXPRESSION,3,sum( abs(trade.pnl) for trade in trades if trade.pnl < 0 )
+src/paper_trading_v7.py,336,ECONOMIC_EXPRESSION,3,abs(trade.pnl)
+src/paper_trading_v7.py,346,ECONOMIC_EXPRESSION,3,gross_profit / gross_loss
+src/paper_trading_v7.py,442,ECONOMIC_EXPRESSION,3,sum(1 for trade in trades if trade.pnl > 0)
+src/paper_trading_v7.py,443,ECONOMIC_EXPRESSION,3,sum(1 for trade in trades if trade.pnl < 0)
+src/paper_trading_v7.py,450,ECONOMIC_EXPRESSION,3,sum(trade.pnl for trade in trades)
+src/paper_trading_v7.py,463,ECONOMIC_EXPRESSION,3,(pnl / INITIAL_CAPITAL) * 100.0
+src/paper_trading_v7.py,463,ECONOMIC_EXPRESSION,3,pnl / INITIAL_CAPITAL
+src/paper_trading_v7.py,467,ECONOMIC_EXPRESSION,3,profit_factor(trades)
+src/paper_trading_v7.py,589,ECONOMIC_EXPRESSION,3,gross_value * position.cost_rate
+src/paper_trading_v7.py,592,ECONOMIC_EXPRESSION,3,gross_value - exit_cost - position.quantity * position.entry_price
+src/paper_trading_v7.py,592,ECONOMIC_EXPRESSION,3,gross_value - exit_cost
+src/paper_trading_v7.py,597,ECONOMIC_EXPRESSION,3,( pnl / ( position.quantity * position.entry_price ) ) * 100.0
+src/paper_trading_v7.py,598,ECONOMIC_EXPRESSION,3,pnl / ( position.quantity * position.entry_price )
+src/paper_trading_v7.py,605,ECONOMIC_EXPRESSION,3,"ClosedTrade( symbol=symbol, entry_time=position.entry_time, exit_time=current_time, entry_price=position.entry_price, exit_price=snapshot.price, score=position.score, return_pct=net_return_pct, pnl=pnl, reason=reason, )"
+src/paper_trading_v7.py,619,ECONOMIC_EXPRESSION,3,capital += pnl
+src/paper_trading_v7.py,711,ECONOMIC_EXPRESSION,3,allocation * cost_rate
+src/paper_trading_v7.py,713,ECONOMIC_EXPRESSION,3,allocation - entry_cost
+src/paper_trading_v7.py,762,ECONOMIC_EXPRESSION,3,gross_value * position.cost_rate
+src/paper_trading_v7.py,765,ECONOMIC_EXPRESSION,3,gross_value - exit_cost - position.quantity * position.entry_price
+src/paper_trading_v7.py,765,ECONOMIC_EXPRESSION,3,gross_value - exit_cost
+src/paper_trading_v7.py,770,ECONOMIC_EXPRESSION,3,( pnl / ( position.quantity * position.entry_price ) ) * 100.0
+src/paper_trading_v7.py,771,ECONOMIC_EXPRESSION,3,pnl / ( position.quantity * position.entry_price )
+src/paper_trading_v7.py,778,ECONOMIC_EXPRESSION,3,"ClosedTrade( symbol=symbol, entry_time=position.entry_time, exit_time=final_time, entry_price=position.entry_price, exit_price=snapshot.price, score=position.score, return_pct=net_return_pct, pnl=pnl, reason=""END_OF_REPLAY"", )"
+src/paper_trading_v7.py,792,ECONOMIC_EXPRESSION,3,capital += pnl
+src/paper_trading_v7.py,824,ECONOMIC_EXPRESSION,3,"sorted( result.trades, key=lambda trade: trade.pnl, reverse=True, )"
+src/paper_trading_v7.py,845,ECONOMIC_EXPRESSION,3,capital += trade.pnl
+src/paper_trading_v7.py,870,ECONOMIC_EXPRESSION,3,by_symbol[trade.symbol] += trade.pnl
+src/paper_trading_v7.py,893,ECONOMIC_EXPRESSION,3,capital += trade.pnl
+src/paper_trading_v7.py,920,ECONOMIC_EXPRESSION,3,"min( trade.return_pct, cap_pct, )"
+src/paper_trading_v7.py,925,ECONOMIC_EXPRESSION,3,trade.return_pct / 100.0
+src/paper_trading_v7.py,930,ECONOMIC_EXPRESSION,3,trade.pnl * ( capped_pct / trade.return_pct )
+src/paper_trading_v7.py,931,ECONOMIC_EXPRESSION,3,capped_pct / trade.return_pct
+src/paper_trading_v7.py,934,ECONOMIC_EXPRESSION,3,"new_trades.append( ClosedTrade( symbol=trade.symbol, entry_time=trade.entry_time, exit_time=trade.exit_time, entry_price=trade.entry_price, exit_price=trade.exit_price, score=trade.score, return_pct=capped_pct, pnl=pnl, reason=trade.reason, ) )"
+src/paper_trading_v7.py,935,ECONOMIC_EXPRESSION,3,"ClosedTrade( symbol=trade.symbol, entry_time=trade.entry_time, exit_time=trade.exit_time, entry_price=trade.entry_price, exit_price=trade.exit_price, score=trade.score, return_pct=capped_pct, pnl=pnl, reason=trade.reason, )"
+src/paper_trading_v7.py,952,ECONOMIC_EXPRESSION,3,capital += trade.pnl
+src/paper_trading_v7.py,1004,ECONOMIC_EXPRESSION,3,pnl_values.copy()
+src/paper_trading_v7.py,1012,ECONOMIC_EXPRESSION,3,capital += pnl
+src/paper_trading_v7.py,1262,ECONOMIC_EXPRESSION,3,"math.isfinite(m[""profit_factor""])"
+src/paper_trading_v7.py,1266,ECONOMIC_EXPRESSION,3,"print( f""{result.name:<26}"" f"" TRADES={m['trades']:4d}"" f"" WIN={m['win_rate']:6.2f}%"" f"" RET={m['return_pct']:+9.4f}%"" f"" AVG={m['avg_pct']:+8.4f}%"" f"" MED={m['median_pct']:+8.4f}%"" f"" PF={pf}"" f"" DD={m['drawdown_pct']:+9.4f}%"" f"" P&L={fmt_money(m['pnl']):>12}"" )"
+src/paper_trading_v7.py,1275,ECONOMIC_EXPRESSION,3,fmt_money(m['pnl'])
+src/paper_trading_v7.py,1289,ECONOMIC_EXPRESSION,3,"print(f"" Taxa de acerto: {m['win_rate']:.2f}%"")"
+src/paper_trading_v7.py,1292,ECONOMIC_EXPRESSION,3,"print(f"" P&L realizado: ${m['pnl']:+.2f}"")"
+src/paper_trading_v7.py,1294,ECONOMIC_EXPRESSION,3,"print(f"" Profit Factor: {m['profit_factor']:.3f}"")"
+src/paper_trading_v7.py,1316,ECONOMIC_EXPRESSION,3,by_symbol[trade.symbol] += trade.pnl
+src/paper_trading_v7.py,1333,ECONOMIC_EXPRESSION,3,"sum( pnl for _, pnl in ordered[:5] )"
+src/paper_trading_v7.py,1338,ECONOMIC_EXPRESSION,3,"sum( pnl for _, pnl in ordered[:10] )"
+src/paper_trading_v7.py,1364,ECONOMIC_EXPRESSION,3,"print( f"" {symbol:<18} ${pnl:+10.2f}"" )"
+src/paper_trading_v7.py,1745,ECONOMIC_EXPRESSION,3,"print(""7) SENSIBILIDADE A CUSTOS"")"
+src/paper_trading_v7.py,1755,ECONOMIC_EXPRESSION,3,int(cost * 10000)
+src/paper_trading_v7.py,1755,ECONOMIC_EXPRESSION,3,cost * 10000
+src/paper_trading_v7.py,1949,ECONOMIC_EXPRESSION,3,"print( f""{result.name:<28}"" f""{m['trades']:>8}"" f""{m['win_rate']:>8.2f}%"" f""{m['return_pct']:>+10.4f}%"" f""{m['avg_pct']:>+9.4f}%"" f""{m['median_pct']:>+9.4f}%"" f""{m['profit_factor']:>7.3f}"" f""{m['drawdown_pct']:>+10.4f}%"" f""{m['pnl']:>12.2f}"" )"
+src/paper_trading_v7.py,1982,ECONOMIC_EXPRESSION,3,"eligible.sort( key=lambda result: ( result_metrics(result)[""profit_factor""], result_metrics(result)[""pnl""], ), reverse=True, )"
+src/paper_trading_v7.py,1996,ECONOMIC_EXPRESSION,3,"print( f""{index:2d}. "" f""{result.name:<25} "" f""PF={m['profit_factor']:6.3f} "" f""P&L=${m['pnl']:+9.2f} "" f""DD={m['drawdown_pct']:+8.3f}% "" f""MED={m['median_pct']:+8.4f}%"" )"
+src/paper_trading_v7.py,2044,ECONOMIC_EXPRESSION,3,"positive( cost_results[""COST030""] )"
+src/paper_trading_v7.py,2048,ECONOMIC_EXPRESSION,3,"pf_at_least( cost_results[""COST030""], 1.20, )"
+src/paper_trading_v8.py,596,ECONOMIC_EXPRESSION,3,gross_return - ( config.cost * 2.0 )
+src/paper_trading_v8.py,597,ECONOMIC_EXPRESSION,3,config.cost * 2.0
+src/paper_trading_v8.py,606,ECONOMIC_EXPRESSION,3,"trades.append( Trade( entry_time=position[""entry_time""].isoformat(), exit_time=exit_info[""time""].isoformat(), symbol=symbol, entry_price=position[""entry_price""], exit_price=exit_price, score=position[""score""], confidence=position[""confidence""], return_pct=net_return, pnl=pnl, exit_reason=exit_info[""reason""], holding_hours=holding_hours, ) )"
+src/paper_trading_v8.py,607,ECONOMIC_EXPRESSION,3,"Trade( entry_time=position[""entry_time""].isoformat(), exit_time=exit_info[""time""].isoformat(), symbol=symbol, entry_price=position[""entry_price""], exit_price=exit_price, score=position[""score""], confidence=position[""confidence""], return_pct=net_return, pnl=pnl, exit_reason=exit_info[""reason""], holding_hours=holding_hours, )"
+src/paper_trading_v8.py,829,ECONOMIC_EXPRESSION,3,"Metrics( name=name, trades=0, wins=0, losses=0, win_rate=0.0, return_pct=0.0, avg_pct=0.0, median_pct=0.0, profit_factor=0.0, max_drawdown_pct=0.0, pnl=0.0, best_trade_pct=0.0, worst_trade_pct=0.0, max_win_streak=0, max_loss_streak=0, sharpe=0.0, sortino=0.0, symbols=0, )"
+src/paper_trading_v8.py,871,ECONOMIC_EXPRESSION,3,gross_profit / gross_loss
+src/paper_trading_v8.py,888,ECONOMIC_EXPRESSION,3,"Metrics( name=name, trades=len(trades), wins=len(wins), losses=len(losses), win_rate=( len(wins) / len(returns) * 100.0 ), return_pct=total_return, avg_pct=statistics.mean(returns), median_pct=statistics.median(returns), profit_factor=pf, max_drawdown_pct=max_drawdown(returns), pnl=equity - INITIAL_CAPITAL, best_trade_pct=max(returns), worst_trade_pct=min(returns), max_win_streak=max_win_streak, max_loss_streak=max_loss_streak, sharpe=sharpe_simple(returns), sortino=sortino_simple(returns), symb"
+src/paper_trading_v8.py,929,ECONOMIC_EXPRESSION,3,"sorted( trades, key=lambda x: x.return_pct, reverse=True, )"
+src/paper_trading_v8.py,955,ECONOMIC_EXPRESSION,3,pnl_by_symbol[trade.symbol] += trade.pnl
+src/paper_trading_v8.py,959,ECONOMIC_EXPRESSION,3,"sorted( pnl_by_symbol.items(), key=lambda item: item[1], reverse=True, )"
+src/paper_trading_v8.py,960,ECONOMIC_EXPRESSION,3,pnl_by_symbol.items()
+src/paper_trading_v8.py,1168,ECONOMIC_EXPRESSION,3,"rows.append( { ""window"": window, ""train_start"": train_start.isoformat(), ""train_end"": train_end.isoformat(), ""test_start"": test_start.isoformat(), ""test_end"": test_end.isoformat(), ""train_trades"": train_metrics.trades, ""train_return"": train_metrics.return_pct, ""train_pf"": train_metrics.profit_factor, ""test_trades"": test_metrics.trades, ""test_return"": test_metrics.return_pct, ""test_pf"": test_metrics.profit_factor, ""test_dd"": test_metrics.max_drawdown_pct, ""test_median"": test_metrics.median_pct, """
+src/paper_trading_v8.py,1329,ECONOMIC_EXPRESSION,3,"print( f""{metrics.name:<28}"" f"" TRADES={metrics.trades:4d}"" f"" WIN={metrics.win_rate:6.2f}%"" f"" RET={metrics.return_pct:+9.4f}%"" f"" AVG={metrics.avg_pct:+8.4f}%"" f"" MED={metrics.median_pct:+8.4f}%"" f"" PF={metrics.profit_factor:6.3f}"" f"" DD={metrics.max_drawdown_pct:+9.4f}%"" f"" P&L=${metrics.pnl:10.2f}"" )"
+src/paper_trading_v8.py,1365,ECONOMIC_EXPRESSION,3,"print( f""Taxa de acerto: "" f""{metrics.win_rate:.2f}%"" )"
+src/paper_trading_v8.py,1380,ECONOMIC_EXPRESSION,3,"print( f""P&L realizado: "" f""${metrics.pnl:+.2f}"" )"
+src/paper_trading_v8.py,1385,ECONOMIC_EXPRESSION,3,"print( f""Capital final realizado: "" f""${INITIAL_CAPITAL + metrics.pnl:,.2f}"" )"
+src/paper_trading_v8.py,1387,ECONOMIC_EXPRESSION,3,INITIAL_CAPITAL + metrics.pnl
+src/paper_trading_v8.py,1390,ECONOMIC_EXPRESSION,3,"print( f""Profit Factor: "" f""{metrics.profit_factor:.3f}"" )"
+src/paper_trading_v8.py,1584,ECONOMIC_EXPRESSION,3,math.isfinite(base.profit_factor)
+src/paper_trading_v8.py,1747,ECONOMIC_EXPRESSION,3,"print(""7. Testar custos até 0.30%."")"
+src/paper_trading_v8.py,1764,ECONOMIC_EXPRESSION,3,"configurations.extend( [ ( ""V8_BASE"", Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, ), ), ( ""V8_SCORE78"", Configuration( score=78, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, ), ), ( ""V8_SL5_TP12"", Configuration( score=75, sl=5.0, tp=12.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, ), ), ( ""V8_COOLDOWN6"", Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=6, max_en"
+src/paper_trading_v8.py,1768,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1780,ECONOMIC_EXPRESSION,3,"Configuration( score=78, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1792,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=12.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1804,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=6, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1816,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=24, max_entries_24h=1, max_positions=5, cost=0.10, )"
+src/paper_trading_v8.py,1828,ECONOMIC_EXPRESSION,3,"Configuration( score=78, sl=5.0, tp=12.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1853,ECONOMIC_EXPRESSION,3,"configurations.append( ( ( f""S{score}_"" f""SL{int(sl)}_"" f""TP{int(tp)}"" ), Configuration( score=score, sl=sl, tp=tp, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, ), ) )"
+src/paper_trading_v8.py,1860,ECONOMIC_EXPRESSION,3,"Configuration( score=score, sl=sl, tp=tp, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=0.10, )"
+src/paper_trading_v8.py,1884,ECONOMIC_EXPRESSION,3,"configurations.append( ( ( f""CD{cooldown}_"" f""E{max_entries}_"" f""P{max_positions}"" ), Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=cooldown, max_entries_24h=max_entries, max_positions=max_positions, cost=0.10, ), ) )"
+src/paper_trading_v8.py,1891,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=cooldown, max_entries_24h=max_entries, max_positions=max_positions, cost=0.10, )"
+src/paper_trading_v8.py,1909,ECONOMIC_EXPRESSION,3,"configurations.append( ( f""COST_{cost:.2f}"", Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=cost, ), ) )"
+src/paper_trading_v8.py,1912,ECONOMIC_EXPRESSION,3,"Configuration( score=75, sl=5.0, tp=10.0, cooldown_hours=12, max_entries_24h=1, max_positions=10, cost=cost, )"
+src/paper_trading_v8.py,2031,ECONOMIC_EXPRESSION,3,"configurations.append( ( name, Configuration( score=score, sl=sl, tp=tp, cooldown_hours=cooldown, max_entries_24h=entries, max_positions=positions, cost=0.10, ), ) )"
+src/paper_trading_v8.py,2034,ECONOMIC_EXPRESSION,3,"Configuration( score=score, sl=sl, tp=tp, cooldown_hours=cooldown, max_entries_24h=entries, max_positions=positions, cost=0.10, )"
+src/paper_trading_v8.py,2109,ECONOMIC_EXPRESSION,3,"print( f""TRADES={result.trades:4d} "" f""RET={result.return_pct:+8.2f}% "" f""PF={result.profit_factor:5.2f} "" f""DD={result.drawdown_pct:+7.2f}% "" f""ROB={result.robustness_score:5.1f} "" f""{'OK' if result.eligible else '---'}"" )"
+src/paper_trading_v8.py,2165,ECONOMIC_EXPRESSION,3,"results.sort( key=lambda x: ( x.eligible, x.robustness_score, x.remove_symbol10_return > 0, x.remove_top20_return > 0, x.profit_factor, x.return_pct, ), reverse=True, )"
+src/paper_trading_v8.py,2206,ECONOMIC_EXPRESSION,3,"print( f""{index:>3} "" f""{result.name:<35} "" f""{result.robustness_score:>6.1f} "" f""{result.return_pct:>+8.2f}% "" f""{result.profit_factor:>6.2f} "" f""{result.drawdown_pct:>+8.2f}% "" f""{result.median_pct:>+8.3f}% "" f""{wf_text:>8} "" f""{'SIM' if result.eligible else 'NÃO':>4}"" )"
+src/paper_trading_v8.py,2262,ECONOMIC_EXPRESSION,3,"print( f""{index:2d}. "" f""{result.name:<35} "" f""ROB={result.robustness_score:5.1f} "" f""PF={result.profit_factor:5.3f} "" f""P&L=${result.return_pct:8.2f}% "" f""DD={result.drawdown_pct:+7.3f}%"" )"
+src/paper_trading_v8.py,2286,ECONOMIC_EXPRESSION,3,"next( ( result for result in results if ( result.score == 75 and result.sl == 5 and result.tp == 10 and result.cooldown_hours == 12 and result.max_entries_24h == 1 and result.max_positions == 10 and abs(result.cost - 0.10) < 1e-9 ) ), None, )"
+src/paper_trading_v8.py,2297,ECONOMIC_EXPRESSION,3,abs(result.cost - 0.10)
+src/paper_trading_v8.py,2297,ECONOMIC_EXPRESSION,3,result.cost - 0.10
+src/paper_trading_v8.py,2469,ECONOMIC_EXPRESSION,3,"print( f""Taxa positiva: "" f""{positive / len(wf) * 100:.2f}%"" )"
+src/paper_trading_v8.py,2528,ECONOMIC_EXPRESSION,3,"print( f"" Take Profit: "" f""{winner.tp:.2f}%"" )"
+src/paper_trading_v8.py,2548,ECONOMIC_EXPRESSION,3,"print( f"" Custo por lado: "" f""{winner.cost:.2f}%"" )"
+src/paper_trading_v8.py,2559,ECONOMIC_EXPRESSION,3,"print( f"" Retorno: "" f""{winner.return_pct:+.4f}%"" )"
+src/paper_trading_v8.py,2564,ECONOMIC_EXPRESSION,3,"print( f"" Profit Factor: "" f""{winner.profit_factor:.3f}"" )"
+src/paper_trading_v8_1.bak.py,52,ECONOMIC_EXPRESSION,3,"float(r[""entry_fee""])"
+src/paper_trading_v8_1.bak.py,52,ECONOMIC_EXPRESSION,3,"float(r[""exit_fee""])"
+src/paper_trading_v8_1.bak.py,52,ECONOMIC_EXPRESSION,3,"float(r[""gross_return_pct""])"
+src/paper_trading_v8_1.bak.py,53,ECONOMIC_EXPRESSION,3,"float(r[""net_return_pct""])"
+src/paper_trading_v8_1.bak.py,53,ECONOMIC_EXPRESSION,3,"float(r[""pnl""])"
+src/paper_trading_v8_1.bak.py,60,ECONOMIC_EXPRESSION,3,t.notional*t.xp/t.ep-t.exit_fee-t.notional-t.entry_fee
+src/paper_trading_v8_1.bak.py,60,ECONOMIC_EXPRESSION,3,t.notional*t.xp/t.ep-t.exit_fee-t.notional
+src/paper_trading_v8_1.bak.py,60,ECONOMIC_EXPRESSION,3,t.notional*t.xp/t.ep-t.exit_fee
+src/paper_trading_v8_1.bak.py,63,ECONOMIC_EXPRESSION,3,abs(ep-t.pnl)
+src/paper_trading_v8_1.bak.py,63,ECONOMIC_EXPRESSION,3,ep-t.pnl
+src/paper_trading_v8_1.bak.py,79,ECONOMIC_EXPRESSION,3,cash-=t.notional+t.entry_fee
+src/paper_trading_v8_1.bak.py,79,ECONOMIC_EXPRESSION,3,t.notional+t.entry_fee
+src/paper_trading_v8_1.bak.py,81,ECONOMIC_EXPRESSION,3,cash+=t.notional+t.pnl
+src/paper_trading_v8_1.bak.py,81,ECONOMIC_EXPRESSION,3,t.notional+t.pnl
+src/paper_trading_v8_1.bak.py,156,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts)
+src/paper_trading_v8_1.bak.py,156,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl>0)
+src/paper_trading_v8_1.bak.py,156,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in ts if t.pnl<0))
+src/paper_trading_v8_1.bak.py,156,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl<0)
+src/paper_trading_v8_1.bak.py,159,ECONOMIC_EXPRESSION,3,eq+=t.pnl
+src/paper_trading_v8_1.bak.py,160,ECONOMIC_EXPRESSION,3,pnl/CAPITAL_INITIAL*100
+src/paper_trading_v8_1.bak.py,160,ECONOMIC_EXPRESSION,3,sum(t.pnl>0 for t in ts)/len(ts)*100
+src/paper_trading_v8_1.bak.py,160,ECONOMIC_EXPRESSION,3,pnl/CAPITAL_INITIAL
+src/paper_trading_v8_1.bak.py,160,ECONOMIC_EXPRESSION,3,sum(t.pnl>0 for t in ts)/len(ts)
+src/paper_trading_v8_1.bak.py,160,ECONOMIC_EXPRESSION,3,sum(t.pnl>0 for t in ts)
+src/paper_trading_v8_1.bak.py,197,ECONOMIC_EXPRESSION,3,"print(f""\n[{name}] trades={len(ts)} gross_bad={len(bg)} pnl_bad={len(bp)} net_bad={len(bn)} invalid={len(iv)}"")"
+src/paper_trading_v8_1.bak.py,227,ECONOMIC_EXPRESSION,3,"print(f"" {t.symbol:<16} RET={t.net:+9.3f}% P&L=${t.pnl:+10.2f} {t.entry.isoformat()} -> {t.exit.isoformat()} {t.reason}"")"
+src/paper_trading_v8_1.bak.py,246,ECONOMIC_EXPRESSION,3,"print(f""{name:<32} TRADES={n:4d} WIN={w:6.2f}% RET={ret:+10.4f}% PF={pf:7.3f} DD={dd:+9.4f}% P&L=${pnl:+10.2f}"")"
+src/paper_trading_v8_1.py,103,ECONOMIC_EXPRESSION,3,"float(r[""pnl""])"
+src/paper_trading_v8_1.py,107,ECONOMIC_EXPRESSION,3,"float(r[""entry_fee""])"
+src/paper_trading_v8_1.py,108,ECONOMIC_EXPRESSION,3,"float(r[""exit_fee""])"
+src/paper_trading_v8_1.py,109,ECONOMIC_EXPRESSION,3,"float(r[""gross_return_pct""])"
+src/paper_trading_v8_1.py,110,ECONOMIC_EXPRESSION,3,"float(r[""net_return_pct""])"
+src/paper_trading_v8_1.py,117,ECONOMIC_EXPRESSION,3,"float(r[""return_pct""])"
+src/paper_trading_v8_1.py,118,ECONOMIC_EXPRESSION,3,abs(pnl / (ret / 100.0))
+src/paper_trading_v8_1.py,118,ECONOMIC_EXPRESSION,3,pnl / (ret / 100.0)
+src/paper_trading_v8_1.py,156,ECONOMIC_EXPRESSION,3,t.notional * t.xp / t.ep - t.exit_fee - t.notional - t.entry_fee
+src/paper_trading_v8_1.py,156,ECONOMIC_EXPRESSION,3,t.notional * t.xp / t.ep - t.exit_fee - t.notional
+src/paper_trading_v8_1.py,156,ECONOMIC_EXPRESSION,3,t.notional * t.xp / t.ep - t.exit_fee
+src/paper_trading_v8_1.py,162,ECONOMIC_EXPRESSION,3,abs(ep - t.pnl)
+src/paper_trading_v8_1.py,162,ECONOMIC_EXPRESSION,3,ep - t.pnl
+src/paper_trading_v8_1.py,189,ECONOMIC_EXPRESSION,3,cash -= t.notional + t.entry_fee
+src/paper_trading_v8_1.py,189,ECONOMIC_EXPRESSION,3,t.notional + t.entry_fee
+src/paper_trading_v8_1.py,192,ECONOMIC_EXPRESSION,3,cash += t.notional + t.pnl
+src/paper_trading_v8_1.py,192,ECONOMIC_EXPRESSION,3,t.notional + t.pnl
+src/paper_trading_v8_1.py,318,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts)
+src/paper_trading_v8_1.py,319,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl > 0)
+src/paper_trading_v8_1.py,320,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in ts if t.pnl < 0))
+src/paper_trading_v8_1.py,320,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl < 0)
+src/paper_trading_v8_1.py,324,ECONOMIC_EXPRESSION,3,eq += t.pnl
+src/paper_trading_v8_1.py,329,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in ts) / len(ts) * 100
+src/paper_trading_v8_1.py,329,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in ts) / len(ts)
+src/paper_trading_v8_1.py,329,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in ts)
+src/paper_trading_v8_1.py,331,ECONOMIC_EXPRESSION,3,pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v8_1.py,331,ECONOMIC_EXPRESSION,3,pnl / CAPITAL_INITIAL
+src/paper_trading_v8_1.py,371,ECONOMIC_EXPRESSION,3,"print(""Compatibilidade: ATIVA — V8 não exportou notional/taxas/campos gross/net"")"
+src/paper_trading_v8_1.py,372,ECONOMIC_EXPRESSION,3,"print(""Taxas reconstruídas: 0.00 — não disponíveis no CSV legado"")"
+src/paper_trading_v8_1.py,387,ECONOMIC_EXPRESSION,3,"print("" Campos gross/net/fees/notional não existiam no CSV original; não foram inventados como dados históricos."")"
+src/paper_trading_v8_1.py,391,ECONOMIC_EXPRESSION,3,"print(f""\n[{name}] trades={len(ts)} gross_bad={len(bg)} pnl_bad={len(bp)} net_bad={len(bn)} invalid={len(iv)}"")"
+src/paper_trading_v8_1.py,421,ECONOMIC_EXPRESSION,3,"print(f"" {t.symbol:<16} RET={t.net:+9.3f}% P&L=${t.pnl:+10.2f} {t.entry.isoformat()} -> {t.exit.isoformat()} {t.reason}"")"
+src/paper_trading_v8_1.py,443,ECONOMIC_EXPRESSION,3,"print(f""{name:<32} TRADES={n:4d} WIN={w:6.2f}% RET={ret:+10.4f}% PF={pf:7.3f} DD={dd:+9.4f}% P&L=${pnl:+10.2f}"")"
+src/paper_trading_v8_1_1.py,87,ECONOMIC_EXPRESSION,3,"Trade( line_no, str(r[""scenario""]).strip(), str(r[""symbol""]).strip().upper(), dt(r[""entry_time""]), dt(r[""exit_time""]), float(r[""entry_price""]), float(r[""exit_price""]), finite(r.get(""score"")), finite(r.get(""confidence"")), float(r[""return_pct""]), float(r[""pnl""]), str(r.get(""exit_reason"", """")).strip().upper(), float(r[""holding_hours""]), )"
+src/paper_trading_v8_1_1.py,97,ECONOMIC_EXPRESSION,3,"float(r[""return_pct""])"
+src/paper_trading_v8_1_1.py,98,ECONOMIC_EXPRESSION,3,"float(r[""pnl""])"
+src/paper_trading_v8_1_1.py,149,ECONOMIC_EXPRESSION,3,"add(findings, t.scenario, t.row, ""RETURN_RECONSTRUCTION"", ""REAL_DATA_ISSUE"", ""return_pct não reconstrói do entry_price/exit_price."", f""{calc_ret:.12f}"", f""{t.ret:.12f}"")"
+src/paper_trading_v8_1_1.py,157,ECONOMIC_EXPRESSION,3,abs(implied - t.pnl)
+src/paper_trading_v8_1_1.py,157,ECONOMIC_EXPRESSION,3,implied - t.pnl
+src/paper_trading_v8_1_1.py,158,ECONOMIC_EXPRESSION,3,"add(findings, t.scenario, t.row, ""PNL_RECONSTRUCTION"", ""REAL_DATA_ISSUE"", ""pnl não é compatível com return_pct sobre capital de referência de $1,000."", f""{implied:.12f}"", f""{t.pnl:.12f}"")"
+src/paper_trading_v8_1_1.py,185,ECONOMIC_EXPRESSION,3,"Counter( (t.scenario, t.symbol, t.entry, t.exit, t.ep, t.xp, t.ret, t.pnl, t.reason) for t in trades )"
+src/paper_trading_v8_1_1.py,404,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts)
+src/paper_trading_v8_1_1.py,405,ECONOMIC_EXPRESSION,3,sum(t.pnl > 0 for t in ts)
+src/paper_trading_v8_1_1.py,406,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl > 0)
+src/paper_trading_v8_1_1.py,407,ECONOMIC_EXPRESSION,3,abs(sum(t.pnl for t in ts if t.pnl < 0))
+src/paper_trading_v8_1_1.py,407,ECONOMIC_EXPRESSION,3,sum(t.pnl for t in ts if t.pnl < 0)
+src/paper_trading_v8_1_1.py,413,ECONOMIC_EXPRESSION,3,eq += t.pnl
+src/paper_trading_v8_1_1.py,418,ECONOMIC_EXPRESSION,3,"rows.append({ ""scenario"": scenario, ""trades"": len(ts), ""win_rate_pct"": wins / len(ts) * 100 if ts else 0, ""pnl"": pnl, ""return_on_reference_capital_pct"": pnl / CAPITAL_INITIAL * 100, ""profit_factor"": pf, ""max_drawdown_pct"": maxdd, ""real_data_issues"": sum( 1 for f in findings if f[""scenario""] == scenario and f[""severity""] == ""REAL_DATA_ISSUE"" ), ""warnings"": sum( 1 for f in findings if f[""scenario""] == scenario and f[""severity""] == ""ATENÇÃO"" ), })"
+src/paper_trading_v8_1_1.py,423,ECONOMIC_EXPRESSION,3,pnl / CAPITAL_INITIAL * 100
+src/paper_trading_v8_1_1.py,423,ECONOMIC_EXPRESSION,3,pnl / CAPITAL_INITIAL
+src/paper_trading_v8_1_2.py,69,ECONOMIC_EXPRESSION,3,self.gross_return_pct - self.return_pct
+src/paper_trading_v8_1_2.py,128,ECONOMIC_EXPRESSION,3,"required_float(r, ""return_pct"", line)"
+src/paper_trading_v8_1_2.py,129,ECONOMIC_EXPRESSION,3,"required_float(r, ""pnl"", line)"
+src/paper_trading_v8_1_2.py,141,ECONOMIC_EXPRESSION,3,"trades.append( Trade( row=line, scenario=str(r.get(""scenario"", """")).strip(), symbol=str(r.get(""symbol"", """")).strip().upper(), entry_time=entry, exit_time=exit_, entry_price=ep, exit_price=xp, score=score, confidence=confidence, return_pct=ret, pnl=pnl, exit_reason=str(r.get(""exit_reason"", """")).strip().upper(), holding_hours=holding, ) )"
+src/paper_trading_v8_1_2.py,142,ECONOMIC_EXPRESSION,3,"Trade( row=line, scenario=str(r.get(""scenario"", """")).strip(), symbol=str(r.get(""symbol"", """")).strip().upper(), entry_time=entry, exit_time=exit_, entry_price=ep, exit_price=xp, score=score, confidence=confidence, return_pct=ret, pnl=pnl, exit_reason=str(r.get(""exit_reason"", """")).strip().upper(), holding_hours=holding, )"
+src/paper_trading_v8_1_2.py,194,ECONOMIC_EXPRESSION,3,abs(t.return_pct)
+src/paper_trading_v8_1_2.py,194,ECONOMIC_EXPRESSION,3,abs(t.pnl)
+src/paper_trading_v8_1_2.py,196,ECONOMIC_EXPRESSION,3,"add_finding( findings, ""REAL_DATA_ISSUE"", ""PNL_RETURN_SIGN"", t.scenario, t.row, f""return_pct={t.return_pct:.6f} e pnl={t.pnl:.6f} possuem sinais diferentes."" )"
+src/paper_trading_v8_1_2.py,231,ECONOMIC_EXPRESSION,3,abs(t.return_pct)
+src/paper_trading_v8_1_2.py,231,ECONOMIC_EXPRESSION,3,abs(t.pnl)
+src/paper_trading_v8_1_2.py,232,ECONOMIC_EXPRESSION,3,ratios.append(abs(t.pnl / t.return_pct))
+src/paper_trading_v8_1_2.py,232,ECONOMIC_EXPRESSION,3,abs(t.pnl / t.return_pct)
+src/paper_trading_v8_1_2.py,232,ECONOMIC_EXPRESSION,3,t.pnl / t.return_pct
+src/paper_trading_v8_1_2.py,240,ECONOMIC_EXPRESSION,3,abs(t.return_pct)
+src/paper_trading_v8_1_2.py,242,ECONOMIC_EXPRESSION,3,abs(t.pnl / t.return_pct)
+src/paper_trading_v8_1_2.py,242,ECONOMIC_EXPRESSION,3,t.pnl / t.return_pct
+src/paper_trading_v8_1_2.py,246,ECONOMIC_EXPRESSION,3,"add_finding( findings, ""WARNING"", ""PNL_SCALE_OUTLIER"", t.scenario, t.row, f""escala implícita P&L/retorno={implied_scale:.6f}; "" f""mediana={median_ratio:.6f}."" )"
+src/paper_trading_v8_1_2.py,334,ECONOMIC_EXPRESSION,3,math.isfinite(t.return_pct)
+src/paper_trading_v8_1_2.py,347,ECONOMIC_EXPRESSION,3,abs(t.return_pct - med) / mad
+src/paper_trading_v8_1_2.py,347,ECONOMIC_EXPRESSION,3,abs(t.return_pct - med)
+src/paper_trading_v8_1_2.py,347,ECONOMIC_EXPRESSION,3,t.return_pct - med
+src/paper_trading_v8_1_2.py,349,ECONOMIC_EXPRESSION,3,"add_finding( findings, ""WARNING"", ""OUTLIER"", t.scenario, t.row, f""return_pct={t.return_pct:.6f}%; mediana={med:.6f}%; "" f""MAD={mad:.6f}; robust_z={robust_z:.2f}."" )"
+src/paper_trading_v8_1_2.py,355,ECONOMIC_EXPRESSION,3,abs(t.return_pct)
+src/paper_trading_v8_1_2.py,356,ECONOMIC_EXPRESSION,3,"add_finding( findings, ""WARNING"", ""OUTLIER"", t.scenario, t.row, f""return_pct={t.return_pct:.6f}% excede limite absoluto de 25%."" )"
+src/paper_trading_v8_1_2.py,435,ECONOMIC_EXPRESSION,3,statistics.median(costs)
+src/paper_trading_v8_1_2.py,436,ECONOMIC_EXPRESSION,3,statistics.mean(costs)
+src/paper_trading_v8_1_2.py,477,ECONOMIC_EXPRESSION,3,"print(""RETORNO E CUSTO IMPLÍCITO"")"
+src/paper_trading_v8_1_2.py,485,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mediano: {statistics.median(costs):+.6f} p.p."")"
+src/paper_trading_v8_1_2.py,485,ECONOMIC_EXPRESSION,3,statistics.median(costs)
+src/paper_trading_v8_1_2.py,486,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito médio: {statistics.mean(costs):+.6f} p.p."")"
+src/paper_trading_v8_1_2.py,486,ECONOMIC_EXPRESSION,3,statistics.mean(costs)
+src/paper_trading_v8_1_2.py,489,ECONOMIC_EXPRESSION,3,"print(""IMPORTANTE: divergência entre retorno bruto e return_pct NÃO é"")"
+src/paper_trading_v8_1_2.py,491,ECONOMIC_EXPRESSION,3,"print(""entry_fee/exit_fee/notional; a V8.1.2 não inventa essas colunas."")"
+src/paper_trading_v8_1_2.py,609,ECONOMIC_EXPRESSION,3,"audit_pnl_scale(trades, findings)"
+src/paper_trading_v8_1_3.py,105,ECONOMIC_EXPRESSION,3,"trades.append( Trade( row=rownum, scenario=(r.get(""scenario"") or """").strip(), symbol=(r.get(""symbol"") or """").strip().upper(), entry=e, exit=x, entry_price=fnum(r[""entry_price""]), exit_price=fnum(r[""exit_price""]), return_pct=fnum(r[""return_pct""]), pnl=fnum(r[""pnl""]), exit_reason=(r.get(""exit_reason"") or """").strip(), ) )"
+src/paper_trading_v8_1_3.py,106,ECONOMIC_EXPRESSION,3,"Trade( row=rownum, scenario=(r.get(""scenario"") or """").strip(), symbol=(r.get(""symbol"") or """").strip().upper(), entry=e, exit=x, entry_price=fnum(r[""entry_price""]), exit_price=fnum(r[""exit_price""]), return_pct=fnum(r[""return_pct""]), pnl=fnum(r[""pnl""]), exit_reason=(r.get(""exit_reason"") or """").strip(), )"
+src/paper_trading_v8_1_3.py,114,ECONOMIC_EXPRESSION,3,"fnum(r[""return_pct""])"
+src/paper_trading_v8_1_3.py,115,ECONOMIC_EXPRESSION,3,"fnum(r[""pnl""])"
+src/paper_trading_v8_1_3.py,186,ECONOMIC_EXPRESSION,3,"Counter( ( t.scenario, t.symbol, t.entry, t.exit, round(t.entry_price, 12), round(t.exit_price, 12), round(t.return_pct, 8), round(t.pnl, 8), ) for t in trades )"
+src/paper_trading_v8_1_3.py,192,ECONOMIC_EXPRESSION,3,"round(t.return_pct, 8)"
+src/paper_trading_v8_1_3.py,193,ECONOMIC_EXPRESSION,3,"round(t.pnl, 8)"
+src/paper_trading_v8_1_4.py,57,ECONOMIC_EXPRESSION,3,"trades.append(Trade( rownum, (r.get(""scenario"") or """").strip(), (r.get(""symbol"") or """").strip().upper(), parse_dt(r[""entry_time""]), parse_dt(r[""exit_time""]), fnum(r[""entry_price""]), fnum(r[""exit_price""]), fnum(r[""return_pct""]), fnum(r[""pnl""]), (r.get(""exit_reason"") or """").strip()))"
+src/paper_trading_v8_1_4.py,57,ECONOMIC_EXPRESSION,3,"Trade( rownum, (r.get(""scenario"") or """").strip(), (r.get(""symbol"") or """").strip().upper(), parse_dt(r[""entry_time""]), parse_dt(r[""exit_time""]), fnum(r[""entry_price""]), fnum(r[""exit_price""]), fnum(r[""return_pct""]), fnum(r[""pnl""]), (r.get(""exit_reason"") or """").strip())"
+src/paper_trading_v8_1_4.py,62,ECONOMIC_EXPRESSION,3,"fnum(r[""return_pct""])"
+src/paper_trading_v8_1_4.py,62,ECONOMIC_EXPRESSION,3,"fnum(r[""pnl""])"
+src/paper_trading_v8_1_5.py,105,ECONOMIC_EXPRESSION,3,"num(row[""return_pct""])"
+src/paper_trading_v8_1_5.py,106,ECONOMIC_EXPRESSION,3,"num(row[""pnl""])"
+src/paper_trading_v8_1_5.py,140,ECONOMIC_EXPRESSION,3,"sorted(x[""implicit_cost""] for x in valid)"
+src/paper_trading_v8_1_5.py,148,ECONOMIC_EXPRESSION,3,"print(""2) RETORNO E CUSTO IMPLÍCITO"")"
+src/paper_trading_v8_1_5.py,152,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mediano: {median(costs):+.6f} p.p."")"
+src/paper_trading_v8_1_5.py,152,ECONOMIC_EXPRESSION,3,median(costs)
+src/paper_trading_v8_1_5.py,153,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito médio: {mean(costs):+.6f} p.p."")"
+src/paper_trading_v8_1_5.py,153,ECONOMIC_EXPRESSION,3,mean(costs)
+src/paper_trading_v8_1_5.py,162,ECONOMIC_EXPRESSION,3,"attention.append({ ""type"": ""ATTENTION"", ""category"": ""NEGATIVE_IMPLICIT_COST"", ""scenario"": x[""scenario""], ""symbol"": x[""symbol""], ""row"": x[""line""], ""detail"": f""custo implícito {x['implicit_cost']:.8f} p.p."" })"
+src/paper_trading_v8_1_5.py,176,ECONOMIC_EXPRESSION,3,"abs(x[""pnl""])"
+src/paper_trading_v8_1_5.py,178,ECONOMIC_EXPRESSION,3,"real_issues.append({ ""type"": ""REAL_DATA_ISSUE"", ""category"": ""RETURN_PNL_SIGN_CONFLICT"", ""scenario"": x[""scenario""], ""symbol"": x[""symbol""], ""row"": x[""line""], ""detail"": ( f""return_pct={x['recorded_return']:.8f}% "" f""e pnl={x['pnl']:.8f} possuem sinais opostos"" ) })"
+src/paper_trading_v8_1_5.py,194,ECONOMIC_EXPRESSION,3,"real_issues.append({ ""type"": ""REAL_DATA_ISSUE"", ""category"": ""FLAT_PRICE_NONZERO_RETURN"", ""scenario"": x[""scenario""], ""symbol"": x[""symbol""], ""row"": x[""line""], ""detail"": ( f""entry=exit={x['entry']:.12g}, "" f""return_pct={x['recorded_return']:.8f}%"" ) })"
+src/paper_trading_v8_1_5.py,209,ECONOMIC_EXPRESSION,3,"abs(x[""pnl""])"
+src/paper_trading_v8_1_5.py,210,ECONOMIC_EXPRESSION,3,"attention.append({ ""type"": ""ATTENTION"", ""category"": ""ZERO_PNL_NONZERO_RETURN"", ""scenario"": x[""scenario""], ""symbol"": x[""symbol""], ""row"": x[""line""], ""detail"": ( f""return_pct={x['recorded_return']:.8f}% com pnl=0; "" ""notional/sizing não está disponível no CSV legado"" ) })"
+src/paper_trading_v8_1_5.py,225,ECONOMIC_EXPRESSION,3,"by_scenario[x[""scenario""]].append(x[""implicit_cost""])"
+src/paper_trading_v8_1_5.py,232,ECONOMIC_EXPRESSION,3,"scenario_rows.append({ ""scenario"": scenario, ""trades"": len(vals), ""implicit_cost_mean_pp"": f""{m:.8f}"", ""implicit_cost_median_pp"": f""{med:.8f}"", ""implicit_cost_min_pp"": f""{mn:.8f}"", ""implicit_cost_max_pp"": f""{mx:.8f}"", })"
+src/paper_trading_v8_1_5.py,245,ECONOMIC_EXPRESSION,3,"print(f""Conflitos de sinal return/P&L: {sum(1 for x in real_issues if x['category']=='RETURN_PNL_SIGN_CONFLICT')}"")"
+src/paper_trading_v8_1_5.py,245,ECONOMIC_EXPRESSION,3,sum(1 for x in real_issues if x['category']=='RETURN_PNL_SIGN_CONFLICT')
+src/paper_trading_v8_1_5.py,276,ECONOMIC_EXPRESSION,3,median(costs)
+src/paper_trading_v8_1_5.py,277,ECONOMIC_EXPRESSION,3,mean(costs)
+src/paper_trading_v8_1_5.py,302,ECONOMIC_EXPRESSION,3,"print(""✓ Diferenças de retorno compatíveis com custo implícito não foram tratadas como falha."")"
+src/paper_trading_v8_1_5.py,312,ECONOMIC_EXPRESSION,3,"print( f"" {r['scenario']:<34} "" f""TRADES={r['trades']:>4} "" f""CUSTO_MED={float(r['implicit_cost_median_pp']):+.6f} pp"" )"
+src/paper_trading_v8_1_5.py,315,ECONOMIC_EXPRESSION,3,float(r['implicit_cost_median_pp'])
+src/paper_trading_v8_1_6.py,156,ECONOMIC_EXPRESSION,3,"fnum(get(row, ""return_pct"", ""return"", ""ret""))"
+src/paper_trading_v8_1_6.py,156,ECONOMIC_EXPRESSION,3,"get(row, ""return_pct"", ""return"", ""ret"")"
+src/paper_trading_v8_1_6.py,157,ECONOMIC_EXPRESSION,3,"fnum(get(row, ""pnl"", ""profit_loss"", ""profit"", ""p&l""))"
+src/paper_trading_v8_1_6.py,157,ECONOMIC_EXPRESSION,3,"get(row, ""pnl"", ""profit_loss"", ""profit"", ""p&l"")"
+src/paper_trading_v8_1_6.py,173,ECONOMIC_EXPRESSION,3,"classify(row, entry, exit_, ret, pnl)"
+src/paper_trading_v8_1_6.py,209,ECONOMIC_EXPRESSION,3,"fnum(d[""return_pct""])"
+src/paper_trading_v8_1_6.py,256,ECONOMIC_EXPRESSION,3,"print(""Preço plano + retorno negativo: "" f""{classes.get('FLAT_NEGATIVE_RETURN', 0) + classes.get('COST_ONLY_CANDIDATE', 0)}"")"
+src/paper_trading_v8_1_6.py,257,ECONOMIC_EXPRESSION,3,"classes.get('FLAT_NEGATIVE_RETURN', 0) + classes.get('COST_ONLY_CANDIDATE', 0)"
+src/paper_trading_v8_1_6.py,257,ECONOMIC_EXPRESSION,3,"classes.get('COST_ONLY_CANDIDATE', 0)"
+src/paper_trading_v8_1_6.py,265,ECONOMIC_EXPRESSION,3,"print("" Esses casos NÃO são explicados por custo implícito negativo."")"
+src/paper_trading_v8_1_6.py,271,ECONOMIC_EXPRESSION,3,"print("" Retornos negativos podem ser compatíveis com custo implícito."")"
+src/paper_trading_v8_1_6.py,272,ECONOMIC_EXPRESSION,3,"print("" O CSV legado não permite provar a origem das taxas."")"
+src/paper_trading_v8_1_6.py,331,ECONOMIC_EXPRESSION,3,"writer.writerow([""cost_only_candidate"", classes.get(""COST_ONLY_CANDIDATE"", 0)])"
+src/paper_trading_v8_1_6.py,331,ECONOMIC_EXPRESSION,3,"classes.get(""COST_ONLY_CANDIDATE"", 0)"
+src/paper_trading_v8_1_7.py,96,ECONOMIC_EXPRESSION,3,"find_col(headers, [""return_pct"", ""return"", ""ret_pct"", ""retorno_pct""])"
+src/paper_trading_v8_1_7.py,97,ECONOMIC_EXPRESSION,3,"find_col(headers, [""pnl"", ""p&l"", ""profit"", ""profit_loss"", ""pnl_usd""])"
+src/paper_trading_v8_1_7.py,137,ECONOMIC_EXPRESSION,3,num(row.get(pnl_col))
+src/paper_trading_v8_1_7.py,137,ECONOMIC_EXPRESSION,3,row.get(pnl_col)
+src/paper_trading_v8_1_7.py,173,ECONOMIC_EXPRESSION,3,abs(implicit_cost)
+src/paper_trading_v8_1_7.py,174,ECONOMIC_EXPRESSION,3,cost_only += 1
+src/paper_trading_v8_1_7.py,175,ECONOMIC_EXPRESSION,3,costs.append(implicit_cost)
+src/paper_trading_v8_1_7.py,179,ECONOMIC_EXPRESSION,3,costs.append(implicit_cost)
+src/paper_trading_v8_1_7.py,180,ECONOMIC_EXPRESSION,3,abs(implicit_cost)
+src/paper_trading_v8_1_7.py,195,ECONOMIC_EXPRESSION,3,pnl_sign_conflicts += 1
+src/paper_trading_v8_1_7.py,199,ECONOMIC_EXPRESSION,3,pnl_sign_conflicts += 1
+src/paper_trading_v8_1_7.py,220,ECONOMIC_EXPRESSION,3,"scenario_stats.setdefault(scenario, {""trades"": 0, ""mismatch"": 0, ""cost"": []})"
+src/paper_trading_v8_1_7.py,225,ECONOMIC_EXPRESSION,3,"st[""cost""].append(implicit_cost)"
+src/paper_trading_v8_1_7.py,238,ECONOMIC_EXPRESSION,3,statistics.median(costs)
+src/paper_trading_v8_1_7.py,239,ECONOMIC_EXPRESSION,3,statistics.mean(costs)
+src/paper_trading_v8_1_7.py,244,ECONOMIC_EXPRESSION,3,parse_errors + impossible + mismatches + pnl_sign_conflicts
+src/paper_trading_v8_1_7.py,259,ECONOMIC_EXPRESSION,3,"print(f""Casos compatíveis com custo: {cost_only}"")"
+src/paper_trading_v8_1_7.py,261,ECONOMIC_EXPRESSION,3,"print(f""Conflitos de sinal P&L/retorno: {pnl_sign_conflicts}"")"
+src/paper_trading_v8_1_7.py,264,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mediano: {median_cost:+.6f}%"")"
+src/paper_trading_v8_1_7.py,265,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito médio: {mean_cost:+.6f}%"")"
+src/paper_trading_v8_1_7.py,275,ECONOMIC_EXPRESSION,3,"print(""✓ Divergências pequenas podem ser compatíveis com custo implícito."")"
+src/paper_trading_v8_1_8.py,100,ECONOMIC_EXPRESSION,3,"find_col(headers, [""return_pct"", ""return"", ""ret_pct"", ""retorno_pct""])"
+src/paper_trading_v8_1_8.py,101,ECONOMIC_EXPRESSION,3,"find_col(headers, [""pnl"", ""p&l"", ""profit"", ""profit_loss""])"
+src/paper_trading_v8_1_8.py,122,ECONOMIC_EXPRESSION,3,"SystemExit(""Estrutura insuficiente: entry_price, exit_price e return_pct são necessários."")"
+src/paper_trading_v8_1_8.py,146,ECONOMIC_EXPRESSION,3,num(row.get(pnl_col))
+src/paper_trading_v8_1_8.py,146,ECONOMIC_EXPRESSION,3,row.get(pnl_col)
+src/paper_trading_v8_1_8.py,171,ECONOMIC_EXPRESSION,3,costs.append(implicit_cost)
+src/paper_trading_v8_1_8.py,180,ECONOMIC_EXPRESSION,3,"min( COST_HYPOTHESES, key=lambda c: abs(recorded - (gross - c)) )"
+src/paper_trading_v8_1_8.py,192,ECONOMIC_EXPRESSION,3,cost20 += 1
+src/paper_trading_v8_1_8.py,196,ECONOMIC_EXPRESSION,3,cost15 += 1
+src/paper_trading_v8_1_8.py,200,ECONOMIC_EXPRESSION,3,cost10 += 1
+src/paper_trading_v8_1_8.py,235,ECONOMIC_EXPRESSION,3,"scenarios.setdefault(scenario, {""trades"": 0, ""costs"": []})"
+src/paper_trading_v8_1_8.py,237,ECONOMIC_EXPRESSION,3,"st[""costs""].append(implicit_cost)"
+src/paper_trading_v8_1_8.py,250,ECONOMIC_EXPRESSION,3,statistics.median(costs)
+src/paper_trading_v8_1_8.py,251,ECONOMIC_EXPRESSION,3,statistics.mean(costs)
+src/paper_trading_v8_1_8.py,256,ECONOMIC_EXPRESSION,3,sum(abs(c - 0.20) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,257,ECONOMIC_EXPRESSION,3,sum(abs(c - 0.15) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,258,ECONOMIC_EXPRESSION,3,sum(abs(c - 0.10) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,259,ECONOMIC_EXPRESSION,3,sum(abs(c - 0.30) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,274,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mediano: {med_cost:+.6f}%"" if med_cost is not None else ""N/D"")"
+src/paper_trading_v8_1_8.py,275,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito médio: {mean_cost:+.6f}%"" if mean_cost is not None else ""N/D"")"
+src/paper_trading_v8_1_8.py,291,ECONOMIC_EXPRESSION,3,"print(""✓ A divergência é fortemente compatível com custo implícito de 0,20 p.p."")"
+src/paper_trading_v8_1_8.py,293,ECONOMIC_EXPRESSION,3,"print("" A origem exata da taxa ainda não é provada pelo CSV legado."")"
+src/paper_trading_v8_1_9.py,40,ECONOMIC_EXPRESSION,3,"re.compile(r""return_pct"", re.I)"
+src/paper_trading_v8_1_9.py,41,ECONOMIC_EXPRESSION,3,"re.compile(r""pnl"", re.I)"
+src/paper_trading_v8_1_9.py,42,ECONOMIC_EXPRESSION,3,"re.compile(r""fee|fees|cost|commission|tax|slippage"", re.I)"
+src/paper_trading_v8_1_9.py,75,ECONOMIC_EXPRESSION,3,"fnum(r.get(""return_pct""))"
+src/paper_trading_v8_1_9.py,75,ECONOMIC_EXPRESSION,3,"r.get(""return_pct"")"
+src/paper_trading_v8_1_9.py,76,ECONOMIC_EXPRESSION,3,"fnum(r.get(""pnl""))"
+src/paper_trading_v8_1_9.py,76,ECONOMIC_EXPRESSION,3,"r.get(""pnl"")"
+src/paper_trading_v8_1_9.py,127,ECONOMIC_EXPRESSION,3,"buckets[""NO_COST_DATA""] += 1"
+src/paper_trading_v8_1_9.py,145,ECONOMIC_EXPRESSION,3,"buckets[f""COST_{label}""] += 1"
+src/paper_trading_v8_1_9.py,224,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,20 p.p.: {buckets['COST_0.20pp']}"")"
+src/paper_trading_v8_1_9.py,225,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,30 p.p.: {buckets['COST_0.30pp']}"")"
+src/paper_trading_v8_1_9.py,226,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,15 p.p.: {buckets['COST_0.15pp']}"")"
+src/paper_trading_v8_1_9.py,227,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,10 p.p.: {buckets['COST_0.10pp']}"")"
+src/paper_trading_v8_1_9.py,228,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,00 p.p.: {buckets['COST_0.00pp']}"")"
+src/paper_trading_v8_1_9.py,229,ECONOMIC_EXPRESSION,3,"print(f""Compatíveis com 0,25 p.p.: {buckets['COST_0.25pp']}"")"
+src/paper_trading_v8_1_9.py,244,ECONOMIC_EXPRESSION,3,"re.search(r""fee|fees|cost|commission|tax|slippage|0\.2|0\.20|0\.002|0,2|0,20"", t, re.I)"
+src/paper_trading_v8_1_9.py,245,ECONOMIC_EXPRESSION,3,fee_hits.append(h)
+src/paper_trading_v8_1_9.py,246,ECONOMIC_EXPRESSION,3,"re.search(r""return_pct|pnl"", t, re.I)"
+src/paper_trading_v8_1_9.py,249,ECONOMIC_EXPRESSION,3,"print(f""Linhas relacionadas a custo/taxa: {len(fee_hits)}"")"
+src/paper_trading_v8_1_9.py,249,ECONOMIC_EXPRESSION,3,len(fee_hits)
+src/paper_trading_v8_1_9.py,254,ECONOMIC_EXPRESSION,3,"print(""CANDIDATOS DE CUSTO/TAXA:"")"
+src/paper_trading_v8_1_9.py,258,ECONOMIC_EXPRESSION,3,"print(""Nenhuma linha explícita de taxa/custo foi localizada no src/."")"
+src/paper_trading_v8_1_9.py,264,ECONOMIC_EXPRESSION,3,"abs(r[""_implicit_cost""] - 0.30)"
+src/paper_trading_v8_1_9.py,264,ECONOMIC_EXPRESSION,3,"r[""_implicit_cost""] - 0.30"
+src/paper_trading_v8_1_9.py,276,ECONOMIC_EXPRESSION,3,"min(abs(r[""_implicit_cost""]-v) for v in [0, .10, .15, .20, .25, .30])"
+src/paper_trading_v8_1_9.py,276,ECONOMIC_EXPRESSION,3,"abs(r[""_implicit_cost""]-v)"
+src/paper_trading_v8_1_9.py,276,ECONOMIC_EXPRESSION,3,"r[""_implicit_cost""]-v"
+src/paper_trading_v8_1_9.py,279,ECONOMIC_EXPRESSION,3,"sorted(r[""_implicit_cost""] for r in other)"
+src/paper_trading_v8_1_9.py,280,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mínimo: {vals[0]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,281,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito mediano: {vals[len(vals)//2]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,282,ECONOMIC_EXPRESSION,3,"print(f""Custo implícito máximo: {vals[-1]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,297,ECONOMIC_EXPRESSION,3,"print(""✓ Existem candidatos explícitos de custo/taxa no código."")"
+src/paper_trading_v8_1_9.py,300,ECONOMIC_EXPRESSION,3,"print(""⚠ Não foi localizada uma taxa explícita no src/."")"
+src/paper_trading_v8_1_9.py,315,ECONOMIC_EXPRESSION,3,len(fee_hits)
+src/backtest_v3.py,738,RETURN_OR_PNL_ASSIGNMENT,2,returns = {}
+src/backtest_v3_optimizer.py,402,RETURN_OR_PNL_ASSIGNMENT,2,"returns = { name: future_return(prices, ts_ms, hours) for name, hours in HORIZONS.items() }"
+src/backtest_v3_optimizer.py,506,RETURN_OR_PNL_ASSIGNMENT,2,mean_return = statistics.mean(selected)
+src/backtest_v3_optimizer.py,507,RETURN_OR_PNL_ASSIGNMENT,2,median_return = statistics.median(selected)
+src/backtest_v3_optimizer.py,667,RETURN_OR_PNL_ASSIGNMENT,2,mean_return = statistics.mean(selected)
+src/backtest_v3_optimizer.py,766,RETURN_OR_PNL_ASSIGNMENT,2,returns = [ obs.returns[horizon] for obs in selected if obs.returns.get(horizon) is not None ]
+src/backtest_v3_optimizer.py,1001,RETURN_OR_PNL_ASSIGNMENT,2,selected_returns = []
+src/backtest_v3_optimizer.py,1028,RETURN_OR_PNL_ASSIGNMENT,2,mean_return = statistics.mean(selected_returns)
+src/backtest_v3_optimizer.py,1031,RETURN_OR_PNL_ASSIGNMENT,2,mean_return = 0.0
+src/backtest_v4_walkforward_v3.py,45,RETURN_OR_PNL_ASSIGNMENT,2,DEFAULT_COST_PCT = 0.10
+src/backtest_v4_walkforward_v3.py,45,COST_LITERAL_CANDIDATE,2,DEFAULT_COST_PCT = 0.10
+src/backtest_v4_walkforward_v3.py,329,COST_LITERAL_CANDIDATE,2,"""gross_mean"": 0.0,"
+src/backtest_v4_walkforward_v3.py,330,COST_LITERAL_CANDIDATE,2,"""net_mean"": 0.0,"
+src/backtest_v4_walkforward_v3.py,335,COST_LITERAL_CANDIDATE,2,"""profit_factor"": 0.0,"
+src/backtest_v4_walkforward_v3.py,339,COST_LITERAL_CANDIDATE,2,gains = net[net > 0].sum()
+src/backtest_v4_walkforward_v3.py,340,COST_LITERAL_CANDIDATE,2,losses = -net[net < 0].sum()
+src/backtest_v4_walkforward_v3.py,341,RETURN_OR_PNL_ASSIGNMENT,2,"profit_factor = ( float(gains / losses) if losses > 0 else float(""inf"") )"
+src/backtest_v4_walkforward_v3.py,345,COST_LITERAL_CANDIDATE,2,equity = (1.0 + net / 100.0).cumprod()
+src/backtest_v4_walkforward_v3.py,351,COST_LITERAL_CANDIDATE,2,"""hit"": float((net > 0).mean() * 100.0),"
+src/backtest_v4_walkforward_v3.py,406,COST_LITERAL_CANDIDATE,2,"cost_pct=0.0,"
+src/backtest_v4_walkforward_v3.py,433,COST_LITERAL_CANDIDATE,2,"cost_pct=0.0,"
+src/backtest_v4_walkforward_v3.py,521,RETURN_OR_PNL_ASSIGNMENT,2,"return_column = f""future_return_{horizon.lower()}"""
+src/backtest_v4_walkforward_v3.py,638,COST_LITERAL_CANDIDATE,2,"if test_stats[""n""] >= min_test and test_stats[""net_mean""] > 0:"
+src/backtest_v4_walkforward_v3.py,820,COST_LITERAL_CANDIDATE,2,"and item[""median_net""] > 0.0"
+src/backtest_v5_discovery.py,49,RETURN_OR_PNL_ASSIGNMENT,2,DEFAULT_COST_PCT = 0.10
+src/backtest_v5_discovery.py,49,COST_LITERAL_CANDIDATE,2,DEFAULT_COST_PCT = 0.10
+src/backtest_v5_discovery.py,172,COST_LITERAL_CANDIDATE,2,wins = net[net > 0]
+src/backtest_v5_discovery.py,173,COST_LITERAL_CANDIDATE,2,losses = net[net < 0]
+src/backtest_v5_discovery.py,175,COST_LITERAL_CANDIDATE,2,hit = float((net > 0).mean() * 100.0)
+src/backtest_v5_discovery.py,178,COST_LITERAL_CANDIDATE,2,std = float(net.std(ddof=1)) if len(net) > 1 else 0.0
+src/backtest_v5_discovery.py,179,COST_LITERAL_CANDIDATE,2,total = float((1.0 + net / 100.0).prod() - 1.0) * 100.0
+src/backtest_v5_discovery.py,181,COST_LITERAL_CANDIDATE,2,equity = (1.0 + net / 100.0).cumprod()
+src/backtest_v5_discovery.py,186,RETURN_OR_PNL_ASSIGNMENT,2,gross_profit = float(wins.sum())
+src/backtest_v5_discovery.py,188,COST_LITERAL_CANDIDATE,2,pf = gross_profit / gross_loss if gross_loss > 0 else math.inf
+src/backtest_v5_discovery.py,401,RETURN_OR_PNL_ASSIGNMENT,2,return_col = HORIZONS[horizon]
+src/backtest_v5_discovery.py,488,COST_LITERAL_CANDIDATE,2,and test_m.profit_factor > 1
+src/backtest_v5_discovery.py,527,COST_LITERAL_CANDIDATE,2,"help=""custo total por operação em pontos percentuais (default: 0.10)"","
+src/backtest_v5_discovery_v2.py,40,RETURN_OR_PNL_ASSIGNMENT,2,COST_PCT = 0.10
+src/backtest_v5_discovery_v2.py,40,COST_LITERAL_CANDIDATE,2,COST_PCT = 0.10
+src/backtest_v5_discovery_v2.py,350,COST_LITERAL_CANDIDATE,2,"""gross_mean"": 0.0,"
+src/backtest_v5_discovery_v2.py,351,COST_LITERAL_CANDIDATE,2,"""net_mean"": 0.0,"
+src/backtest_v5_discovery_v2.py,361,COST_LITERAL_CANDIDATE,2,"""hit"": float((net > 0).mean() * 100.0),"
+src/backtest_v5_discovery_v2.py,496,RETURN_OR_PNL_ASSIGNMENT,2,"return_column = ( f""future_return_{horizon.lower()}"" )"
+src/backtest_v5_discovery_v2.py,584,COST_LITERAL_CANDIDATE,2,"and test_stats[""net_mean""] > 0.0"
+src/backtest_v5_discovery_v3.py,40,RETURN_OR_PNL_ASSIGNMENT,2,COST_PCT = 0.10
+src/backtest_v5_discovery_v3.py,40,COST_LITERAL_CANDIDATE,2,COST_PCT = 0.10
+src/backtest_v5_discovery_v3.py,349,COST_LITERAL_CANDIDATE,2,"""gross_mean"": 0.0,"
+src/backtest_v5_discovery_v3.py,350,COST_LITERAL_CANDIDATE,2,"""net_mean"": 0.0,"
+src/backtest_v5_discovery_v3.py,360,COST_LITERAL_CANDIDATE,2,"""hit"": float((net > 0).mean() * 100.0),"
+src/backtest_v5_discovery_v3.py,495,RETURN_OR_PNL_ASSIGNMENT,2,"return_column = ( f""future_return_{horizon.lower()}"" )"
+src/backtest_v5_discovery_v3.py,583,COST_LITERAL_CANDIDATE,2,"and test_stats[""net_mean""] > 0.0"
+src/backtest_v5_final_validation.py,32,RETURN_OR_PNL_ASSIGNMENT,2,DEFAULT_COST = 0.10
+src/backtest_v5_final_validation.py,32,COST_LITERAL_CANDIDATE,2,DEFAULT_COST = 0.10
+src/backtest_v5_final_validation.py,303,COST_LITERAL_CANDIDATE,2,gains = net[net > 0].sum()
+src/backtest_v5_final_validation.py,304,COST_LITERAL_CANDIDATE,2,losses = -net[net < 0].sum()
+src/backtest_v5_final_validation.py,312,COST_LITERAL_CANDIDATE,2,equity = (1 + net / 100).cumprod()
+src/backtest_v5_final_validation.py,317,COST_LITERAL_CANDIDATE,2,"""hit"": float((net > 0).mean() * 100),"
+src/backtest_v5_final_validation.py,442,COST_LITERAL_CANDIDATE,2,"parser.add_argument(""--min-net"", type=float, default=0.0)"
+src/paper_trading_v1.py,23,COST_LITERAL_CANDIDATE,2,"- desconta custo de 0,10% na entrada e 0,10% na saída;"
+src/paper_trading_v1.py,63,COST_LITERAL_CANDIDATE,2,"# Custo por lado: 0,10%"
+src/paper_trading_v1.py,64,RETURN_OR_PNL_ASSIGNMENT,2,COST_RATE = 0.001
+src/paper_trading_v1.py,64,COST_LITERAL_CANDIDATE,2,COST_RATE = 0.001
+src/paper_trading_v1.py,67,COST_LITERAL_CANDIDATE,2,DEFAULT_INITIAL_CAPITAL = 1000.0
+src/paper_trading_v1.py,527,COST_LITERAL_CANDIDATE,2,"# Custo de 0,10% na entrada e 0,10% na saída."
+src/paper_trading_v1.py,528,COST_LITERAL_CANDIDATE,2,net_factor = gross_factor * (1.0 - COST_RATE) ** 2
+src/paper_trading_v1.py,530,RETURN_OR_PNL_ASSIGNMENT,2,gross_return = gross_factor - 1.0
+src/paper_trading_v1.py,530,COST_LITERAL_CANDIDATE,2,gross_return = gross_factor - 1.0
+src/paper_trading_v1.py,531,RETURN_OR_PNL_ASSIGNMENT,2,net_return = net_factor - 1.0
+src/paper_trading_v1.py,531,COST_LITERAL_CANDIDATE,2,net_return = net_factor - 1.0
+src/paper_trading_v1.py,550,RETURN_OR_PNL_ASSIGNMENT,2,gross_pnl = position_size * gross_return
+src/paper_trading_v1.py,573,COST_LITERAL_CANDIDATE,2,"gross_return * 100.0,"
+src/paper_trading_v1.py,574,COST_LITERAL_CANDIDATE,2,"net_return * 100.0,"
+src/paper_trading_v1.py,684,COST_LITERAL_CANDIDATE,2,"f""ret={net_return * 100:+.3f}% """
+src/paper_trading_v1.py,700,COST_LITERAL_CANDIDATE,2,"f""{net_return * 100:+.3f}%"""
+src/paper_trading_v1.py,829,COST_LITERAL_CANDIDATE,2,"COALESCE(SUM(net_pnl), 0) AS pnl,"
+src/paper_trading_v1.py,830,COST_LITERAL_CANDIDATE,2,"COALESCE(AVG(net_return_pct), 0) AS avg_ret,"
+src/paper_trading_v1.py,838,COST_LITERAL_CANDIDATE,2,WHEN status = 'CLOSED' AND net_return_pct > 0
+src/paper_trading_v1.py,844,COST_LITERAL_CANDIDATE,2,WHEN status = 'CLOSED' AND net_return_pct <= 0
+src/paper_trading_v1.py,857,COST_LITERAL_CANDIDATE,2,pnl = row[3] or 0.0
+src/paper_trading_v1.py,884,COST_LITERAL_CANDIDATE,2,"print(f""Custo por lado:        {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v1.py,1018,COST_LITERAL_CANDIDATE,2,"print(f""Custo por lado:        {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v1.py,1146,RETURN_OR_PNL_ASSIGNMENT,2,"gross_return = exit_price / position[""entry_price""] - 1.0"
+src/paper_trading_v1.py,1146,COST_LITERAL_CANDIDATE,2,"gross_return = exit_price / position[""entry_price""] - 1.0"
+src/paper_trading_v1.py,1147,RETURN_OR_PNL_ASSIGNMENT,2,net_return = gross_return - (2.0 * COST_RATE)
+src/paper_trading_v1.py,1147,COST_LITERAL_CANDIDATE,2,net_return = gross_return - (2.0 * COST_RATE)
+src/paper_trading_v1.py,1194,COST_LITERAL_CANDIDATE,2,"f""RET {trade['net_return'] * 100:+8.3f}%  """
+src/paper_trading_v1.py,1198,COST_LITERAL_CANDIDATE,2,"wins = sum(1 for t in trades if t[""net_return""] > 0)"
+src/paper_trading_v1.py,1200,RETURN_OR_PNL_ASSIGNMENT,2,"total_pnl = sum(t[""pnl""] for t in trades)"
+src/paper_trading_v1.py,1202,RETURN_OR_PNL_ASSIGNMENT,2,"average_return = ( sum(t[""net_return""] for t in trades) / len(trades) if trades else 0.0 )"
+src/paper_trading_v1.py,1209,COST_LITERAL_CANDIDATE,2,"compounded *= 1.0 + trade[""net_return""]"
+src/paper_trading_v1.py,1289,COST_LITERAL_CANDIDATE,2,"print(f""Custo por lado:        {COST_RATE * 100:.3f}%"")"
+src/paper_trading_v2.py,16,COST_LITERAL_CANDIDATE,2,"- Capital inicial: $1,000"
+src/paper_trading_v2.py,19,COST_LITERAL_CANDIDATE,2,- Custo de entrada: 0.100%
+src/paper_trading_v2.py,20,COST_LITERAL_CANDIDATE,2,- Custo de saída: 0.100%
+src/paper_trading_v2.py,80,COST_LITERAL_CANDIDATE,2,INITIAL_CAPITAL = 1000.00
+src/paper_trading_v2.py,86,RETURN_OR_PNL_ASSIGNMENT,2,ENTRY_COST = 0.001
+src/paper_trading_v2.py,86,COST_LITERAL_CANDIDATE,2,ENTRY_COST = 0.001
+src/paper_trading_v2.py,87,RETURN_OR_PNL_ASSIGNMENT,2,EXIT_COST = 0.001
+src/paper_trading_v2.py,87,COST_LITERAL_CANDIDATE,2,EXIT_COST = 0.001
+src/paper_trading_v2.py,403,COST_LITERAL_CANDIDATE,2,"entry_fee REAL NOT NULL DEFAULT 0,"
+src/paper_trading_v2.py,404,COST_LITERAL_CANDIDATE,2,"exit_fee REAL NOT NULL DEFAULT 0,"
+src/paper_trading_v2.py,734,COST_LITERAL_CANDIDATE,2,"""pnl"": 0.0,"
+src/paper_trading_v2.py,825,RETURN_OR_PNL_ASSIGNMENT,2,total_entry_cost = ( self.position_size * self.entry_cost )
+src/paper_trading_v2.py,862,RETURN_OR_PNL_ASSIGNMENT,2,fee = ( nominal * self.entry_cost )
+src/paper_trading_v2.py,939,RETURN_OR_PNL_ASSIGNMENT,2,exit_fee = ( proceeds * self.exit_cost )
+src/paper_trading_v2.py,949,RETURN_OR_PNL_ASSIGNMENT,2,gross_pnl = ( proceeds - position.nominal_value )
+src/paper_trading_v2.py,965,COST_LITERAL_CANDIDATE,2,return_pct = 0.0
+src/paper_trading_v2.py,1014,COST_LITERAL_CANDIDATE,2,if net_pnl >= 0:
+src/paper_trading_v2.py,1191,COST_LITERAL_CANDIDATE,2,if trade.net_pnl >= 0
+src/paper_trading_v2.py,1199,COST_LITERAL_CANDIDATE,2,if trade.net_pnl < 0
+src/paper_trading_v2.py,1242,COST_LITERAL_CANDIDATE,2,if trade.net_pnl >= 0
+src/paper_trading_v2.py,1255,COST_LITERAL_CANDIDATE,2,if trade.net_pnl < 0
+src/paper_trading_v2.py,1265,RETURN_OR_PNL_ASSIGNMENT,2,gross_profit = sum( trade.net_pnl for trade in self.closed_trades if trade.net_pnl > 0 )
+src/paper_trading_v2.py,1268,COST_LITERAL_CANDIDATE,2,if trade.net_pnl > 0
+src/paper_trading_v2.py,1275,COST_LITERAL_CANDIDATE,2,if trade.net_pnl < 0
+src/paper_trading_v2.py,1280,COST_LITERAL_CANDIDATE,2,if gross_profit > 0:
+src/paper_trading_v2.py,1333,COST_LITERAL_CANDIDATE,2,"-item[1][""pnl""],"
+src/paper_trading_v2.py,1405,RETURN_OR_PNL_ASSIGNMENT,2,return_total = 0.0
+src/paper_trading_v2.py,1407,COST_LITERAL_CANDIDATE,2,if self.initial_capital > 0:
+src/paper_trading_v2.py,1408,RETURN_OR_PNL_ASSIGNMENT,2,return_total = ( ( final_equity_realized / self.initial_capital ) - 1.0 ) * 100.0
+src/paper_trading_v2.py,1442,COST_LITERAL_CANDIDATE,2,"f""Custo entrada:               {self.entry_cost * 100:.3f}%"""
+src/paper_trading_v2.py,1446,COST_LITERAL_CANDIDATE,2,"f""Custo saída:                 {self.exit_cost * 100:.3f}%"""
+src/paper_trading_v2.py,1752,COST_LITERAL_CANDIDATE,2,"f""Custo entrada:              {ENTRY_COST * 100:.3f}%"""
+src/paper_trading_v2.py,1756,COST_LITERAL_CANDIDATE,2,"f""Custo saída:                {EXIT_COST * 100:.3f}%"""
+src/paper_trading_v2.py,2001,COST_LITERAL_CANDIDATE,2,"""- Capital limitado a $1,000."""
+src/paper_trading_v3.py,70,COST_LITERAL_CANDIDATE,2,INITIAL_CAPITAL = 1000.00
+src/paper_trading_v3.py,73,RETURN_OR_PNL_ASSIGNMENT,2,DEFAULT_COST = 0.001
+src/paper_trading_v3.py,73,COST_LITERAL_CANDIDATE,2,DEFAULT_COST = 0.001
+src/paper_trading_v3.py,149,COST_LITERAL_CANDIDATE,2,exit_cost: float = 0.0
+src/paper_trading_v3.py,443,RETURN_OR_PNL_ASSIGNMENT,2,gross_return = ( exit_price / position.entry_price ) - 1.0
+src/paper_trading_v3.py,447,RETURN_OR_PNL_ASSIGNMENT,2,exit_cost = size * (1.0 + gross_return) * self.scenario.cost
+src/paper_trading_v3.py,447,COST_LITERAL_CANDIDATE,2,exit_cost = size * (1.0 + gross_return) * self.scenario.cost
+src/paper_trading_v3.py,449,COST_LITERAL_CANDIDATE,2,gross_value = size * (1.0 + gross_return)
+src/paper_trading_v3.py,453,RETURN_OR_PNL_ASSIGNMENT,2,cash_return = net_value - size
+src/paper_trading_v3.py,505,RETURN_OR_PNL_ASSIGNMENT,2,entry_cost = size * self.scenario.cost
+src/paper_trading_v3.py,549,RETURN_OR_PNL_ASSIGNMENT,2,estimated_exit_cost = ( gross_value * self.scenario.cost )
+src/paper_trading_v3.py,618,COST_LITERAL_CANDIDATE,2,if (p.pnl or 0.0) > 0
+src/paper_trading_v3.py,624,COST_LITERAL_CANDIDATE,2,if (p.pnl or 0.0) <= 0
+src/paper_trading_v3.py,633,RETURN_OR_PNL_ASSIGNMENT,2,returns = [ p.return_pct for p in self.closed_positions if p.return_pct is not None ]
+src/paper_trading_v3.py,639,RETURN_OR_PNL_ASSIGNMENT,2,avg_return = ( sum(returns) / len(returns) if returns else 0.0 )
+src/paper_trading_v3.py,645,RETURN_OR_PNL_ASSIGNMENT,2,realized_pnl = sum( p.pnl or 0.0 for p in self.closed_positions )
+src/paper_trading_v3.py,646,COST_LITERAL_CANDIDATE,2,p.pnl or 0.0
+src/paper_trading_v3.py,650,RETURN_OR_PNL_ASSIGNMENT,2,total_return = ( realized_pnl / self.initial_capital * 100.0 )
+src/paper_trading_v3.py,656,RETURN_OR_PNL_ASSIGNMENT,2,positive_pnl = sum( p.pnl for p in self.closed_positions if (p.pnl or 0.0) > 0 )
+src/paper_trading_v3.py,659,COST_LITERAL_CANDIDATE,2,if (p.pnl or 0.0) > 0
+src/paper_trading_v3.py,662,RETURN_OR_PNL_ASSIGNMENT,2,negative_pnl = abs( sum( p.pnl for p in self.closed_positions if (p.pnl or 0.0) < 0 ) )
+src/paper_trading_v3.py,666,COST_LITERAL_CANDIDATE,2,if (p.pnl or 0.0) < 0
+src/paper_trading_v3.py,671,RETURN_OR_PNL_ASSIGNMENT,2,profit_factor = ( positive_pnl / negative_pnl )
+src/paper_trading_v3.py,675,RETURN_OR_PNL_ASSIGNMENT,2,"profit_factor = ( float(""inf"") if positive_pnl > 0 else 0.0 )"
+src/paper_trading_v3.py,677,COST_LITERAL_CANDIDATE,2,if positive_pnl > 0
+src/paper_trading_v3.py,753,COST_LITERAL_CANDIDATE,2,"realized_pnl=0.0,"
+src/paper_trading_v3.py,758,COST_LITERAL_CANDIDATE,2,"avg_return_pct=0.0,"
+src/paper_trading_v3.py,759,COST_LITERAL_CANDIDATE,2,"total_return_pct=0.0,"
+src/paper_trading_v3.py,760,COST_LITERAL_CANDIDATE,2,"profit_factor=0.0,"
+src/paper_trading_v3.py,786,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,796,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,803,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,810,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,817,COST_LITERAL_CANDIDATE,2,"cost=0.0015,"
+src/paper_trading_v3.py,824,COST_LITERAL_CANDIDATE,2,"cost=0.0020,"
+src/paper_trading_v3.py,831,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,838,COST_LITERAL_CANDIDATE,2,"cost=0.001,"
+src/paper_trading_v3.py,972,COST_LITERAL_CANDIDATE,2,"f""custo={scenario.cost * 100:.3f}% """
+src/paper_trading_v3.py,993,COST_LITERAL_CANDIDATE,2,"f""P&L={fmt_money(result.realized_pnl):>12}"""
+src/paper_trading_v3.py,1033,COST_LITERAL_CANDIDATE,2,"f""{fmt_money(result.realized_pnl):>14}"""
+src/paper_trading_v3.py,1060,COST_LITERAL_CANDIDATE,2,if result.profit_factor < 1.20:
+src/paper_trading_v3.py,1063,COST_LITERAL_CANDIDATE,2,if result.realized_pnl <= 0:
+src/paper_trading_v3.py,1096,RETURN_OR_PNL_ASSIGNMENT,2,profitable = sum( 1 for r in results if r.realized_pnl > 0 )
+src/paper_trading_v3.py,1099,COST_LITERAL_CANDIDATE,2,if r.realized_pnl > 0
+src/paper_trading_v3.py,1293,COST_LITERAL_CANDIDATE,2,"f""custo={scenario.cost * 100:.3f}% """
+src/paper_trading_v4.py,18,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v4.py,93,COST_LITERAL_CANDIDATE,2,return sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v4.py,97,COST_LITERAL_CANDIDATE,2,return sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v4.py,105,COST_LITERAL_CANDIDATE,2,return sum(t.net_return_pct for t in self.trades) / len(self.trades) if self.trades else 0.0
+src/paper_trading_v4.py,109,COST_LITERAL_CANDIDATE,2,return sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v4.py,113,COST_LITERAL_CANDIDATE,2,return abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v4.py,117,COST_LITERAL_CANDIDATE,2,if self.gross_loss == 0:
+src/paper_trading_v4.py,118,COST_LITERAL_CANDIDATE,2,"return float(""inf"") if self.gross_profit > 0 else 0.0"
+src/paper_trading_v4.py,123,COST_LITERAL_CANDIDATE,2,"return max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v4.py,127,COST_LITERAL_CANDIDATE,2,"return min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v4.py,265,COST_LITERAL_CANDIDATE,2,gross_pct = (o.price / pos.entry_price - 1.0) * 100.0
+src/paper_trading_v4.py,280,RETURN_OR_PNL_ASSIGNMENT,2,exit_fee = value * scenario.exit_cost
+src/paper_trading_v4.py,282,COST_LITERAL_CANDIDATE,2,net_pct = pnl / pos.notional * 100.0
+src/paper_trading_v4.py,297,COST_LITERAL_CANDIDATE,2,"f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"""
+src/paper_trading_v4.py,314,RETURN_OR_PNL_ASSIGNMENT,2,fee = scenario.position_size * scenario.entry_cost
+src/paper_trading_v4.py,373,COST_LITERAL_CANDIDATE,2,"f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v4.py,375,COST_LITERAL_CANDIDATE,2,"f""PF={pf_text(r.profit_factor):>7} """
+src/paper_trading_v4.py,402,COST_LITERAL_CANDIDATE,2,"""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"","
+src/paper_trading_v4.py,512,COST_LITERAL_CANDIDATE,2,"f""custo={s.entry_cost * 100:.3f}% SL={sl:<4} TP={tp}"""
+src/paper_trading_v4.py,541,COST_LITERAL_CANDIDATE,2,"f""{r.win_rate:7.2f}% {r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v4.py,542,COST_LITERAL_CANDIDATE,2,"f""{r.avg_return:+8.4f}% {pf_text(r.profit_factor):>7} """
+src/paper_trading_v4.py,582,COST_LITERAL_CANDIDATE,2,if len(r.trades) >= 30 and r.pnl > 0 and r.profit_factor >= 1.20
+src/paper_trading_v4.py,584,COST_LITERAL_CANDIDATE,2,positive = [r for r in results if r.pnl > 0]
+src/paper_trading_v4.py,593,COST_LITERAL_CANDIDATE,2,"print(f""Retorno base:              {base.pnl / CAPITAL_INITIAL * 100:+.4f}%"")"
+src/paper_trading_v4.py,605,RETURN_OR_PNL_ASSIGNMENT,2,"best_pnl = max(eligible, key=lambda r: r.pnl)"
+src/paper_trading_v5.py,18,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v5.py,65,COST_LITERAL_CANDIDATE,2,entry_cost: float = 0.001
+src/paper_trading_v5.py,66,COST_LITERAL_CANDIDATE,2,exit_cost: float = 0.001
+src/paper_trading_v5.py,69,COST_LITERAL_CANDIDATE,2,take_profit_pct: Optional[float] = 10.0
+src/paper_trading_v5.py,88,COST_LITERAL_CANDIDATE,2,return sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v5.py,92,COST_LITERAL_CANDIDATE,2,return sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v5.py,100,COST_LITERAL_CANDIDATE,2,return sum(t.net_return_pct for t in self.trades) / len(self.trades) if self.trades else 0.0
+src/paper_trading_v5.py,112,COST_LITERAL_CANDIDATE,2,return sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v5.py,116,COST_LITERAL_CANDIDATE,2,return abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v5.py,120,COST_LITERAL_CANDIDATE,2,if self.gross_loss == 0:
+src/paper_trading_v5.py,121,COST_LITERAL_CANDIDATE,2,"return float(""inf"") if self.gross_profit > 0 else 0.0"
+src/paper_trading_v5.py,126,COST_LITERAL_CANDIDATE,2,"return max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v5.py,130,COST_LITERAL_CANDIDATE,2,"return min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v5.py,262,COST_LITERAL_CANDIDATE,2,gross_pct = (o.price / pos.entry_price - 1.0) * 100.0
+src/paper_trading_v5.py,277,RETURN_OR_PNL_ASSIGNMENT,2,exit_fee = value * scenario.exit_cost
+src/paper_trading_v5.py,279,COST_LITERAL_CANDIDATE,2,net_pct = pnl / pos.notional * 100.0
+src/paper_trading_v5.py,294,COST_LITERAL_CANDIDATE,2,"f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"""
+src/paper_trading_v5.py,310,RETURN_OR_PNL_ASSIGNMENT,2,fee = scenario.position_size * scenario.entry_cost
+src/paper_trading_v5.py,349,COST_LITERAL_CANDIDATE,2,"return Scenario(name, 100, 10, cost, cost, score, 5, 10)"
+src/paper_trading_v5.py,358,COST_LITERAL_CANDIDATE,2,net_pct = pnl / t.notional * 100.0
+src/paper_trading_v5.py,412,RETURN_OR_PNL_ASSIGNMENT,2,"cap_pnl = min(t.pnl, t.notional * cap_pct / 100.0)"
+src/paper_trading_v5.py,412,COST_LITERAL_CANDIDATE,2,"cap_pnl = min(t.pnl, t.notional * cap_pct / 100.0)"
+src/paper_trading_v5.py,461,COST_LITERAL_CANDIDATE,2,"f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v5.py,464,COST_LITERAL_CANDIDATE,2,"f""PF={fmt_pf(r.profit_factor):>7} """
+src/paper_trading_v5.py,493,COST_LITERAL_CANDIDATE,2,"""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"","
+src/paper_trading_v5.py,589,COST_LITERAL_CANDIDATE,2,"print(""4. Testar custos de 0.10%, 0.15%, 0.20% e 0.30%."")"
+src/paper_trading_v5.py,608,COST_LITERAL_CANDIDATE,2,"print(""2) CUSTOS"")"
+src/paper_trading_v5.py,611,COST_LITERAL_CANDIDATE,2,"(0.0015, ""COST_015""),"
+src/paper_trading_v5.py,612,COST_LITERAL_CANDIDATE,2,"(0.0020, ""COST_020""),"
+src/paper_trading_v5.py,613,COST_LITERAL_CANDIDATE,2,"(0.0030, ""COST_030""),"
+src/paper_trading_v5.py,655,COST_LITERAL_CANDIDATE,2,"print(f""Top 5 símbolos P&L:           ${c['top5_pnl']:+.2f} ({c['top5_pct_total']:.2f}% do P&L)"")"
+src/paper_trading_v5.py,656,COST_LITERAL_CANDIDATE,2,"print(f""Top 10 símbolos P&L:          ${c['top10_pnl']:+.2f} ({c['top10_pct_total']:.2f}% do P&L)"")"
+src/paper_trading_v5.py,660,COST_LITERAL_CANDIDATE,2,"print(f""  {symbol:<18} ${pnl:+10.2f}"")"
+src/paper_trading_v5.py,707,COST_LITERAL_CANDIDATE,2,"f""{r.win_rate:7.2f}% {r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v5.py,709,COST_LITERAL_CANDIDATE,2,"f""{fmt_pf(r.profit_factor):>7} {r.max_dd_pct:+9.4f}% """
+src/paper_trading_v5.py,721,COST_LITERAL_CANDIDATE,2,"f""P&L=${r.pnl:+9.2f}  RET={r.pnl / CAPITAL_INITIAL * 100:+8.3f}%  """
+src/paper_trading_v5.py,722,COST_LITERAL_CANDIDATE,2,"f""PF={fmt_pf(r.profit_factor):>6}  DD={r.max_dd_pct:+8.3f}%"""
+src/paper_trading_v5.py,732,COST_LITERAL_CANDIDATE,2,if len(r.trades) >= 30 and r.pnl > 0 and r.profit_factor >= 1.20
+src/paper_trading_v5.py,738,RETURN_OR_PNL_ASSIGNMENT,2,"cost30 = next(x for x in results if x.scenario.name == ""COST_030"")"
+src/paper_trading_v5.py,742,COST_LITERAL_CANDIDATE,2,"""base_positive"": base.pnl > 0,"
+src/paper_trading_v5.py,743,COST_LITERAL_CANDIDATE,2,"""base_pf"": base.profit_factor >= 1.20,"
+src/paper_trading_v5.py,745,COST_LITERAL_CANDIDATE,2,"""remove_top10_positive"": remove10.pnl > 0,"
+src/paper_trading_v5.py,746,COST_LITERAL_CANDIDATE,2,"""remove_top20_positive"": remove20.pnl > 0,"
+src/paper_trading_v5.py,747,COST_LITERAL_CANDIDATE,2,"""second_half_positive"": second.pnl > 0,"
+src/paper_trading_v5.py,748,COST_LITERAL_CANDIDATE,2,"""cost30_positive"": cost30.pnl > 0,"
+src/paper_trading_v5.py,749,COST_LITERAL_CANDIDATE,2,"""cost30_pf"": cost30.profit_factor >= 1.20,"
+src/paper_trading_v5.py,750,COST_LITERAL_CANDIDATE,2,"""without_top10_symbols_positive"": remove_sym10.pnl > 0,"
+src/paper_trading_v6.py,19,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v6.py,70,COST_LITERAL_CANDIDATE,2,entry_cost: float = 0.001
+src/paper_trading_v6.py,71,COST_LITERAL_CANDIDATE,2,exit_cost: float = 0.001
+src/paper_trading_v6.py,74,COST_LITERAL_CANDIDATE,2,take_profit_pct: Optional[float] = 10.0
+src/paper_trading_v6.py,99,COST_LITERAL_CANDIDATE,2,return sum(t.pnl > 0 for t in self.trades)
+src/paper_trading_v6.py,103,COST_LITERAL_CANDIDATE,2,return sum(t.pnl <= 0 for t in self.trades)
+src/paper_trading_v6.py,126,COST_LITERAL_CANDIDATE,2,return sum(t.pnl for t in self.trades if t.pnl > 0)
+src/paper_trading_v6.py,130,COST_LITERAL_CANDIDATE,2,return abs(sum(t.pnl for t in self.trades if t.pnl < 0))
+src/paper_trading_v6.py,134,COST_LITERAL_CANDIDATE,2,if self.gross_loss == 0:
+src/paper_trading_v6.py,135,COST_LITERAL_CANDIDATE,2,"return float(""inf"") if self.gross_profit > 0 else 0.0"
+src/paper_trading_v6.py,140,COST_LITERAL_CANDIDATE,2,"return max((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v6.py,144,COST_LITERAL_CANDIDATE,2,"return min((t.net_return_pct for t in self.trades), default=0.0)"
+src/paper_trading_v6.py,295,COST_LITERAL_CANDIDATE,2,gross_pct = (o.price / pos.entry_price - 1.0) * 100.0
+src/paper_trading_v6.py,316,RETURN_OR_PNL_ASSIGNMENT,2,exit_fee = value * scenario.exit_cost
+src/paper_trading_v6.py,318,COST_LITERAL_CANDIDATE,2,net_pct = pnl / pos.notional * 100.0
+src/paper_trading_v6.py,347,COST_LITERAL_CANDIDATE,2,"f""{reason:<10} RET={net_pct:+8.3f}% P&L=${pnl:+8.2f}"""
+src/paper_trading_v6.py,391,RETURN_OR_PNL_ASSIGNMENT,2,fee = scenario.position_size * scenario.entry_cost
+src/paper_trading_v6.py,461,COST_LITERAL_CANDIDATE,2,"entry_cost=0.001,"
+src/paper_trading_v6.py,462,COST_LITERAL_CANDIDATE,2,"exit_cost=0.001,"
+src/paper_trading_v6.py,500,COST_LITERAL_CANDIDATE,2,"pnl / t.notional * 100.0,"
+src/paper_trading_v6.py,598,COST_LITERAL_CANDIDATE,2,"f""RET={r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v6.py,601,COST_LITERAL_CANDIDATE,2,"f""PF={fmt_pf(r.profit_factor):>7} """
+src/paper_trading_v6.py,637,COST_LITERAL_CANDIDATE,2,"""return_pct"": f""{r.pnl / CAPITAL_INITIAL * 100:.8f}"","
+src/paper_trading_v6.py,860,COST_LITERAL_CANDIDATE,2,"for symbol, pnl in c[""ordered""][:10]:"
+src/paper_trading_v6.py,861,COST_LITERAL_CANDIDATE,2,"print(f""  {symbol:<18} ${pnl:+10.2f}"")"
+src/paper_trading_v6.py,886,COST_LITERAL_CANDIDATE,2,# 5) CUSTOS
+src/paper_trading_v6.py,890,COST_LITERAL_CANDIDATE,2,"print(""5) SENSIBILIDADE A CUSTOS"")"
+src/paper_trading_v6.py,894,COST_LITERAL_CANDIDATE,2,"(0.0015, ""COST015""),"
+src/paper_trading_v6.py,895,COST_LITERAL_CANDIDATE,2,"(0.0020, ""COST020""),"
+src/paper_trading_v6.py,896,COST_LITERAL_CANDIDATE,2,"(0.0030, ""COST030""),"
+src/paper_trading_v6.py,976,COST_LITERAL_CANDIDATE,2,"f""{r.pnl / CAPITAL_INITIAL * 100:+9.4f}% """
+src/paper_trading_v6.py,979,COST_LITERAL_CANDIDATE,2,"f""{fmt_pf(r.profit_factor):>7} """
+src/paper_trading_v6.py,990,COST_LITERAL_CANDIDATE,2,and r.pnl > 0
+src/paper_trading_v6.py,991,COST_LITERAL_CANDIDATE,2,and r.profit_factor >= 1.20
+src/paper_trading_v6.py,1012,COST_LITERAL_CANDIDATE,2,"f""PF={fmt_pf(r.profit_factor):>6} """
+src/paper_trading_v6.py,1026,COST_LITERAL_CANDIDATE,2,base_positive = base.pnl > 0
+src/paper_trading_v6.py,1027,COST_LITERAL_CANDIDATE,2,base_pf = base.profit_factor >= 1.20
+src/paper_trading_v6.py,1039,RETURN_OR_PNL_ASSIGNMENT,2,"cost30 = next( r for r in results if r.scenario.name == ""COST030"" )"
+src/paper_trading_v6.py,1060,COST_LITERAL_CANDIDATE,2,"""remove_top10_positive"": remove_top10.pnl > 0,"
+src/paper_trading_v6.py,1061,COST_LITERAL_CANDIDATE,2,"""remove_top20_positive"": remove_top20.pnl > 0,"
+src/paper_trading_v6.py,1062,COST_LITERAL_CANDIDATE,2,"""remove_top10_symbols_positive"": remove10.pnl > 0,"
+src/paper_trading_v6.py,1063,COST_LITERAL_CANDIDATE,2,"""cost30_positive"": cost30.pnl > 0,"
+src/paper_trading_v6.py,1064,COST_LITERAL_CANDIDATE,2,"""cost30_pf"": cost30.profit_factor >= 1.20,"
+src/paper_trading_v6.py,1065,COST_LITERAL_CANDIDATE,2,"""second_half_positive"": second.pnl > 0,"
+src/paper_trading_v6.py,1066,COST_LITERAL_CANDIDATE,2,"""cooldown24_positive"": cooldown24.pnl > 0,"
+src/paper_trading_v6.py,1067,COST_LITERAL_CANDIDATE,2,"""max1_entry_24h_positive"": max1.pnl > 0,"
+src/paper_trading_v6.py,1068,COST_LITERAL_CANDIDATE,2,"""combined_positive"": combined.pnl > 0,"
+src/paper_trading_v6.py,1069,COST_LITERAL_CANDIDATE,2,"""combined_pf"": combined.profit_factor >= 1.20,"
+src/paper_trading_v7.py,52,COST_LITERAL_CANDIDATE,2,INITIAL_CAPITAL = 1000.0
+src/paper_trading_v7.py,57,RETURN_OR_PNL_ASSIGNMENT,2,BASE_TAKE_PROFIT = 0.10
+src/paper_trading_v7.py,57,COST_LITERAL_CANDIDATE,2,BASE_TAKE_PROFIT = 0.10
+src/paper_trading_v7.py,58,RETURN_OR_PNL_ASSIGNMENT,2,BASE_COST = 0.001
+src/paper_trading_v7.py,58,COST_LITERAL_CANDIDATE,2,BASE_COST = 0.001
+src/paper_trading_v7.py,331,RETURN_OR_PNL_ASSIGNMENT,2,gross_profit = sum( trade.pnl for trade in trades if trade.pnl > 0 )
+src/paper_trading_v7.py,332,COST_LITERAL_CANDIDATE,2,trade.pnl for trade in trades if trade.pnl > 0
+src/paper_trading_v7.py,338,COST_LITERAL_CANDIDATE,2,if trade.pnl < 0
+src/paper_trading_v7.py,341,COST_LITERAL_CANDIDATE,2,if gross_loss <= 0:
+src/paper_trading_v7.py,342,COST_LITERAL_CANDIDATE,2,if gross_profit > 0:
+src/paper_trading_v7.py,357,COST_LITERAL_CANDIDATE,2,if trade.pnl > 0:
+src/paper_trading_v7.py,360,COST_LITERAL_CANDIDATE,2,elif trade.pnl < 0:
+src/paper_trading_v7.py,427,COST_LITERAL_CANDIDATE,2,"""return_pct"": 0.0,"
+src/paper_trading_v7.py,430,COST_LITERAL_CANDIDATE,2,"""pnl"": 0.0,"
+src/paper_trading_v7.py,431,COST_LITERAL_CANDIDATE,2,"""profit_factor"": 0.0,"
+src/paper_trading_v7.py,442,COST_LITERAL_CANDIDATE,2,wins = sum(1 for trade in trades if trade.pnl > 0)
+src/paper_trading_v7.py,443,COST_LITERAL_CANDIDATE,2,losses = sum(1 for trade in trades if trade.pnl < 0)
+src/paper_trading_v7.py,445,RETURN_OR_PNL_ASSIGNMENT,2,returns = [ trade.return_pct for trade in trades ]
+src/paper_trading_v7.py,463,COST_LITERAL_CANDIDATE,2,"""return_pct"": (pnl / INITIAL_CAPITAL) * 100.0,"
+src/paper_trading_v7.py,589,RETURN_OR_PNL_ASSIGNMENT,2,exit_cost = gross_value * position.cost_rate
+src/paper_trading_v7.py,597,RETURN_OR_PNL_ASSIGNMENT,2,net_return_pct = ( pnl / ( position.quantity * position.entry_price ) ) * 100.0
+src/paper_trading_v7.py,711,RETURN_OR_PNL_ASSIGNMENT,2,entry_cost = allocation * cost_rate
+src/paper_trading_v7.py,762,RETURN_OR_PNL_ASSIGNMENT,2,exit_cost = gross_value * position.cost_rate
+src/paper_trading_v7.py,770,RETURN_OR_PNL_ASSIGNMENT,2,net_return_pct = ( pnl / ( position.quantity * position.entry_price ) ) * 100.0
+src/paper_trading_v7.py,925,RETURN_OR_PNL_ASSIGNMENT,2,base_return = trade.return_pct / 100.0
+src/paper_trading_v7.py,925,COST_LITERAL_CANDIDATE,2,base_return = trade.return_pct / 100.0
+src/paper_trading_v7.py,995,RETURN_OR_PNL_ASSIGNMENT,2,pnl_values = [ trade.pnl for trade in trades ]
+src/paper_trading_v7.py,1028,RETURN_OR_PNL_ASSIGNMENT,2,total_return = ( (capital - INITIAL_CAPITAL) / INITIAL_CAPITAL ) * 100.0
+src/paper_trading_v7.py,1275,COST_LITERAL_CANDIDATE,2,"f"" P&L={fmt_money(m['pnl']):>12}"""
+src/paper_trading_v7.py,1335,COST_LITERAL_CANDIDATE,2,"for _, pnl in ordered[:5]"
+src/paper_trading_v7.py,1340,COST_LITERAL_CANDIDATE,2,"for _, pnl in ordered[:10]"
+src/paper_trading_v7.py,1363,COST_LITERAL_CANDIDATE,2,"for symbol, pnl in ordered[:10]:"
+src/paper_trading_v7.py,1365,COST_LITERAL_CANDIDATE,2,"f""  {symbol:<18} ${pnl:+10.2f}"""
+src/paper_trading_v7.py,1375,COST_LITERAL_CANDIDATE,2,"return result_metrics(result)[""pnl""] > 0"
+src/paper_trading_v7.py,1745,COST_LITERAL_CANDIDATE,2,"print(""7) SENSIBILIDADE A CUSTOS"")"
+src/paper_trading_v7.py,1753,COST_LITERAL_CANDIDATE,2,"for cost in [0.0015, 0.0020, 0.0030]:"
+src/paper_trading_v7.py,1755,COST_LITERAL_CANDIDATE,2,"f""COST{int(cost * 10000):03d}"""
+src/paper_trading_v7.py,1977,COST_LITERAL_CANDIDATE,2,"and m[""pnl""] > 0"
+src/paper_trading_v7.py,1978,COST_LITERAL_CANDIDATE,2,"and m[""profit_factor""] >= 1.20"
+src/paper_trading_v7.py,2119,COST_LITERAL_CANDIDATE,2,"and base_metrics[""pnl""] > 0"
+src/paper_trading_v7.py,2120,COST_LITERAL_CANDIDATE,2,"and base_metrics[""profit_factor""] >= 1.30"
+src/paper_trading_v7.py,2136,COST_LITERAL_CANDIDATE,2,"and base_metrics[""pnl""] > 0"
+src/paper_trading_v8.py,66,COST_LITERAL_CANDIDATE,2,INITIAL_CAPITAL = 1000.0
+src/paper_trading_v8.py,72,RETURN_OR_PNL_ASSIGNMENT,2,BASE_COST = 0.10
+src/paper_trading_v8.py,72,COST_LITERAL_CANDIDATE,2,BASE_COST = 0.10
+src/paper_trading_v8.py,88,RETURN_OR_PNL_ASSIGNMENT,2,"COST_VALUES = [0.10, 0.15, 0.20, 0.30]"
+src/paper_trading_v8.py,88,COST_LITERAL_CANDIDATE,2,"COST_VALUES = [0.10, 0.15, 0.20, 0.30]"
+src/paper_trading_v8.py,591,RETURN_OR_PNL_ASSIGNMENT,2,"gross_return = ( exit_price / position[""entry_price""] - 1.0 ) * 100.0"
+src/paper_trading_v8.py,596,RETURN_OR_PNL_ASSIGNMENT,2,net_return = gross_return - ( config.cost * 2.0 )
+src/paper_trading_v8.py,597,COST_LITERAL_CANDIDATE,2,config.cost * 2.0
+src/paper_trading_v8.py,600,COST_LITERAL_CANDIDATE,2,pnl = capital * (net_return / 100.0)
+src/paper_trading_v8.py,835,COST_LITERAL_CANDIDATE,2,"return_pct=0.0,"
+src/paper_trading_v8.py,838,COST_LITERAL_CANDIDATE,2,"profit_factor=0.0,"
+src/paper_trading_v8.py,840,COST_LITERAL_CANDIDATE,2,"pnl=0.0,"
+src/paper_trading_v8.py,850,RETURN_OR_PNL_ASSIGNMENT,2,returns = [ trade.return_pct for trade in trades ]
+src/paper_trading_v8.py,867,RETURN_OR_PNL_ASSIGNMENT,2,gross_profit = sum(wins)
+src/paper_trading_v8.py,870,COST_LITERAL_CANDIDATE,2,if gross_loss > 0:
+src/paper_trading_v8.py,873,COST_LITERAL_CANDIDATE,2,"pf = float(""inf"") if gross_profit > 0 else 0.0"
+src/paper_trading_v8.py,880,RETURN_OR_PNL_ASSIGNMENT,2,total_return = ( equity / INITIAL_CAPITAL - 1.0 ) * 100.0
+src/paper_trading_v8.py,881,COST_LITERAL_CANDIDATE,2,equity / INITIAL_CAPITAL - 1.0
+src/paper_trading_v8.py,952,RETURN_OR_PNL_ASSIGNMENT,2,pnl_by_symbol = defaultdict(float)
+src/paper_trading_v8.py,1021,RETURN_OR_PNL_ASSIGNMENT,2,returns = [ trade.return_pct for trade in trades ]
+src/paper_trading_v8.py,1028,RETURN_OR_PNL_ASSIGNMENT,2,final_returns = []
+src/paper_trading_v8.py,1058,RETURN_OR_PNL_ASSIGNMENT,2,final_return = equity - 100.0
+src/paper_trading_v8.py,1184,COST_LITERAL_CANDIDATE,2,test_metrics.return_pct > 0
+src/paper_trading_v8.py,1213,COST_LITERAL_CANDIDATE,2,if base.return_pct > 0:
+src/paper_trading_v8.py,1216,COST_LITERAL_CANDIDATE,2,if base.profit_factor >= 1.20:
+src/paper_trading_v8.py,1236,COST_LITERAL_CANDIDATE,2,if remove10.return_pct > 0:
+src/paper_trading_v8.py,1239,COST_LITERAL_CANDIDATE,2,if remove20.return_pct > 0:
+src/paper_trading_v8.py,1243,COST_LITERAL_CANDIDATE,2,if remove_symbol10.return_pct > 0:
+src/paper_trading_v8.py,1247,COST_LITERAL_CANDIDATE,2,if first.return_pct > 0:
+src/paper_trading_v8.py,1250,COST_LITERAL_CANDIDATE,2,if second.return_pct > 0:
+src/paper_trading_v8.py,1558,COST_LITERAL_CANDIDATE,2,and base.return_pct > 0
+src/paper_trading_v8.py,1559,COST_LITERAL_CANDIDATE,2,and base.profit_factor >= 1.20
+src/paper_trading_v8.py,1561,COST_LITERAL_CANDIDATE,2,and remove10.return_pct > 0
+src/paper_trading_v8.py,1562,COST_LITERAL_CANDIDATE,2,and remove_symbol10.return_pct > 0
+src/paper_trading_v8.py,1563,COST_LITERAL_CANDIDATE,2,and first.return_pct > 0
+src/paper_trading_v8.py,1564,COST_LITERAL_CANDIDATE,2,and second.return_pct > 0
+src/paper_trading_v8.py,1747,COST_LITERAL_CANDIDATE,2,"print(""7. Testar custos até 0.30%."")"
+src/paper_trading_v8.py,1775,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1787,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1799,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1811,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1823,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1835,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1867,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,1898,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,2041,COST_LITERAL_CANDIDATE,2,"cost=0.10,"
+src/paper_trading_v8.py,2297,COST_LITERAL_CANDIDATE,2,and abs(result.cost - 0.10) < 1e-9
+src/paper_trading_v8_1.bak.py,9,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v8_1.bak.py,61,COST_LITERAL_CANDIDATE,2,en=ep/t.notional*100
+src/paper_trading_v8_1.bak.py,62,COST_LITERAL_CANDIDATE,2,if abs(eg-t.gross)>1e-5: badg.append(t)
+src/paper_trading_v8_1.bak.py,63,COST_LITERAL_CANDIDATE,2,if abs(ep-t.pnl)>1e-5: badp.append(t)
+src/paper_trading_v8_1.bak.py,64,COST_LITERAL_CANDIDATE,2,if abs(en-t.net)>1e-5: badn.append(t)
+src/paper_trading_v8_1.bak.py,65,COST_LITERAL_CANDIDATE,2,"if min(t.ep,t.xp,t.notional)<=0: invalid.append(t)"
+src/paper_trading_v8_1.bak.py,69,COST_LITERAL_CANDIDATE,2,"notionals=sorted(set(round(t.notional,10) for t in ts))"
+src/paper_trading_v8_1.bak.py,74,COST_LITERAL_CANDIDATE,2,cash=CAPITAL_INITIAL; active={}; peak=CAPITAL_INITIAL; maxdd=0; maxexp=0; neg=[]
+src/paper_trading_v8_1.bak.py,113,COST_LITERAL_CANDIDATE,2,"[t for t in ts if t.net>50],[t for t in ts if t.net>100],"
+src/paper_trading_v8_1.bak.py,114,COST_LITERAL_CANDIDATE,2,[t for t in ts if t.net>200])
+src/paper_trading_v8_1.bak.py,156,COST_LITERAL_CANDIDATE,2,pnl=sum(t.pnl for t in ts); gp=sum(t.pnl for t in ts if t.pnl>0); gl=abs(sum(t.pnl for t in ts if t.pnl<0))
+src/paper_trading_v8_1.bak.py,157,COST_LITERAL_CANDIDATE,2,eq=peak=CAPITAL_INITIAL; dd=0
+src/paper_trading_v8_1.bak.py,159,COST_LITERAL_CANDIDATE,2,"eq+=t.pnl; peak=max(peak,eq); dd=min(dd,(eq-peak)/peak*100 if peak else 0)"
+src/paper_trading_v8_1.bak.py,160,COST_LITERAL_CANDIDATE,2,"return len(ts),sum(t.pnl>0 for t in ts)/len(ts)*100 if ts else 0,pnl,pnl/CAPITAL_INITIAL*100,gp/gl if gl else float(""inf""),dd"
+src/paper_trading_v8_1.bak.py,177,COST_LITERAL_CANDIDATE,2,"print(""Capital inicial de referência: $1,000.00"")"
+src/paper_trading_v8_1.bak.py,201,COST_LITERAL_CANDIDATE,2,"print(""\n""+""=""*100+""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n""+""=""*100)"
+src/paper_trading_v8_1.bak.py,204,COST_LITERAL_CANDIDATE,2,"print(f""\n[{name}] notionals={no} fixed={'SIM' if len(no)==1 else 'NÃO'}"")"
+src/paper_trading_v8_1.bak.py,227,COST_LITERAL_CANDIDATE,2,"print(f""  {t.symbol:<16} RET={t.net:+9.3f}% P&L=${t.pnl:+10.2f} {t.entry.isoformat()} -> {t.exit.isoformat()} {t.reason}"")"
+src/paper_trading_v8_1.bak.py,246,COST_LITERAL_CANDIDATE,2,"print(f""{name:<32} TRADES={n:4d} WIN={w:6.2f}% RET={ret:+10.4f}% PF={pf:7.3f} DD={dd:+9.4f}% P&L=${pnl:+10.2f}"")"
+src/paper_trading_v8_1.py,15,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v8_1.py,107,RETURN_OR_PNL_ASSIGNMENT,2,"entry_fee = float(r[""entry_fee""])"
+src/paper_trading_v8_1.py,108,RETURN_OR_PNL_ASSIGNMENT,2,"exit_fee = float(r[""exit_fee""])"
+src/paper_trading_v8_1.py,116,COST_LITERAL_CANDIDATE,2,"# Se return_pct == 0, usamos o capital de referência."
+src/paper_trading_v8_1.py,118,COST_LITERAL_CANDIDATE,2,notional = CAPITAL_INITIAL if abs(ret) < 1e-12 else abs(pnl / (ret / 100.0))
+src/paper_trading_v8_1.py,119,COST_LITERAL_CANDIDATE,2,if not math.isfinite(notional) or notional <= 0:
+src/paper_trading_v8_1.py,121,RETURN_OR_PNL_ASSIGNMENT,2,entry_fee = 0.0
+src/paper_trading_v8_1.py,121,COST_LITERAL_CANDIDATE,2,entry_fee = 0.0
+src/paper_trading_v8_1.py,122,RETURN_OR_PNL_ASSIGNMENT,2,exit_fee = 0.0
+src/paper_trading_v8_1.py,122,COST_LITERAL_CANDIDATE,2,exit_fee = 0.0
+src/paper_trading_v8_1.py,123,COST_LITERAL_CANDIDATE,2,gross = (xp / ep - 1.0) * 100.0
+src/paper_trading_v8_1.py,157,COST_LITERAL_CANDIDATE,2,en = ep / t.notional * 100
+src/paper_trading_v8_1.py,160,COST_LITERAL_CANDIDATE,2,"if mode == ""MODERNO"" and abs(eg - t.gross) > 1e-5:"
+src/paper_trading_v8_1.py,162,COST_LITERAL_CANDIDATE,2,"if mode == ""MODERNO"" and abs(ep - t.pnl) > 1e-5:"
+src/paper_trading_v8_1.py,164,COST_LITERAL_CANDIDATE,2,"if mode == ""MODERNO"" and abs(en - t.net) > 1e-5:"
+src/paper_trading_v8_1.py,166,COST_LITERAL_CANDIDATE,2,"if min(t.ep, t.xp, t.notional) <= 0:"
+src/paper_trading_v8_1.py,172,COST_LITERAL_CANDIDATE,2,"notionals = sorted(set(round(t.notional, 10) for t in ts))"
+src/paper_trading_v8_1.py,244,COST_LITERAL_CANDIDATE,2,"[t for t in ts if t.net > 50],"
+src/paper_trading_v8_1.py,245,COST_LITERAL_CANDIDATE,2,"[t for t in ts if t.net > 100],"
+src/paper_trading_v8_1.py,246,COST_LITERAL_CANDIDATE,2,"[t for t in ts if t.net > 200],"
+src/paper_trading_v8_1.py,319,COST_LITERAL_CANDIDATE,2,gp = sum(t.pnl for t in ts if t.pnl > 0)
+src/paper_trading_v8_1.py,320,COST_LITERAL_CANDIDATE,2,gl = abs(sum(t.pnl for t in ts if t.pnl < 0))
+src/paper_trading_v8_1.py,329,COST_LITERAL_CANDIDATE,2,"sum(t.pnl > 0 for t in ts) / len(ts) * 100 if ts else 0,"
+src/paper_trading_v8_1.py,331,COST_LITERAL_CANDIDATE,2,"pnl / CAPITAL_INITIAL * 100,"
+src/paper_trading_v8_1.py,356,COST_LITERAL_CANDIDATE,2,"print(""Capital inicial de referência: $1,000.00"")"
+src/paper_trading_v8_1.py,372,COST_LITERAL_CANDIDATE,2,"print(""Taxas reconstruídas:         0.00 — não disponíveis no CSV legado"")"
+src/paper_trading_v8_1.py,394,COST_LITERAL_CANDIDATE,2,"print(""\n"" + ""="" * 100 + ""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n"" + ""="" * 100)"
+src/paper_trading_v8_1.py,397,COST_LITERAL_CANDIDATE,2,"print(f""\n[{name}] notionals={no} fixed={'SIM' if len(no) == 1 else 'NÃO'}"")"
+src/paper_trading_v8_1.py,421,COST_LITERAL_CANDIDATE,2,"print(f""  {t.symbol:<16} RET={t.net:+9.3f}% P&L=${t.pnl:+10.2f} {t.entry.isoformat()} -> {t.exit.isoformat()} {t.reason}"")"
+src/paper_trading_v8_1.py,443,COST_LITERAL_CANDIDATE,2,"print(f""{name:<32} TRADES={n:4d} WIN={w:6.2f}% RET={ret:+10.4f}% PF={pf:7.3f} DD={dd:+9.4f}% P&L=${pnl:+10.2f}"")"
+src/paper_trading_v8_1_1.py,15,COST_LITERAL_CANDIDATE,2,CAPITAL_INITIAL = 1000.0
+src/paper_trading_v8_1_1.py,139,RETURN_OR_PNL_ASSIGNMENT,2,tol_pnl = 1e-7
+src/paper_trading_v8_1_1.py,139,COST_LITERAL_CANDIDATE,2,tol_pnl = 1e-7
+src/paper_trading_v8_1_1.py,154,COST_LITERAL_CANDIDATE,2,"# A V8 real usa capital de referência de $1,000 por trade no CSV legado."
+src/paper_trading_v8_1_1.py,156,COST_LITERAL_CANDIDATE,2,implied = CAPITAL_INITIAL * t.ret / 100.0
+src/paper_trading_v8_1_1.py,160,COST_LITERAL_CANDIDATE,2,"""pnl não é compatível com return_pct sobre capital de referência de $1,000."","
+src/paper_trading_v8_1_1.py,251,COST_LITERAL_CANDIDATE,2,"if t.reason in {""TP"", ""TAKE_PROFIT"", ""TAKEPROFIT""} and t.ret <= 0:"
+src/paper_trading_v8_1_1.py,405,COST_LITERAL_CANDIDATE,2,wins = sum(t.pnl > 0 for t in ts)
+src/paper_trading_v8_1_1.py,406,COST_LITERAL_CANDIDATE,2,gp = sum(t.pnl for t in ts if t.pnl > 0)
+src/paper_trading_v8_1_1.py,407,COST_LITERAL_CANDIDATE,2,gl = abs(sum(t.pnl for t in ts if t.pnl < 0))
+src/paper_trading_v8_1_1.py,423,COST_LITERAL_CANDIDATE,2,"""return_on_reference_capital_pct"": pnl / CAPITAL_INITIAL * 100,"
+src/paper_trading_v8_1_2.py,194,COST_LITERAL_CANDIDATE,2,if abs(t.return_pct) > 1e-12 and abs(t.pnl) > 1e-12:
+src/paper_trading_v8_1_2.py,195,COST_LITERAL_CANDIDATE,2,if (t.return_pct > 0) != (t.pnl > 0):
+src/paper_trading_v8_1_2.py,231,COST_LITERAL_CANDIDATE,2,if abs(t.return_pct) > 1e-12 and abs(t.pnl) > 1e-12:
+src/paper_trading_v8_1_2.py,240,COST_LITERAL_CANDIDATE,2,if abs(t.return_pct) < 1e-12:
+src/paper_trading_v8_1_2.py,334,RETURN_OR_PNL_ASSIGNMENT,2,returns = [t.return_pct for t in trades if math.isfinite(t.return_pct)]
+src/paper_trading_v8_1_2.py,355,COST_LITERAL_CANDIDATE,2,elif abs(t.return_pct) > 25:
+src/paper_trading_v8_1_2.py,359,COST_LITERAL_CANDIDATE,2,"f""return_pct={t.return_pct:.6f}% excede limite absoluto de 25%."""
+src/paper_trading_v8_1_2.py,420,RETURN_OR_PNL_ASSIGNMENT,2,costs = [t.implicit_cost_pct for t in trades]
+src/paper_trading_v8_1_2.py,460,RETURN_OR_PNL_ASSIGNMENT,2,costs = [t.implicit_cost_pct for t in trades]
+src/paper_trading_v8_1_3.py,192,COST_LITERAL_CANDIDATE,2,"round(t.return_pct, 8),"
+src/paper_trading_v8_1_3.py,193,COST_LITERAL_CANDIDATE,2,"round(t.pnl, 8),"
+src/paper_trading_v8_1_5.py,105,RETURN_OR_PNL_ASSIGNMENT,2,"recorded_return = num(row[""return_pct""])"
+src/paper_trading_v8_1_5.py,111,RETURN_OR_PNL_ASSIGNMENT,2,"gross_return = pct_from_prices(entry, exit_)"
+src/paper_trading_v8_1_5.py,112,RETURN_OR_PNL_ASSIGNMENT,2,implicit_cost = gross_return - recorded_return
+src/paper_trading_v8_1_5.py,140,RETURN_OR_PNL_ASSIGNMENT,2,"costs = sorted(x[""implicit_cost""] for x in valid)"
+src/paper_trading_v8_1_5.py,148,COST_LITERAL_CANDIDATE,2,"print(""2) RETORNO E CUSTO IMPLÍCITO"")"
+src/paper_trading_v8_1_5.py,161,COST_LITERAL_CANDIDATE,2,"if x[""implicit_cost""] < -0.01:"
+src/paper_trading_v8_1_5.py,177,COST_LITERAL_CANDIDATE,2,"if (x[""recorded_return""] > 0) != (x[""pnl""] > 0):"
+src/paper_trading_v8_1_5.py,209,COST_LITERAL_CANDIDATE,2,"if abs(x[""pnl""]) <= EPS and abs(x[""recorded_return""]) > 0.01:"
+src/paper_trading_v8_1_5.py,217,COST_LITERAL_CANDIDATE,2,"f""return_pct={x['recorded_return']:.8f}% com pnl=0; """
+src/paper_trading_v8_1_5.py,245,COST_LITERAL_CANDIDATE,2,"print(f""Conflitos de sinal return/P&L: {sum(1 for x in real_issues if x['category']=='RETURN_PNL_SIGN_CONFLICT')}"")"
+src/paper_trading_v8_1_6.py,37,RETURN_OR_PNL_ASSIGNMENT,2,RETURN_TOL = 1e-12
+src/paper_trading_v8_1_6.py,100,COST_LITERAL_CANDIDATE,2,if pnl is not None and pnl <= 0:
+src/paper_trading_v8_1_6.py,165,RETURN_OR_PNL_ASSIGNMENT,2,price_return = None
+src/paper_trading_v8_1_6.py,167,RETURN_OR_PNL_ASSIGNMENT,2,price_return = ((exit_ / entry) - 1.0) * 100.0
+src/paper_trading_v8_1_6.py,169,RETURN_OR_PNL_ASSIGNMENT,2,implicit_cost = None
+src/paper_trading_v8_1_6.py,171,RETURN_OR_PNL_ASSIGNMENT,2,implicit_cost = price_return - ret
+src/paper_trading_v8_1_6.py,257,COST_LITERAL_CANDIDATE,2,"f""{classes.get('FLAT_NEGATIVE_RETURN', 0) + classes.get('COST_ONLY_CANDIDATE', 0)}"")"
+src/paper_trading_v8_1_6.py,331,COST_LITERAL_CANDIDATE,2,"writer.writerow([""cost_only_candidate"", classes.get(""COST_ONLY_CANDIDATE"", 0)])"
+src/paper_trading_v8_1_7.py,33,RETURN_OR_PNL_ASSIGNMENT,2,COST_TOL_PCT = 0.05
+src/paper_trading_v8_1_7.py,33,COST_LITERAL_CANDIDATE,2,COST_TOL_PCT = 0.05
+src/paper_trading_v8_1_7.py,34,RETURN_OR_PNL_ASSIGNMENT,2,OUTLIER_COST_PCT = 1.0
+src/paper_trading_v8_1_7.py,34,COST_LITERAL_CANDIDATE,2,OUTLIER_COST_PCT = 1.0
+src/paper_trading_v8_1_7.py,96,RETURN_OR_PNL_ASSIGNMENT,2,"return_col = find_col(headers, [""return_pct"", ""return"", ""ret_pct"", ""retorno_pct""])"
+src/paper_trading_v8_1_7.py,97,RETURN_OR_PNL_ASSIGNMENT,2,"pnl_col = find_col(headers, [""pnl"", ""p&l"", ""profit"", ""profit_loss"", ""pnl_usd""])"
+src/paper_trading_v8_1_7.py,123,RETURN_OR_PNL_ASSIGNMENT,2,cost_only = 0
+src/paper_trading_v8_1_7.py,123,COST_LITERAL_CANDIDATE,2,cost_only = 0
+src/paper_trading_v8_1_7.py,125,RETURN_OR_PNL_ASSIGNMENT,2,pnl_sign_conflicts = 0
+src/paper_trading_v8_1_7.py,125,COST_LITERAL_CANDIDATE,2,pnl_sign_conflicts = 0
+src/paper_trading_v8_1_7.py,126,RETURN_OR_PNL_ASSIGNMENT,2,pnl_magnitude_issues = 0
+src/paper_trading_v8_1_7.py,126,COST_LITERAL_CANDIDATE,2,pnl_magnitude_issues = 0
+src/paper_trading_v8_1_7.py,130,RETURN_OR_PNL_ASSIGNMENT,2,costs = []
+src/paper_trading_v8_1_7.py,156,RETURN_OR_PNL_ASSIGNMENT,2,implicit_cost = price_ret - recorded if price_ret is not None else None
+src/paper_trading_v8_1_7.py,174,COST_LITERAL_CANDIDATE,2,cost_only += 1
+src/paper_trading_v8_1_7.py,195,COST_LITERAL_CANDIDATE,2,pnl_sign_conflicts += 1
+src/paper_trading_v8_1_7.py,199,COST_LITERAL_CANDIDATE,2,pnl_sign_conflicts += 1
+src/paper_trading_v8_1_7.py,220,COST_LITERAL_CANDIDATE,2,"st = scenario_stats.setdefault(scenario, {""trades"": 0, ""mismatch"": 0, ""cost"": []})"
+src/paper_trading_v8_1_7.py,238,RETURN_OR_PNL_ASSIGNMENT,2,median_cost = statistics.median(costs) if costs else None
+src/paper_trading_v8_1_7.py,239,RETURN_OR_PNL_ASSIGNMENT,2,mean_cost = statistics.mean(costs) if costs else None
+src/paper_trading_v8_1_8.py,33,RETURN_OR_PNL_ASSIGNMENT,2,"COST_HYPOTHESES = (0.00, 0.10, 0.15, 0.20, 0.25, 0.30)"
+src/paper_trading_v8_1_8.py,33,COST_LITERAL_CANDIDATE,2,"COST_HYPOTHESES = (0.00, 0.10, 0.15, 0.20, 0.25, 0.30)"
+src/paper_trading_v8_1_8.py,101,RETURN_OR_PNL_ASSIGNMENT,2,"pnl_col = find_col(headers, [""pnl"", ""p&l"", ""profit"", ""profit_loss""])"
+src/paper_trading_v8_1_8.py,127,COST_LITERAL_CANDIDATE,2,exact_net = 0
+src/paper_trading_v8_1_8.py,128,COST_LITERAL_CANDIDATE,2,exact_gross = 0
+src/paper_trading_v8_1_8.py,129,RETURN_OR_PNL_ASSIGNMENT,2,cost20 = 0
+src/paper_trading_v8_1_8.py,129,COST_LITERAL_CANDIDATE,2,cost20 = 0
+src/paper_trading_v8_1_8.py,130,RETURN_OR_PNL_ASSIGNMENT,2,cost15 = 0
+src/paper_trading_v8_1_8.py,130,COST_LITERAL_CANDIDATE,2,cost15 = 0
+src/paper_trading_v8_1_8.py,131,RETURN_OR_PNL_ASSIGNMENT,2,cost10 = 0
+src/paper_trading_v8_1_8.py,131,COST_LITERAL_CANDIDATE,2,cost10 = 0
+src/paper_trading_v8_1_8.py,135,RETURN_OR_PNL_ASSIGNMENT,2,costs = []
+src/paper_trading_v8_1_8.py,136,RETURN_OR_PNL_ASSIGNMENT,2,gross_returns = []
+src/paper_trading_v8_1_8.py,137,RETURN_OR_PNL_ASSIGNMENT,2,recorded_returns = []
+src/paper_trading_v8_1_8.py,170,RETURN_OR_PNL_ASSIGNMENT,2,implicit_cost = gross - recorded
+src/paper_trading_v8_1_8.py,175,COST_LITERAL_CANDIDATE,2,residual_20 = abs(recorded - (gross - 0.20))
+src/paper_trading_v8_1_8.py,176,COST_LITERAL_CANDIDATE,2,residual_15 = abs(recorded - (gross - 0.15))
+src/paper_trading_v8_1_8.py,177,COST_LITERAL_CANDIDATE,2,residual_10 = abs(recorded - (gross - 0.10))
+src/paper_trading_v8_1_8.py,178,COST_LITERAL_CANDIDATE,2,residual_30 = abs(recorded - (gross - 0.30))
+src/paper_trading_v8_1_8.py,186,COST_LITERAL_CANDIDATE,2,if residual_gross <= 0.01:
+src/paper_trading_v8_1_8.py,187,COST_LITERAL_CANDIDATE,2,exact_gross += 1
+src/paper_trading_v8_1_8.py,191,COST_LITERAL_CANDIDATE,2,exact_net += 1
+src/paper_trading_v8_1_8.py,192,COST_LITERAL_CANDIDATE,2,cost20 += 1
+src/paper_trading_v8_1_8.py,194,COST_LITERAL_CANDIDATE,2,"message = ""return_pct coincide com retorno de preço menos 0,20 p.p."""
+src/paper_trading_v8_1_8.py,196,COST_LITERAL_CANDIDATE,2,cost15 += 1
+src/paper_trading_v8_1_8.py,198,COST_LITERAL_CANDIDATE,2,"message = ""return_pct coincide com retorno de preço menos 0,15 p.p."""
+src/paper_trading_v8_1_8.py,200,COST_LITERAL_CANDIDATE,2,cost10 += 1
+src/paper_trading_v8_1_8.py,202,COST_LITERAL_CANDIDATE,2,"message = ""return_pct coincide com retorno de preço menos 0,10 p.p."""
+src/paper_trading_v8_1_8.py,205,COST_LITERAL_CANDIDATE,2,"message = ""return_pct coincide com retorno de preço menos 0,30 p.p."""
+src/paper_trading_v8_1_8.py,213,COST_LITERAL_CANDIDATE,2,if (recorded > 1e-9 and pnl < -1e-9) or (recorded < -1e-9 and pnl > 1e-9):
+src/paper_trading_v8_1_8.py,235,COST_LITERAL_CANDIDATE,2,"st = scenarios.setdefault(scenario, {""trades"": 0, ""costs"": []})"
+src/paper_trading_v8_1_8.py,250,RETURN_OR_PNL_ASSIGNMENT,2,med_cost = statistics.median(costs) if costs else None
+src/paper_trading_v8_1_8.py,251,RETURN_OR_PNL_ASSIGNMENT,2,mean_cost = statistics.mean(costs) if costs else None
+src/paper_trading_v8_1_8.py,256,COST_LITERAL_CANDIDATE,2,near_20 = sum(abs(c - 0.20) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,257,COST_LITERAL_CANDIDATE,2,near_15 = sum(abs(c - 0.15) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,258,COST_LITERAL_CANDIDATE,2,near_10 = sum(abs(c - 0.10) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,259,COST_LITERAL_CANDIDATE,2,near_30 = sum(abs(c - 0.30) <= 0.01 for c in costs)
+src/paper_trading_v8_1_8.py,277,COST_LITERAL_CANDIDATE,2,"print(f""Compatível com 0,00 p.p.:   {exact_gross}"")"
+src/paper_trading_v8_1_8.py,291,COST_LITERAL_CANDIDATE,2,"print(""✓ A divergência é fortemente compatível com custo implícito de 0,20 p.p."")"
+src/paper_trading_v8_1_9.py,127,COST_LITERAL_CANDIDATE,2,"buckets[""NO_COST_DATA""] += 1"
+src/paper_trading_v8_1_9.py,145,COST_LITERAL_CANDIDATE,2,"buckets[f""COST_{label}""] += 1"
+src/paper_trading_v8_1_9.py,224,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,20 p.p.:  {buckets['COST_0.20pp']}"")"
+src/paper_trading_v8_1_9.py,225,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,30 p.p.:  {buckets['COST_0.30pp']}"")"
+src/paper_trading_v8_1_9.py,226,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,15 p.p.:  {buckets['COST_0.15pp']}"")"
+src/paper_trading_v8_1_9.py,227,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,10 p.p.:  {buckets['COST_0.10pp']}"")"
+src/paper_trading_v8_1_9.py,228,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,00 p.p.:  {buckets['COST_0.00pp']}"")"
+src/paper_trading_v8_1_9.py,229,COST_LITERAL_CANDIDATE,2,"print(f""Compatíveis com 0,25 p.p.:  {buckets['COST_0.25pp']}"")"
+src/paper_trading_v8_1_9.py,240,RETURN_OR_PNL_ASSIGNMENT,2,fee_hits = []
+src/paper_trading_v8_1_9.py,241,RETURN_OR_PNL_ASSIGNMENT,2,return_hits = []
+src/paper_trading_v8_1_9.py,244,COST_LITERAL_CANDIDATE,2,"if re.search(r""fee|fees|cost|commission|tax|slippage|0\.2|0\.20|0\.002|0,2|0,20"", t, re.I):"
+src/paper_trading_v8_1_9.py,255,COST_LITERAL_CANDIDATE,2,for h in fee_hits[:40]:
+src/paper_trading_v8_1_9.py,264,COST_LITERAL_CANDIDATE,2,"cases_030 = [r for r in rows if r[""_implicit_cost""] is not None and abs(r[""_implicit_cost""] - 0.30) <= 1e-5]"
+src/paper_trading_v8_1_9.py,276,COST_LITERAL_CANDIDATE,2,"min(abs(r[""_implicit_cost""]-v) for v in [0, .10, .15, .20, .25, .30]) > 1e-5]"
+src/paper_trading_v8_1_9.py,280,COST_LITERAL_CANDIDATE,2,"print(f""Custo implícito mínimo:     {vals[0]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,281,COST_LITERAL_CANDIDATE,2,"print(f""Custo implícito mediano:    {vals[len(vals)//2]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,282,COST_LITERAL_CANDIDATE,2,"print(f""Custo implícito máximo:     {vals[-1]:.8f} pp"")"
+src/paper_trading_v8_1_9.py,288,COST_LITERAL_CANDIDATE,2,"if buckets[""COST_0.20pp""] >= len(rows) * 0.90:"
+src/scanner_v2.py,1106,COST_LITERAL_CANDIDATE,2,"f""{NETWORK_TIMEOUT_MS / 1000:.0f}s"""
+src/scanner_v3.py,985,COST_LITERAL_CANDIDATE,2,"f""Timeout rede:     {NETWORK_TIMEOUT_MS / 1000:.0f}s"""
+src/scanner_v3_backup.py,1015,COST_LITERAL_CANDIDATE,2,"f""Timeout rede:     {NETWORK_TIMEOUT_MS / 1000:.0f}s"""
+src/backfill_scanner_v3_history.py,215,ECONOMIC_EXPRESSION,1,"ccxt.binance( { ""enableRateLimit"": True, ""timeout"": NETWORK_TIMEOUT_MS, ""options"": {""defaultType"": ""spot""}, } )"
+src/backtest_v3.py,453,ECONOMIC_EXPRESSION,1,"ccxt.binance( { ""enableRateLimit"": True, ""timeout"": NETWORK_TIMEOUT_MS, ""options"": { ""defaultType"": ""spot"", }, } )"
+src/backtest_v4_walkforward_v3.py,339,ECONOMIC_EXPRESSION,1,net[net > 0].sum()
+src/backtest_v4_walkforward_v3.py,340,ECONOMIC_EXPRESSION,1,net[net < 0].sum()
+src/backtest_v4_walkforward_v3.py,345,ECONOMIC_EXPRESSION,1,(1.0 + net / 100.0).cumprod()
+src/backtest_v4_walkforward_v3.py,345,ECONOMIC_EXPRESSION,1,1.0 + net / 100.0
+src/backtest_v4_walkforward_v3.py,345,ECONOMIC_EXPRESSION,1,net / 100.0
+src/backtest_v4_walkforward_v3.py,351,ECONOMIC_EXPRESSION,1,float((net > 0).mean() * 100.0)
+src/backtest_v4_walkforward_v3.py,351,ECONOMIC_EXPRESSION,1,(net > 0).mean() * 100.0
+src/backtest_v4_walkforward_v3.py,351,ECONOMIC_EXPRESSION,1,(net > 0).mean()
+src/backtest_v4_walkforward_v3.py,353,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v4_walkforward_v3.py,353,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v4_walkforward_v3.py,354,ECONOMIC_EXPRESSION,1,float(net.median())
+src/backtest_v4_walkforward_v3.py,354,ECONOMIC_EXPRESSION,1,net.median()
+src/backtest_v4_walkforward_v3.py,355,ECONOMIC_EXPRESSION,1,float(net.min())
+src/backtest_v4_walkforward_v3.py,355,ECONOMIC_EXPRESSION,1,net.min()
+src/backtest_v4_walkforward_v3.py,356,ECONOMIC_EXPRESSION,1,float(net.max())
+src/backtest_v4_walkforward_v3.py,356,ECONOMIC_EXPRESSION,1,net.max()
+src/backtest_v4_walkforward_v3.py,410,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v4_walkforward_v3.py,437,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v4_walkforward_v3.py,631,ECONOMIC_EXPRESSION,1,"item[""test_net""].append(test_stats[""net_mean""])"
+src/backtest_v4_walkforward_v3.py,641,ECONOMIC_EXPRESSION,1,"print( f"" {rule.label():55s} "" f""TEST N={int(test_stats['n']):<4d} "" f""AC={test_stats['hit']:6.2f}% "" f""RET={test_stats['net_mean']:+7.3f}% "" f""MED={test_stats['median']:+7.3f}%"" )"
+src/backtest_v4_walkforward_v3.py,655,ECONOMIC_EXPRESSION,1,"np.asarray(item[""test_net""], dtype=float)"
+src/backtest_v4_walkforward_v3.py,659,ECONOMIC_EXPRESSION,1,"results.append( { ""horizon"": item[""horizon""], ""rule"": item[""rule""], ""windows"": int(item[""windows""]), ""positive_windows"": int(item[""positive_windows""]), ""stability"": float( item[""positive_windows""] / item[""windows""] * 100.0 ), ""test_n"": int(item[""total_test_n""]), ""mean_hit"": float(hit.mean()), ""median_hit"": float(np.median(hit)), ""mean_net"": float(net.mean()), ""median_net"": float(np.median(net)), ""worst_window"": float(net.min()), ""best_window"": float(net.max()), ""mean_median"": float(med.mean()), "
+src/backtest_v4_walkforward_v3.py,671,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v4_walkforward_v3.py,671,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v4_walkforward_v3.py,672,ECONOMIC_EXPRESSION,1,float(np.median(net))
+src/backtest_v4_walkforward_v3.py,672,ECONOMIC_EXPRESSION,1,np.median(net)
+src/backtest_v4_walkforward_v3.py,673,ECONOMIC_EXPRESSION,1,float(net.min())
+src/backtest_v4_walkforward_v3.py,673,ECONOMIC_EXPRESSION,1,net.min()
+src/backtest_v4_walkforward_v3.py,674,ECONOMIC_EXPRESSION,1,float(net.max())
+src/backtest_v4_walkforward_v3.py,674,ECONOMIC_EXPRESSION,1,net.max()
+src/backtest_v4_walkforward_v3.py,789,ECONOMIC_EXPRESSION,1,"all_results.sort( key=lambda x: ( x[""stability""], x[""median_net""], x[""mean_net""], x[""test_n""], ), reverse=True, )"
+src/backtest_v4_walkforward_v3.py,800,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""[{item['horizon']}] "" f""{item['rule'].label():55s} "" f""J={item['positive_windows']}/{item['windows']} "" f""EST={item['stability']:6.2f}% "" f""N={item['test_n']:<4d} "" f""MED={item['median_net']:+7.3f}% "" f""MÉD={item['mean_net']:+7.3f}% "" f""PIOR={item['worst_window']:+7.3f}% "" f""DD={item['worst_drawdown']:+7.3f}%"" )"
+src/backtest_v4_walkforward_v3.py,830,ECONOMIC_EXPRESSION,1,"final_candidates.sort( key=lambda x: ( x[""stability""], x[""median_net""], x[""mean_net""], ), reverse=True, )"
+src/backtest_v4_walkforward_v3.py,840,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""[{item['horizon']}] "" f""{item['rule'].label():55s} "" f""Janelas positivas={item['positive_windows']}/{item['windows']} "" f""EST={item['stability']:.1f}% "" f""MED={item['median_net']:+.3f}% "" f""PIOR={item['worst_window']:+.3f}%"" )"
+src/backtest_v5_discovery.py,175,ECONOMIC_EXPRESSION,1,float((net > 0).mean() * 100.0)
+src/backtest_v5_discovery.py,175,ECONOMIC_EXPRESSION,1,(net > 0).mean() * 100.0
+src/backtest_v5_discovery.py,175,ECONOMIC_EXPRESSION,1,(net > 0).mean()
+src/backtest_v5_discovery.py,176,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v5_discovery.py,176,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v5_discovery.py,177,ECONOMIC_EXPRESSION,1,float(net.median())
+src/backtest_v5_discovery.py,177,ECONOMIC_EXPRESSION,1,net.median()
+src/backtest_v5_discovery.py,178,ECONOMIC_EXPRESSION,1,float(net.std(ddof=1))
+src/backtest_v5_discovery.py,178,ECONOMIC_EXPRESSION,1,len(net)
+src/backtest_v5_discovery.py,178,ECONOMIC_EXPRESSION,1,net.std(ddof=1)
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,float((1.0 + net / 100.0).prod() - 1.0) * 100.0
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,float((1.0 + net / 100.0).prod() - 1.0)
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,(1.0 + net / 100.0).prod() - 1.0
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,(1.0 + net / 100.0).prod()
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,1.0 + net / 100.0
+src/backtest_v5_discovery.py,179,ECONOMIC_EXPRESSION,1,net / 100.0
+src/backtest_v5_discovery.py,181,ECONOMIC_EXPRESSION,1,(1.0 + net / 100.0).cumprod()
+src/backtest_v5_discovery.py,181,ECONOMIC_EXPRESSION,1,1.0 + net / 100.0
+src/backtest_v5_discovery.py,181,ECONOMIC_EXPRESSION,1,net / 100.0
+src/backtest_v5_discovery.py,194,ECONOMIC_EXPRESSION,1,len(net)
+src/backtest_v5_discovery_v2.py,361,ECONOMIC_EXPRESSION,1,float((net > 0).mean() * 100.0)
+src/backtest_v5_discovery_v2.py,361,ECONOMIC_EXPRESSION,1,(net > 0).mean() * 100.0
+src/backtest_v5_discovery_v2.py,361,ECONOMIC_EXPRESSION,1,(net > 0).mean()
+src/backtest_v5_discovery_v2.py,363,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v5_discovery_v2.py,363,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v5_discovery_v2.py,364,ECONOMIC_EXPRESSION,1,float(net.median())
+src/backtest_v5_discovery_v2.py,364,ECONOMIC_EXPRESSION,1,net.median()
+src/backtest_v5_discovery_v2.py,365,ECONOMIC_EXPRESSION,1,float(net.min())
+src/backtest_v5_discovery_v2.py,365,ECONOMIC_EXPRESSION,1,net.min()
+src/backtest_v5_discovery_v2.py,366,ECONOMIC_EXPRESSION,1,float(net.max())
+src/backtest_v5_discovery_v2.py,366,ECONOMIC_EXPRESSION,1,net.max()
+src/backtest_v5_discovery_v2.py,423,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v5_discovery_v2.py,460,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v5_discovery_v2.py,569,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""{rule.label():55s} "" f""TREINO N={int(train_stats['n']):<4d} "" f""AC={train_stats['hit']:6.2f}% "" f""RET={train_stats['net_mean']:+7.3f}% | "" f""TESTE N={int(test_stats['n']):<4d} "" f""AC={test_stats['hit']:6.2f}% "" f""RET={test_stats['net_mean']:+7.3f}%"" )"
+src/backtest_v5_discovery_v2.py,587,ECONOMIC_EXPRESSION,1,"promoted.append( { ""horizon"": horizon, ""rule"": rule.label(), ""train_n"": int(train_stats[""n""]), ""train_hit"": train_stats[""hit""], ""train_net"": train_stats[""net_mean""], ""test_n"": int(test_stats[""n""]), ""test_hit"": test_stats[""hit""], ""test_net"": test_stats[""net_mean""], ""test_median"": test_stats[""median""], ""test_worst"": test_stats[""worst""], ""test_best"": test_stats[""best""], } )"
+src/backtest_v5_discovery_v2.py,705,ECONOMIC_EXPRESSION,1,"all_candidates.sort( key=lambda item: ( item[""test_net""], item[""test_hit""], item[""test_n""], ), reverse=True, )"
+src/backtest_v5_discovery_v2.py,718,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""[{item['horizon']}] "" f""{item['rule']:55s} "" f""N={item['test_n']:<4d} "" f""AC={item['test_hit']:6.2f}% "" f""RET={item['test_net']:+7.3f}% "" f""MED={item['test_median']:+7.3f}% "" f""PIOR={item['test_worst']:+7.3f}% "" f""MELHOR={item['test_best']:+7.3f}%"" )"
+src/backtest_v5_discovery_v3.py,360,ECONOMIC_EXPRESSION,1,float((net > 0).mean() * 100.0)
+src/backtest_v5_discovery_v3.py,360,ECONOMIC_EXPRESSION,1,(net > 0).mean() * 100.0
+src/backtest_v5_discovery_v3.py,360,ECONOMIC_EXPRESSION,1,(net > 0).mean()
+src/backtest_v5_discovery_v3.py,362,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v5_discovery_v3.py,362,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v5_discovery_v3.py,363,ECONOMIC_EXPRESSION,1,float(net.median())
+src/backtest_v5_discovery_v3.py,363,ECONOMIC_EXPRESSION,1,net.median()
+src/backtest_v5_discovery_v3.py,364,ECONOMIC_EXPRESSION,1,float(net.min())
+src/backtest_v5_discovery_v3.py,364,ECONOMIC_EXPRESSION,1,net.min()
+src/backtest_v5_discovery_v3.py,365,ECONOMIC_EXPRESSION,1,float(net.max())
+src/backtest_v5_discovery_v3.py,365,ECONOMIC_EXPRESSION,1,net.max()
+src/backtest_v5_discovery_v3.py,422,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v5_discovery_v3.py,459,ECONOMIC_EXPRESSION,1,"candidates.append( ( stats[""net_mean""], stats[""hit""], stats[""n""], rule, ) )"
+src/backtest_v5_discovery_v3.py,568,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""{rule.label():55s} "" f""TREINO N={int(train_stats['n']):<4d} "" f""AC={train_stats['hit']:6.2f}% "" f""RET={train_stats['net_mean']:+7.3f}% | "" f""TESTE N={int(test_stats['n']):<4d} "" f""AC={test_stats['hit']:6.2f}% "" f""RET={test_stats['net_mean']:+7.3f}%"" )"
+src/backtest_v5_discovery_v3.py,586,ECONOMIC_EXPRESSION,1,"promoted.append( { ""horizon"": horizon, ""rule"": rule.label(), ""train_n"": int(train_stats[""n""]), ""train_hit"": train_stats[""hit""], ""train_net"": train_stats[""net_mean""], ""test_n"": int(test_stats[""n""]), ""test_hit"": test_stats[""hit""], ""test_net"": test_stats[""net_mean""], ""test_median"": test_stats[""median""], ""test_worst"": test_stats[""worst""], ""test_best"": test_stats[""best""], } )"
+src/backtest_v5_discovery_v3.py,704,ECONOMIC_EXPRESSION,1,"all_candidates.sort( key=lambda item: ( item[""test_net""], item[""test_hit""], item[""test_n""], ), reverse=True, )"
+src/backtest_v5_discovery_v3.py,717,ECONOMIC_EXPRESSION,1,"print( f""{number:2d}. "" f""[{item['horizon']}] "" f""{item['rule']:55s} "" f""N={item['test_n']:<4d} "" f""AC={item['test_hit']:6.2f}% "" f""RET={item['test_net']:+7.3f}% "" f""MED={item['test_median']:+7.3f}% "" f""PIOR={item['test_worst']:+7.3f}% "" f""MELHOR={item['test_best']:+7.3f}%"" )"
+src/backtest_v5_final_validation.py,303,ECONOMIC_EXPRESSION,1,net[net > 0].sum()
+src/backtest_v5_final_validation.py,304,ECONOMIC_EXPRESSION,1,net[net < 0].sum()
+src/backtest_v5_final_validation.py,312,ECONOMIC_EXPRESSION,1,(1 + net / 100).cumprod()
+src/backtest_v5_final_validation.py,312,ECONOMIC_EXPRESSION,1,1 + net / 100
+src/backtest_v5_final_validation.py,312,ECONOMIC_EXPRESSION,1,net / 100
+src/backtest_v5_final_validation.py,316,ECONOMIC_EXPRESSION,1,int(len(net))
+src/backtest_v5_final_validation.py,316,ECONOMIC_EXPRESSION,1,len(net)
+src/backtest_v5_final_validation.py,317,ECONOMIC_EXPRESSION,1,float((net > 0).mean() * 100)
+src/backtest_v5_final_validation.py,317,ECONOMIC_EXPRESSION,1,(net > 0).mean() * 100
+src/backtest_v5_final_validation.py,317,ECONOMIC_EXPRESSION,1,(net > 0).mean()
+src/backtest_v5_final_validation.py,318,ECONOMIC_EXPRESSION,1,float(net.mean())
+src/backtest_v5_final_validation.py,318,ECONOMIC_EXPRESSION,1,net.mean()
+src/backtest_v5_final_validation.py,319,ECONOMIC_EXPRESSION,1,float(net.median())
+src/backtest_v5_final_validation.py,319,ECONOMIC_EXPRESSION,1,net.median()
+src/backtest_v5_final_validation.py,320,ECONOMIC_EXPRESSION,1,float(net.min())
+src/backtest_v5_final_validation.py,320,ECONOMIC_EXPRESSION,1,net.min()
+src/backtest_v5_final_validation.py,321,ECONOMIC_EXPRESSION,1,float(net.max())
+src/backtest_v5_final_validation.py,321,ECONOMIC_EXPRESSION,1,net.max()
+src/backtest_v5_final_validation.py,442,ECONOMIC_EXPRESSION,1,"parser.add_argument(""--min-net"", type=float, default=0.0)"
+src/backtest_v5_final_validation.py,490,ECONOMIC_EXPRESSION,1,"print( f""Critérios: N>={args.min_n}, "" f""AC>={args.min_hit:.1f}%, "" f""RET>={args.min_net:.3f}%"" )"
+src/paper_trading_v1.py,530,ECONOMIC_EXPRESSION,1,gross_factor - 1.0
+src/paper_trading_v1.py,531,ECONOMIC_EXPRESSION,1,net_factor - 1.0
+src/paper_trading_v1.py,545,ECONOMIC_EXPRESSION,1,"calculate_net_return( entry_price, exit_price, )"
+src/paper_trading_v1.py,550,ECONOMIC_EXPRESSION,1,position_size * gross_return
+src/paper_trading_v1.py,551,ECONOMIC_EXPRESSION,1,position_size * net_return
+src/paper_trading_v1.py,573,ECONOMIC_EXPRESSION,1,gross_return * 100.0
+src/paper_trading_v1.py,574,ECONOMIC_EXPRESSION,1,net_return * 100.0
+src/paper_trading_v1.py,675,ECONOMIC_EXPRESSION,1,"calculate_net_return( safe_float(row[""entry_price""], 0.0) or 0.0, current_price, )"
+src/paper_trading_v1.py,680,ECONOMIC_EXPRESSION,1,"print( f""{symbol:<18} "" f""entrada={safe_float(row['entry_price'], 0.0):.10g} "" f""atual={current_price:.10g} "" f""ret={net_return * 100:+.3f}% "" f""idade={age}"" )"
+src/paper_trading_v1.py,684,ECONOMIC_EXPRESSION,1,net_return * 100
+src/paper_trading_v1.py,698,ECONOMIC_EXPRESSION,1,"print( f"" ✓ FECHADA | retorno líquido="" f""{net_return * 100:+.3f}%"" )"
+src/paper_trading_v1.py,700,ECONOMIC_EXPRESSION,1,net_return * 100
+src/paper_trading_v1.py,1148,ECONOMIC_EXPRESSION,1,position_size * net_return
+src/paper_trading_v1.py,1194,ECONOMIC_EXPRESSION,1,trade['net_return'] * 100
+src/paper_trading_v1.py,1198,ECONOMIC_EXPRESSION,1,"sum(1 for t in trades if t[""net_return""] > 0)"
+src/paper_trading_v1.py,1203,ECONOMIC_EXPRESSION,1,"sum(t[""net_return""] for t in trades) / len(trades)"
+src/paper_trading_v1.py,1203,ECONOMIC_EXPRESSION,1,"sum(t[""net_return""] for t in trades)"
+src/paper_trading_v1.py,1209,ECONOMIC_EXPRESSION,1,"compounded *= 1.0 + trade[""net_return""]"
+src/paper_trading_v1.py,1209,ECONOMIC_EXPRESSION,1,"1.0 + trade[""net_return""]"
+src/paper_trading_v2.py,976,ECONOMIC_EXPRESSION,1,self.cash += net_proceeds
+src/paper_trading_v2.py,1408,ECONOMIC_EXPRESSION,1,( ( final_equity_realized / self.initial_capital ) - 1.0 ) * 100.0
+src/paper_trading_v2.py,1409,ECONOMIC_EXPRESSION,1,( final_equity_realized / self.initial_capital ) - 1.0
+src/paper_trading_v2.py,1410,ECONOMIC_EXPRESSION,1,final_equity_realized / self.initial_capital
+src/paper_trading_v2.py,1429,ECONOMIC_EXPRESSION,1,"print( f""Capital inicial: ${self.initial_capital:,.2f}"" )"
+src/paper_trading_v2.py,1532,ECONOMIC_EXPRESSION,1,"print( f""Capital realizado final: ${final_equity_realized:,.2f}"" )"
+src/paper_trading_v2.py,1739,ECONOMIC_EXPRESSION,1,"print( f""Capital inicial: ${INITIAL_CAPITAL:,.2f}"" )"
+src/paper_trading_v2.py,2000,ECONOMIC_EXPRESSION,1,"print( ""- Capital limitado a $1,000."" )"
+src/paper_trading_v3.py,447,ECONOMIC_EXPRESSION,1,size * (1.0 + gross_return)
+src/paper_trading_v3.py,447,ECONOMIC_EXPRESSION,1,1.0 + gross_return
+src/paper_trading_v3.py,449,ECONOMIC_EXPRESSION,1,size * (1.0 + gross_return)
+src/paper_trading_v3.py,449,ECONOMIC_EXPRESSION,1,1.0 + gross_return
+src/paper_trading_v3.py,453,ECONOMIC_EXPRESSION,1,net_value - size
+src/paper_trading_v3.py,466,ECONOMIC_EXPRESSION,1,self.cash += net_value
+src/paper_trading_v3.py,938,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${INITIAL_CAPITAL:,.2f}"")"
+src/paper_trading_v4.py,239,ECONOMIC_EXPRESSION,1,total += p.notional
+src/paper_trading_v4.py,241,ECONOMIC_EXPRESSION,1,p.notional * px / p.entry_price
+src/paper_trading_v4.py,241,ECONOMIC_EXPRESSION,1,p.notional * px
+src/paper_trading_v4.py,279,ECONOMIC_EXPRESSION,1,pos.notional * o.price / pos.entry_price
+src/paper_trading_v4.py,279,ECONOMIC_EXPRESSION,1,pos.notional * o.price
+src/paper_trading_v4.py,473,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${CAPITAL_INITIAL:,.2f}"")"
+src/paper_trading_v5.py,238,ECONOMIC_EXPRESSION,1,total += p.notional
+src/paper_trading_v5.py,240,ECONOMIC_EXPRESSION,1,p.notional * px / p.entry_price
+src/paper_trading_v5.py,240,ECONOMIC_EXPRESSION,1,p.notional * px
+src/paper_trading_v5.py,276,ECONOMIC_EXPRESSION,1,pos.notional * o.price / pos.entry_price
+src/paper_trading_v5.py,276,ECONOMIC_EXPRESSION,1,pos.notional * o.price
+src/paper_trading_v5.py,412,ECONOMIC_EXPRESSION,1,t.notional * cap_pct / 100.0
+src/paper_trading_v5.py,412,ECONOMIC_EXPRESSION,1,t.notional * cap_pct
+src/paper_trading_v5.py,560,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${CAPITAL_INITIAL:,.2f}"")"
+src/paper_trading_v6.py,262,ECONOMIC_EXPRESSION,1,total += p.notional
+src/paper_trading_v6.py,264,ECONOMIC_EXPRESSION,1,p.notional * px / p.entry_price
+src/paper_trading_v6.py,264,ECONOMIC_EXPRESSION,1,p.notional * px
+src/paper_trading_v6.py,315,ECONOMIC_EXPRESSION,1,pos.notional * o.price / pos.entry_price
+src/paper_trading_v6.py,315,ECONOMIC_EXPRESSION,1,pos.notional * o.price
+src/paper_trading_v6.py,740,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${CAPITAL_INITIAL:,.2f}"")"
+src/paper_trading_v7.py,452,ECONOMIC_EXPRESSION,1,max_drawdown( result.capital_curve )
+src/paper_trading_v7.py,620,ECONOMIC_EXPRESSION,1,capital_curve.append(capital)
+src/paper_trading_v7.py,698,ECONOMIC_EXPRESSION,1,"capital / max( max_positions, 1, )"
+src/paper_trading_v7.py,703,ECONOMIC_EXPRESSION,1,"min( allocation, capital, )"
+src/paper_trading_v7.py,793,ECONOMIC_EXPRESSION,1,capital_curve.append(capital)
+src/paper_trading_v7.py,797,ECONOMIC_EXPRESSION,1,"SimulationResult( name=name, trades=trades, capital_final=capital, capital_curve=capital_curve, attempted_entries=attempted_entries, rejected_limit=rejected_limit, rejected_duplicate=rejected_duplicate, rejected_cooldown=rejected_cooldown, rejected_score=rejected_score, rejected_positions=rejected_positions, )"
+src/paper_trading_v7.py,846,ECONOMIC_EXPRESSION,1,curve.append(capital)
+src/paper_trading_v7.py,848,ECONOMIC_EXPRESSION,1,"SimulationResult( name=name, trades=remaining, capital_final=capital, capital_curve=curve, attempted_entries=result.attempted_entries, rejected_limit=result.rejected_limit, rejected_duplicate=result.rejected_duplicate, rejected_cooldown=result.rejected_cooldown, rejected_score=result.rejected_score, rejected_positions=result.rejected_positions, )"
+src/paper_trading_v7.py,894,ECONOMIC_EXPRESSION,1,curve.append(capital)
+src/paper_trading_v7.py,896,ECONOMIC_EXPRESSION,1,"SimulationResult( name=name, trades=remaining, capital_final=capital, capital_curve=curve, attempted_entries=result.attempted_entries, rejected_limit=result.rejected_limit, rejected_duplicate=result.rejected_duplicate, rejected_cooldown=result.rejected_cooldown, rejected_score=result.rejected_score, rejected_positions=result.rejected_positions, )"
+src/paper_trading_v7.py,953,ECONOMIC_EXPRESSION,1,curve.append(capital)
+src/paper_trading_v7.py,955,ECONOMIC_EXPRESSION,1,"SimulationResult( name=name, trades=new_trades, capital_final=capital, capital_curve=curve, attempted_entries=result.attempted_entries, rejected_limit=result.rejected_limit, rejected_duplicate=result.rejected_duplicate, rejected_cooldown=result.rejected_cooldown, rejected_score=result.rejected_score, rejected_positions=result.rejected_positions, )"
+src/paper_trading_v7.py,1018,ECONOMIC_EXPRESSION,1,( (capital - peak) / peak ) * 100.0
+src/paper_trading_v7.py,1019,ECONOMIC_EXPRESSION,1,(capital - peak) / peak
+src/paper_trading_v7.py,1019,ECONOMIC_EXPRESSION,1,capital - peak
+src/paper_trading_v7.py,1028,ECONOMIC_EXPRESSION,1,( (capital - INITIAL_CAPITAL) / INITIAL_CAPITAL ) * 100.0
+src/paper_trading_v7.py,1029,ECONOMIC_EXPRESSION,1,(capital - INITIAL_CAPITAL) / INITIAL_CAPITAL
+src/paper_trading_v7.py,1029,ECONOMIC_EXPRESSION,1,capital - INITIAL_CAPITAL
+src/paper_trading_v7.py,1293,ECONOMIC_EXPRESSION,1,"print(f"" Capital final realizado: ${result.capital_final:,.2f}"")"
+src/paper_trading_v7.py,1440,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${INITIAL_CAPITAL:,.2f}"")"
+src/paper_trading_v8.py,600,ECONOMIC_EXPRESSION,1,capital * (net_return / 100.0)
+src/paper_trading_v8.py,600,ECONOMIC_EXPRESSION,1,net_return / 100.0
+src/paper_trading_v8.py,880,ECONOMIC_EXPRESSION,1,( equity / INITIAL_CAPITAL - 1.0 ) * 100.0
+src/paper_trading_v8.py,881,ECONOMIC_EXPRESSION,1,equity / INITIAL_CAPITAL - 1.0
+src/paper_trading_v8.py,881,ECONOMIC_EXPRESSION,1,equity / INITIAL_CAPITAL
+src/paper_trading_v8.py,901,ECONOMIC_EXPRESSION,1,equity - INITIAL_CAPITAL
+src/paper_trading_v8.py,1296,ECONOMIC_EXPRESSION,1,"print(f""Capital inicial: ${INITIAL_CAPITAL:,.2f}"")"
+src/paper_trading_v8_1.bak.py,51,ECONOMIC_EXPRESSION,1,"float(r[""notional""])"
+src/paper_trading_v8_1.bak.py,60,ECONOMIC_EXPRESSION,1,t.notional*t.xp/t.ep
+src/paper_trading_v8_1.bak.py,60,ECONOMIC_EXPRESSION,1,t.notional*t.xp
+src/paper_trading_v8_1.bak.py,61,ECONOMIC_EXPRESSION,1,ep/t.notional*100
+src/paper_trading_v8_1.bak.py,61,ECONOMIC_EXPRESSION,1,ep/t.notional
+src/paper_trading_v8_1.bak.py,62,ECONOMIC_EXPRESSION,1,abs(eg-t.gross)
+src/paper_trading_v8_1.bak.py,62,ECONOMIC_EXPRESSION,1,eg-t.gross
+src/paper_trading_v8_1.bak.py,64,ECONOMIC_EXPRESSION,1,abs(en-t.net)
+src/paper_trading_v8_1.bak.py,64,ECONOMIC_EXPRESSION,1,en-t.net
+src/paper_trading_v8_1.bak.py,65,ECONOMIC_EXPRESSION,1,"min(t.ep,t.xp,t.notional)"
+src/paper_trading_v8_1.bak.py,69,ECONOMIC_EXPRESSION,1,"sorted(set(round(t.notional,10) for t in ts))"
+src/paper_trading_v8_1.bak.py,69,ECONOMIC_EXPRESSION,1,"set(round(t.notional,10) for t in ts)"
+src/paper_trading_v8_1.bak.py,69,ECONOMIC_EXPRESSION,1,"round(t.notional,10)"
+src/paper_trading_v8_1.bak.py,82,ECONOMIC_EXPRESSION,1,sum(x.notional for x in active.values())
+src/paper_trading_v8_1.bak.py,83,ECONOMIC_EXPRESSION,1,"sum(x.notional*prices.get(x.symbol,x.ep)/x.ep for x in active.values())"
+src/paper_trading_v8_1.bak.py,83,ECONOMIC_EXPRESSION,1,"x.notional*prices.get(x.symbol,x.ep)/x.ep"
+src/paper_trading_v8_1.bak.py,83,ECONOMIC_EXPRESSION,1,"x.notional*prices.get(x.symbol,x.ep)"
+src/paper_trading_v8_1.bak.py,88,ECONOMIC_EXPRESSION,1,maxexp/CAPITAL_INITIAL
+src/paper_trading_v8_1.bak.py,112,ECONOMIC_EXPRESSION,1,"sorted(ts,key=lambda t:t.net,reverse=True)"
+src/paper_trading_v8_1.bak.py,177,ECONOMIC_EXPRESSION,1,"print(""Capital inicial de referência: $1,000.00"")"
+src/paper_trading_v8_1.bak.py,201,ECONOMIC_EXPRESSION,1,"print(""\n""+""=""*100+""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n""+""=""*100)"
+src/paper_trading_v8_1.bak.py,201,ECONOMIC_EXPRESSION,1,"""\n""+""=""*100+""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n""+""=""*100"
+src/paper_trading_v8_1.bak.py,201,ECONOMIC_EXPRESSION,1,"""\n""+""=""*100+""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n"""
+src/paper_trading_v8_1.bak.py,204,ECONOMIC_EXPRESSION,1,"print(f""\n[{name}] notionals={no} fixed={'SIM' if len(no)==1 else 'NÃO'}"")"
+src/paper_trading_v8_1.bak.py,205,ECONOMIC_EXPRESSION,1,"print(f""máxima exposição=${me:.2f} ({mx:.2f}x capital)"")"
+src/paper_trading_v8_1.py,106,ECONOMIC_EXPRESSION,1,"float(r[""notional""])"
+src/paper_trading_v8_1.py,119,ECONOMIC_EXPRESSION,1,math.isfinite(notional)
+src/paper_trading_v8_1.py,156,ECONOMIC_EXPRESSION,1,t.notional * t.xp / t.ep
+src/paper_trading_v8_1.py,156,ECONOMIC_EXPRESSION,1,t.notional * t.xp
+src/paper_trading_v8_1.py,157,ECONOMIC_EXPRESSION,1,ep / t.notional * 100
+src/paper_trading_v8_1.py,157,ECONOMIC_EXPRESSION,1,ep / t.notional
+src/paper_trading_v8_1.py,160,ECONOMIC_EXPRESSION,1,abs(eg - t.gross)
+src/paper_trading_v8_1.py,160,ECONOMIC_EXPRESSION,1,eg - t.gross
+src/paper_trading_v8_1.py,164,ECONOMIC_EXPRESSION,1,abs(en - t.net)
+src/paper_trading_v8_1.py,164,ECONOMIC_EXPRESSION,1,en - t.net
+src/paper_trading_v8_1.py,166,ECONOMIC_EXPRESSION,1,"min(t.ep, t.xp, t.notional)"
+src/paper_trading_v8_1.py,172,ECONOMIC_EXPRESSION,1,"sorted(set(round(t.notional, 10) for t in ts))"
+src/paper_trading_v8_1.py,172,ECONOMIC_EXPRESSION,1,"set(round(t.notional, 10) for t in ts)"
+src/paper_trading_v8_1.py,172,ECONOMIC_EXPRESSION,1,"round(t.notional, 10)"
+src/paper_trading_v8_1.py,194,ECONOMIC_EXPRESSION,1,sum(x.notional for x in active.values())
+src/paper_trading_v8_1.py,196,ECONOMIC_EXPRESSION,1,"sum(x.notional * prices.get(x.symbol, x.ep) / x.ep for x in active.values())"
+src/paper_trading_v8_1.py,196,ECONOMIC_EXPRESSION,1,"x.notional * prices.get(x.symbol, x.ep) / x.ep"
+src/paper_trading_v8_1.py,196,ECONOMIC_EXPRESSION,1,"x.notional * prices.get(x.symbol, x.ep)"
+src/paper_trading_v8_1.py,204,ECONOMIC_EXPRESSION,1,maxexp / CAPITAL_INITIAL
+src/paper_trading_v8_1.py,243,ECONOMIC_EXPRESSION,1,"sorted(ts, key=lambda t: t.net, reverse=True)"
+src/paper_trading_v8_1.py,356,ECONOMIC_EXPRESSION,1,"print(""Capital inicial de referência: $1,000.00"")"
+src/paper_trading_v8_1.py,394,ECONOMIC_EXPRESSION,1,"print(""\n"" + ""="" * 100 + ""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n"" + ""="" * 100)"
+src/paper_trading_v8_1.py,394,ECONOMIC_EXPRESSION,1,"""\n"" + ""="" * 100 + ""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n"" + ""="" * 100"
+src/paper_trading_v8_1.py,394,ECONOMIC_EXPRESSION,1,"""\n"" + ""="" * 100 + ""\n2) CAPITAL, ALOCAÇÃO E COMPOSIÇÃO\n"""
+src/paper_trading_v8_1.py,397,ECONOMIC_EXPRESSION,1,"print(f""\n[{name}] notionals={no} fixed={'SIM' if len(no) == 1 else 'NÃO'}"")"
+src/paper_trading_v8_1.py,398,ECONOMIC_EXPRESSION,1,"print(f""máxima exposição=${me:.2f} ({mx:.2f}x capital)"")"
+src/paper_trading_v8_1_1.py,156,ECONOMIC_EXPRESSION,1,CAPITAL_INITIAL * t.ret / 100.0
+src/paper_trading_v8_1_1.py,156,ECONOMIC_EXPRESSION,1,CAPITAL_INITIAL * t.ret
+src/paper_trading_v8_1_2.py,433,ECONOMIC_EXPRESSION,1,statistics.median(gross)
+src/paper_trading_v8_1_2.py,434,ECONOMIC_EXPRESSION,1,statistics.median(net)
+src/paper_trading_v8_1_2.py,481,ECONOMIC_EXPRESSION,1,"print(f""Retorno bruto mediano: {statistics.median(gross):+.6f}%"")"
+src/paper_trading_v8_1_2.py,481,ECONOMIC_EXPRESSION,1,statistics.median(gross)
+src/paper_trading_v8_1_2.py,483,ECONOMIC_EXPRESSION,1,"print(f""Retorno registrado mediano: {statistics.median(net):+.6f}%"")"
+src/paper_trading_v8_1_2.py,483,ECONOMIC_EXPRESSION,1,statistics.median(net)
+src/paper_trading_v8_1_5.py,112,ECONOMIC_EXPRESSION,1,gross_return - recorded_return
+src/paper_trading_v8_1_5.py,141,ECONOMIC_EXPRESSION,1,"sorted(x[""gross_return""] for x in valid)"
+src/paper_trading_v8_1_5.py,150,ECONOMIC_EXPRESSION,1,"print(f""Retorno bruto mediano: {median(gross):+.6f}%"")"
+src/paper_trading_v8_1_5.py,150,ECONOMIC_EXPRESSION,1,median(gross)
+src/paper_trading_v8_1_5.py,274,ECONOMIC_EXPRESSION,1,median(gross)
+src/paper_trading_v8_1_8.py,104,ECONOMIC_EXPRESSION,1,"find_col(headers, [""notional"", ""capital"", ""stake"", ""position_value"", ""valor_posicao""])"
+src/paper_trading_v8_1_8.py,168,ECONOMIC_EXPRESSION,1,gross_returns.append(gross)
+src/paper_trading_v8_1_8.py,170,ECONOMIC_EXPRESSION,1,gross - recorded
+src/paper_trading_v8_1_8.py,174,ECONOMIC_EXPRESSION,1,abs(recorded - gross)
+src/paper_trading_v8_1_8.py,174,ECONOMIC_EXPRESSION,1,recorded - gross
+src/paper_trading_v8_1_8.py,175,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - 0.20))
+src/paper_trading_v8_1_8.py,175,ECONOMIC_EXPRESSION,1,recorded - (gross - 0.20)
+src/paper_trading_v8_1_8.py,175,ECONOMIC_EXPRESSION,1,gross - 0.20
+src/paper_trading_v8_1_8.py,176,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - 0.15))
+src/paper_trading_v8_1_8.py,176,ECONOMIC_EXPRESSION,1,recorded - (gross - 0.15)
+src/paper_trading_v8_1_8.py,176,ECONOMIC_EXPRESSION,1,gross - 0.15
+src/paper_trading_v8_1_8.py,177,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - 0.10))
+src/paper_trading_v8_1_8.py,177,ECONOMIC_EXPRESSION,1,recorded - (gross - 0.10)
+src/paper_trading_v8_1_8.py,177,ECONOMIC_EXPRESSION,1,gross - 0.10
+src/paper_trading_v8_1_8.py,178,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - 0.30))
+src/paper_trading_v8_1_8.py,178,ECONOMIC_EXPRESSION,1,recorded - (gross - 0.30)
+src/paper_trading_v8_1_8.py,178,ECONOMIC_EXPRESSION,1,gross - 0.30
+src/paper_trading_v8_1_8.py,182,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - c))
+src/paper_trading_v8_1_8.py,182,ECONOMIC_EXPRESSION,1,recorded - (gross - c)
+src/paper_trading_v8_1_8.py,182,ECONOMIC_EXPRESSION,1,gross - c
+src/paper_trading_v8_1_8.py,184,ECONOMIC_EXPRESSION,1,abs(recorded - (gross - best_hyp))
+src/paper_trading_v8_1_8.py,184,ECONOMIC_EXPRESSION,1,recorded - (gross - best_hyp)
+src/paper_trading_v8_1_8.py,184,ECONOMIC_EXPRESSION,1,gross - best_hyp
+src/paper_trading_v8_1_8.py,187,ECONOMIC_EXPRESSION,1,exact_gross += 1
+src/paper_trading_v8_1_8.py,191,ECONOMIC_EXPRESSION,1,exact_net += 1
+src/paper_trading_v8_1_8.py,252,ECONOMIC_EXPRESSION,1,statistics.median(gross_returns)
+src/paper_trading_v8_1_8.py,272,ECONOMIC_EXPRESSION,1,"print(f""Retorno bruto mediano: {med_gross:+.6f}%"" if med_gross is not None else ""N/D"")"
+src/paper_trading_v8_1_8.py,277,ECONOMIC_EXPRESSION,1,"print(f""Compatível com 0,00 p.p.: {exact_gross}"")"
+src/paper_trading_v8_1_9.py,87,ECONOMIC_EXPRESSION,1,"rr[""_gross""] - ret"
+src/scanner_v2.py,654,ECONOMIC_EXPRESSION,1,"ccxt.binance( { ""enableRateLimit"": True, ""timeout"": NETWORK_TIMEOUT_MS, ""options"": { ""defaultType"": ""spot"", }, } )"
+src/scanner_v2.py,1104,ECONOMIC_EXPRESSION,1,"print( f""Timeout rede: "" f""{NETWORK_TIMEOUT_MS / 1000:.0f}s"" )"
+src/scanner_v2.py,1106,ECONOMIC_EXPRESSION,1,NETWORK_TIMEOUT_MS / 1000
+src/scanner_v3.py,75,ECONOMIC_EXPRESSION,1,"ccxt.binance({ ""enableRateLimit"": True, ""timeout"": NETWORK_TIMEOUT_MS, ""options"": { ""defaultType"": ""spot"", }, })"
+src/scanner_v3.py,984,ECONOMIC_EXPRESSION,1,"print( f""Timeout rede: {NETWORK_TIMEOUT_MS / 1000:.0f}s"" )"
+src/scanner_v3.py,985,ECONOMIC_EXPRESSION,1,NETWORK_TIMEOUT_MS / 1000
+src/scanner_v3_backup.py,75,ECONOMIC_EXPRESSION,1,"ccxt.binance({ ""enableRateLimit"": True, ""timeout"": NETWORK_TIMEOUT_MS, ""options"": { ""defaultType"": ""spot"", }, })"
+src/scanner_v3_backup.py,1014,ECONOMIC_EXPRESSION,1,"print( f""Timeout rede: {NETWORK_TIMEOUT_MS / 1000:.0f}s"" )"
+src/scanner_v3_backup.py,1015,ECONOMIC_EXPRESSION,1,NETWORK_TIMEOUT_MS / 1000

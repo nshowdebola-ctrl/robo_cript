@@ -1,0 +1,7 @@
+check,value
+dataset_integrity,True
+no_duplicate_trade_key,True
+median_positive,False
+pf_above_1,True
+real_fees_recoverable,False
+new_optimization,False

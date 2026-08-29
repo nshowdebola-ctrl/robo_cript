@@ -1,0 +1,13 @@
+metric,value
+trades,31749
+avg_pct,0.9074729718948713
+median_pct,-0.20999200639488774
+win_rate,0.43390343002929227
+dataset_nonempty,True
+median_positive,False
+avg_positive,True
+win_rate_above_50,False
+historical_fees_recoverable,False
+legacy_dataset,True
+new_optimization,False
+approved,False

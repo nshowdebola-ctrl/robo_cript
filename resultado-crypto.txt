@@ -1,0 +1,1401 @@
+
+======================================================================
+                      CRYPTO RADAR - SCANNER V3
+======================================================================
+Timeframe:             1h
+Confirmação:           4h
+Candles 1h:            120
+Candles 4h:            80
+TOP mercados:          50
+Volume mínimo:         $1.00M
+Timeout rede:          15s
+Usando somente candles fechados.
+
+Inicializando banco...
+✓ Banco V3 OK
+Inicializando Binance...
+✓ Binance OK
+
+Carregando mercados...
+Mercados candidatos: 472
+Buscando tickers...
+Mercados selecionados: 50
+
+Analisando mercados...
+----------------------------------------------------------------------
+[01/50] BTC/USDT
+  Preço:                            63902.63
+  RSI:                                 68.86
+  EMA20:                      63443.41210831
+  EMA50:                      63285.06466041
+  Momentum 4h:                         0.33%
+  Volume relativo:                     1.29x
+  ATR:                                 0.38%
+  Volatilidade:                        0.22%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           7/15
+  Volume:             9/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           73/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          83%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[02/50] ETH/USDT
+  Preço:                             1909.61
+  RSI:                                 63.09
+  EMA20:                       1897.10049697
+  EMA50:                       1890.47221184
+  Momentum 4h:                         0.13%
+  Volume relativo:                     1.15x
+  ATR:                                 0.56%
+  Volatilidade:                        0.32%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               19/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           7/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           79/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          89%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[03/50] SOL/USDT
+  Preço:                             75.9900
+  RSI:                                 59.95
+  EMA20:                         75.47448503
+  EMA50:                         75.42267291
+  Momentum 4h:                         0.28%
+  Volume relativo:                     1.25x
+  ATR:                                 0.53%
+  Volatilidade:                        0.41%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           7/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           86/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          96%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.61s
+[04/50] PLUME/USDT
+  Preço:                          0.01242000
+  RSI:                                 34.03
+  EMA20:                          0.01270570
+  EMA50:                          0.01283365
+  Momentum 4h:                        -1.27%
+  Volume relativo:                     0.43x
+  ATR:                                 1.42%
+  Volatilidade:                        0.76%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                2/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     7/20
+  Momentum:           0/15
+  Volume:             0/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           14/100
+  Classificação:     MUITO FRACO
+  Sinal:             EVITAR
+  Confiança:           0%
+  Riscos:            RSI_FRACO, VOLUME_BAIXO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.61s
+[05/50] ZEC/USDT
+  Preço:                            514.6000
+  RSI:                                 70.61
+  EMA20:                        503.48174478
+  EMA50:                        496.67152095
+  Momentum 4h:                         0.23%
+  Volume relativo:                     0.78x
+  ATR:                                 1.23%
+  Volatilidade:                        1.04%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                8/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           7/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           63/100
+  Classificação:     MODERADO
+  Sinal:             OBSERVAR
+  Confiança:          73%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.63s
+[06/50] BNB/USDT
+  Preço:                            607.4200
+  RSI:                                 57.60
+  EMA20:                        605.46016204
+  EMA50:                        606.45416390
+  Momentum 4h:                         0.36%
+  Volume relativo:                     1.53x
+  ATR:                                 0.34%
+  Volatilidade:                        0.18%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:           7/15
+  Volume:            12/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           57/100
+  Classificação:     MODERADO
+  Sinal:             OBSERVAR
+  Confiança:          48%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.63s
+[07/50] XRP/USDT
+  Preço:                              1.0045
+  RSI:                                 56.63
+  EMA20:                          1.00056282
+  EMA50:                          1.00110262
+  Momentum 4h:                         0.24%
+  Volume relativo:                     1.96x
+  ATR:                                 0.50%
+  Volatilidade:                        0.30%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:           7/15
+  Volume:            12/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           57/100
+  Classificação:     MODERADO
+  Sinal:             OBSERVAR
+  Confiança:          48%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[08/50] SNDKB/USDT
+  Preço:                             1809.59
+  RSI:                                 76.24
+  EMA20:                       1720.50539948
+  EMA50:                       1680.24390361
+  Momentum 4h:                         4.40%
+  Volume relativo:                     3.18x
+  ATR:                                 1.82%
+  Volatilidade:                        1.31%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                3/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           83/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          93%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.62s
+[09/50] ACE/USDT
+  Preço:                          0.19510000
+  RSI:                                 66.33
+  EMA20:                          0.16693364
+  EMA50:                          0.16333179
+  Momentum 4h:                        -1.51%
+  Volume relativo:                     1.68x
+  ATR:                                 8.33%
+  Volatilidade:                        5.64%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:            12/15
+  Volatilidade:       1/5
+  -------------------------------------------------------------
+  SCORE V3:           73/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          74%
+  Riscos:            MOMENTUM_NEGATIVO, VOLATILIDADE_ALTA
+  ✓ Concluído em 0.61s
+[10/50] XAUT/USDT
+  Preço:                             4397.74
+  RSI:                                 65.15
+  EMA20:                       4376.58175972
+  EMA50:                       4369.48797314
+  Momentum 4h:                         0.38%
+  Volume relativo:                     5.04x
+  ATR:                                 0.30%
+  Volatilidade:                        0.22%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           7/15
+  Volume:            15/15
+  Volatilidade:       0/5
+  -------------------------------------------------------------
+  SCORE V3:           82/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          95%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[11/50] GPS/USDT
+  Preço:                          0.01624000
+  RSI:                                 72.72
+  EMA20:                          0.01423329
+  EMA50:                          0.01250558
+  Momentum 4h:                        -1.40%
+  Volume relativo:                     2.51x
+  ATR:                                 9.03%
+  Volatilidade:                        4.49%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                8/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:            15/15
+  Volatilidade:       1/5
+  -------------------------------------------------------------
+  SCORE V3:           69/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          70%
+  Riscos:            MOMENTUM_NEGATIVO, VOLATILIDADE_ALTA
+  ✓ Concluído em 0.63s
+[12/50] PORTAL/USDT
+  Preço:                          0.01612000
+  RSI:                                 50.31
+  EMA20:                          0.01646944
+  EMA50:                          0.01484179
+  Momentum 4h:                         1.96%
+  Volume relativo:                     0.76x
+  ATR:                                10.16%
+  Volatilidade:                        5.10%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:          13/15
+  Volume:             4/15
+  Volatilidade:       1/5
+  -------------------------------------------------------------
+  SCORE V3:           58/100
+  Classificação:     MODERADO
+  Sinal:             OBSERVAR
+  Confiança:          51%
+  Riscos:            VOLATILIDADE_ALTA, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.62s
+[13/50] TUT/USDT
+  Preço:                          0.03802000
+  RSI:                                 57.10
+  EMA20:                          0.03632270
+  EMA50:                          0.03591997
+  Momentum 4h:                         1.60%
+  Volume relativo:                     1.10x
+  ATR:                                 8.32%
+  Volatilidade:                        4.84%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:     0/20
+  Momentum:          13/15
+  Volume:             9/15
+  Volatilidade:       1/5
+  -------------------------------------------------------------
+  SCORE V3:           68/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          56%
+  Riscos:            VOLATILIDADE_ALTA, TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[14/50] ALLO/USDT
+  Preço:                          0.28000000
+  RSI:                                 66.96
+  EMA20:                          0.27169685
+  EMA50:                          0.26965095
+  Momentum 4h:                         3.51%
+  Volume relativo:                     2.79x
+  ATR:                                 1.61%
+  Volatilidade:                        0.93%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           89/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:         100%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[15/50] SPCXB/USDT
+  Preço:                            148.3800
+  RSI:                                 74.83
+  EMA20:                        142.57675499
+  EMA50:                        141.52428478
+  Momentum 4h:                         4.46%
+  Volume relativo:                     7.96x
+  ATR:                                 1.17%
+  Volatilidade:                        1.38%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                8/20
+  Tendência 1h:      25/25
+  Confirmação 4h:     7/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           75/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          83%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[16/50] DOGE/USDT
+  Preço:                          0.07038000
+  RSI:                                 57.67
+  EMA20:                          0.07013631
+  EMA50:                          0.07003957
+  Momentum 4h:                        -0.06%
+  Volume relativo:                     1.25x
+  ATR:                                 0.41%
+  Volatilidade:                        0.27%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           3/15
+  Volume:             9/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           74/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          75%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.62s
+[17/50] U/USDT
+  Preço:                              1.0005
+  RSI:                                 56.83
+  EMA20:                          1.00040039
+  EMA50:                          1.00039212
+  Momentum 4h:                         0.02%
+  Volume relativo:                     2.19x
+  ATR:                                 0.02%
+  Volatilidade:                        0.01%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:     0/20
+  Momentum:           7/15
+  Volume:            15/15
+  Volatilidade:       0/5
+  -------------------------------------------------------------
+  SCORE V3:           67/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          61%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 1.63s
+[18/50] WLD/USDT
+  Preço:                          0.35800000
+  RSI:                                 49.88
+  EMA20:                          0.35897676
+  EMA50:                          0.35482312
+  Momentum 4h:                        -1.81%
+  Volume relativo:                     0.89x
+  ATR:                                 1.46%
+  Volatilidade:                        0.92%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           45/100
+  Classificação:     NEUTRO
+  Sinal:             EVITAR
+  Confiança:          32%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 1.12s
+[19/50] TRX/USDT
+  Preço:                          0.33180000
+  RSI:                                 43.73
+  EMA20:                          0.33223615
+  EMA50:                          0.33220258
+  Momentum 4h:                        -0.27%
+  Volume relativo:                     0.63x
+  ATR:                                 0.16%
+  Volatilidade:                        0.09%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               11/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:           3/15
+  Volume:             0/15
+  Volatilidade:       0/5
+  -------------------------------------------------------------
+  SCORE V3:           34/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          13%
+  Riscos:            VOLUME_BAIXO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.63s
+[20/50] XPL/USDT
+  Preço:                          0.07637000
+  RSI:                                 48.00
+  EMA20:                          0.07652251
+  EMA50:                          0.07652247
+  Momentum 4h:                        -0.95%
+  Volume relativo:                     1.27x
+  ATR:                                 0.81%
+  Volatilidade:                        0.73%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           50/100
+  Classificação:     NEUTRO
+  Sinal:             EVITAR
+  Confiança:          37%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.62s
+[21/50] LINK/USDT
+  Preço:                              9.5320
+  RSI:                                 57.67
+  EMA20:                          9.46364370
+  EMA50:                          9.39777446
+  Momentum 4h:                         0.28%
+  Volume relativo:                     1.54x
+  ATR:                                 0.85%
+  Volatilidade:                        0.48%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           7/15
+  Volume:            12/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           89/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:         100%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.63s
+[22/50] ADA/USDT
+  Preço:                          0.17470000
+  RSI:                                 42.91
+  EMA20:                          0.17556975
+  EMA50:                          0.17677138
+  Momentum 4h:                        -0.06%
+  Volume relativo:                     0.87x
+  ATR:                                 0.79%
+  Volatilidade:                        0.54%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               11/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           23/100
+  Classificação:     MUITO FRACO
+  Sinal:             EVITAR
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.62s
+[23/50] SKHYB/USDT
+  Preço:                            176.4400
+  RSI:                                 77.66
+  EMA20:                        171.80736807
+  EMA50:                        169.41926914
+  Momentum 4h:                         1.70%
+  Volume relativo:                     0.94x
+  ATR:                                 1.01%
+  Volatilidade:                        0.54%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                3/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          13/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           70/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          77%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.61s
+[24/50] PUMP/USDT
+  Preço:                          0.00291500
+  RSI:                                 60.49
+  EMA20:                          0.00285591
+  EMA50:                          0.00281502
+  Momentum 4h:                         1.04%
+  Volume relativo:                     0.80x
+  ATR:                                 2.18%
+  Volatilidade:                        1.47%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               19/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          13/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           86/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          96%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[25/50] PAXG/USDT
+  Preço:                             4413.39
+  RSI:                                 63.30
+  EMA20:                       4393.16319203
+  EMA50:                       4386.04726299
+  Momentum 4h:                         0.34%
+  Volume relativo:                     3.07x
+  ATR:                                 0.33%
+  Volatilidade:                        0.23%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               19/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           7/15
+  Volume:            15/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           89/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:         100%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.61s
+[26/50] NEAR/USDT
+  Preço:                              1.6430
+  RSI:                                 57.97
+  EMA20:                          1.63298459
+  EMA50:                          1.62768996
+  Momentum 4h:                        -0.18%
+  Volume relativo:                     1.80x
+  ATR:                                 0.90%
+  Volatilidade:                        0.47%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           3/15
+  Volume:            12/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           79/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          83%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 1.14s
+[27/50] FET/USDT
+  Preço:                          0.12240000
+  RSI:                                 49.46
+  EMA20:                          0.12194974
+  EMA50:                          0.12447926
+  Momentum 4h:                         1.58%
+  Volume relativo:                     0.41x
+  ATR:                                 1.15%
+  Volatilidade:                        0.84%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       8/25
+  Confirmação 4h:     0/20
+  Momentum:          13/15
+  Volume:             0/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           42/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          22%
+  Riscos:            VOLUME_BAIXO, TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[28/50] MUB/USDT
+  Preço:                             1026.57
+  RSI:                                 79.14
+  EMA20:                       1000.04160281
+  EMA50:                        987.67280901
+  Momentum 4h:                         2.01%
+  Volume relativo:                     2.41x
+  ATR:                                 0.97%
+  Volatilidade:                        0.66%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                3/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           83/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          93%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.62s
+[29/50] CHIP/USDT
+  Preço:                          0.03002000
+  RSI:                                 53.22
+  EMA20:                          0.02978070
+  EMA50:                          0.02836828
+  Momentum 4h:                         0.03%
+  Volume relativo:                     0.50x
+  ATR:                                 4.90%
+  Volatilidade:                        3.07%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           7/15
+  Volume:             0/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           75/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          77%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 1.13s
+[30/50] HEMI/USDT
+  Preço:                          0.00692000
+  RSI:                                 60.35
+  EMA20:                          0.00644914
+  EMA50:                          0.00637658
+  Momentum 4h:                         9.84%
+  Volume relativo:                     4.21x
+  ATR:                                 4.34%
+  Volatilidade:                        2.50%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               19/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           97/100
+  Classificação:     EXCEPCIONAL
+  Sinal:             COMPRA FORTE
+  Confiança:         100%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[31/50] PEPE/USDT
+  Preço:                          0.00000259
+  RSI:                                 46.88
+  EMA20:                          0.00000260
+  EMA50:                          0.00000261
+  Momentum 4h:                        -0.38%
+  Volume relativo:                     1.04x
+  ATR:                                 1.10%
+  Volatilidade:                        0.62%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           33/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:           4%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.62s
+[32/50] LTC/USDT
+  Preço:                             44.5000
+  RSI:                                 59.49
+  EMA20:                         44.25010032
+  EMA50:                         44.27435634
+  Momentum 4h:                         0.72%
+  Volume relativo:                     1.20x
+  ATR:                                 0.41%
+  Volatilidade:                        0.29%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:          10/15
+  Volume:             9/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           57/100
+  Classificação:     MODERADO
+  Sinal:             OBSERVAR
+  Confiança:          45%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[33/50] ONG/USDT
+  Preço:                          0.05489000
+  RSI:                                 47.08
+  EMA20:                          0.05655436
+  EMA50:                          0.05320255
+  Momentum 4h:                        -4.74%
+  Volume relativo:                     0.85x
+  ATR:                                 5.35%
+  Volatilidade:                        3.13%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:             4/15
+  Volatilidade:       1/5
+  -------------------------------------------------------------
+  SCORE V3:           41/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          25%
+  Riscos:            MOMENTUM_NEGATIVO, VOLATILIDADE_ALTA, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.61s
+[34/50] AVAX/USDT
+  Preço:                              6.3290
+  RSI:                                 45.60
+  EMA20:                          6.34349173
+  EMA50:                          6.37807717
+  Momentum 4h:                        -0.33%
+  Volume relativo:                     1.12x
+  ATR:                                 0.60%
+  Volatilidade:                        0.36%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           33/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:           4%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.61s
+[35/50] SNXXB/USDT
+  Preço:                             19.5100
+  RSI:                                 76.07
+  EMA20:                         17.75596400
+  EMA50:                         16.97908456
+  Momentum 4h:                         8.51%
+  Volume relativo:                     5.24x
+  ATR:                                 2.99%
+  Volatilidade:                        2.56%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                3/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           83/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          93%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.62s
+[36/50] WLFI/USDT
+  Preço:                          0.06030000
+  RSI:                                 53.50
+  EMA20:                          0.06029717
+  EMA50:                          0.05924480
+  Momentum 4h:                        -0.66%
+  Volume relativo:                     0.99x
+  ATR:                                 0.95%
+  Volatilidade:                        0.39%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           74/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          75%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 1.13s
+[37/50] SUI/USDT
+  Preço:                          0.67700000
+  RSI:                                 50.56
+  EMA20:                          0.67663664
+  EMA50:                          0.67769798
+  Momentum 4h:                        -0.32%
+  Volume relativo:                     0.75x
+  ATR:                                 0.55%
+  Volatilidade:                        0.39%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:       8/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           40/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          19%
+  Riscos:            MOMENTUM_NEGATIVO, TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.61s
+[38/50] KAITO/USDT
+  Preço:                          0.36890000
+  RSI:                                 66.43
+  EMA20:                          0.34771583
+  EMA50:                          0.35932360
+  Momentum 4h:                         8.47%
+  Volume relativo:                     2.93x
+  ATR:                                 2.55%
+  Volatilidade:                        1.66%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           65/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          56%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.63s
+[39/50] UNI/USDT
+  Preço:                              3.3010
+  RSI:                                 54.12
+  EMA20:                          3.28675307
+  EMA50:                          3.28974393
+  Momentum 4h:                        -0.18%
+  Volume relativo:                     0.62x
+  ATR:                                 0.92%
+  Volatilidade:                        0.54%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             0/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           43/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          14%
+  Riscos:            VOLUME_BAIXO, MOMENTUM_NEGATIVO, TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[40/50] ONDO/USDT
+  Preço:                          0.33920000
+  RSI:                                 62.09
+  EMA20:                          0.33567518
+  EMA50:                          0.33217682
+  Momentum 4h:                         0.44%
+  Volume relativo:                     1.31x
+  ATR:                                 0.88%
+  Volatilidade:                        0.54%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               19/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           7/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           79/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          89%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.62s
+[41/50] MSTRB/USDT
+  Preço:                             97.6000
+  RSI:                                 74.88
+  EMA20:                         94.55059064
+  EMA50:                         94.36367648
+  Momentum 4h:                         3.42%
+  Volume relativo:                     1.62x
+  ATR:                                 0.91%
+  Volatilidade:                        0.71%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                8/20
+  Tendência 1h:      25/25
+  Confirmação 4h:     0/20
+  Momentum:          15/15
+  Volume:            12/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           65/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          59%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[42/50] FIL/USDT
+  Preço:                          0.66970000
+  RSI:                                 45.45
+  EMA20:                          0.67049986
+  EMA50:                          0.67473694
+  Momentum 4h:                         0.07%
+  Volume relativo:                     0.13x
+  ATR:                                 0.64%
+  Volatilidade:                        0.49%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           7/15
+  Volume:             0/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           28/100
+  Classificação:     MUITO FRACO
+  Sinal:             EVITAR
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.61s
+[43/50] HOME/USDT
+  Preço:                          0.00682000
+  RSI:                                 30.59
+  EMA20:                          0.00710915
+  EMA50:                          0.00773257
+  Momentum 4h:                        -1.73%
+  Volume relativo:                     1.09x
+  ATR:                                 2.57%
+  Volatilidade:                        1.62%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                2/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           0/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           16/100
+  Classificação:     MUITO FRACO
+  Sinal:             EVITAR
+  Confiança:           0%
+  Riscos:            RSI_FRACO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.62s
+[44/50] BICO/USDT
+  Preço:                          0.02093000
+  RSI:                                 35.70
+  EMA20:                          0.02251008
+  EMA50:                          0.02318365
+  Momentum 4h:                        -6.19%
+  Volume relativo:                     1.30x
+  ATR:                                 3.97%
+  Volatilidade:                        2.01%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:                7/20
+  Tendência 1h:       0/25
+  Confirmação 4h:     0/20
+  Momentum:           0/15
+  Volume:             9/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           19/100
+  Classificação:     MUITO FRACO
+  Sinal:             EVITAR
+  Confiança:           0%
+  Riscos:            RSI_FRACO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA, TENDENCIA_4H_FRACA
+  ✓ Concluído em 0.62s
+[45/50] GIGGLE/USDT
+  Preço:                             33.5900
+  RSI:                                 68.10
+  EMA20:                         32.34528279
+  EMA50:                         31.96927479
+  Momentum 4h:                         4.48%
+  Volume relativo:                     3.14x
+  ATR:                                 1.75%
+  Volatilidade:                        0.95%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               15/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:          15/15
+  Volume:            15/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           89/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:         100%
+  Riscos:            NENHUM
+  ✓ Concluído em 0.61s
+[46/50] RARE/USDT
+  Preço:                          0.01222000
+  RSI:                                 49.96
+  EMA20:                          0.01229310
+  EMA50:                          0.01207241
+  Momentum 4h:                        -5.27%
+  Volume relativo:                     0.59x
+  ATR:                                 3.51%
+  Volatilidade:                        3.26%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    14/20
+  Momentum:           0/15
+  Volume:             0/15
+  Volatilidade:       3/5
+  -------------------------------------------------------------
+  SCORE V3:           33/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          12%
+  Riscos:            VOLUME_BAIXO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.62s
+[47/50] TAO/USDT
+  Preço:                            196.6000
+  RSI:                                 50.11
+  EMA20:                        196.49361489
+  EMA50:                        196.95114305
+  Momentum 4h:                         0.15%
+  Volume relativo:                     1.02x
+  ATR:                                 0.73%
+  Volatilidade:                        0.45%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:       8/25
+  Confirmação 4h:     0/20
+  Momentum:           7/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           49/100
+  Classificação:     NEUTRO
+  Sinal:             EVITAR
+  Confiança:          37%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.62s
+[48/50] XLM/USDT
+  Preço:                          0.15830000
+  RSI:                                 54.83
+  EMA20:                          0.15775649
+  EMA50:                          0.15782469
+  Momentum 4h:                         0.00%
+  Volume relativo:                     1.11x
+  ATR:                                 0.57%
+  Volatilidade:                        0.41%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      15/25
+  Confirmação 4h:     0/20
+  Momentum:           3/15
+  Volume:             9/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           52/100
+  Classificação:     NEUTRO
+  Sinal:             EVITAR
+  Confiança:          34%
+  Riscos:            TENDENCIA_4H_FRACA, SEM_CONFIRMACAO_4H
+  ✓ Concluído em 0.61s
+[49/50] DEXE/USDT
+  Preço:                              1.9410
+  RSI:                                 56.86
+  EMA20:                          1.91481556
+  EMA50:                          1.91298577
+  Momentum 4h:                        -0.72%
+  Volume relativo:                     0.94x
+  ATR:                                 2.13%
+  Volatilidade:                        1.28%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               20/20
+  Tendência 1h:      25/25
+  Confirmação 4h:    14/20
+  Momentum:           0/15
+  Volume:             4/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           68/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          69%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.62s
+[50/50] BEL/USDT
+  Preço:                          0.10860000
+  RSI:                                 48.12
+  EMA20:                          0.10920524
+  EMA50:                          0.10855195
+  Momentum 4h:                        -0.73%
+  Volume relativo:                     0.25x
+  ATR:                                 1.97%
+  Volatilidade:                        2.24%
+
+  COMPONENTES DO SCORE V3
+  -------------------------------------------------------------
+  RSI:               16/20
+  Tendência 1h:       0/25
+  Confirmação 4h:    20/20
+  Momentum:           0/15
+  Volume:             0/15
+  Volatilidade:       5/5
+  -------------------------------------------------------------
+  SCORE V3:           41/100
+  Classificação:     FRACO
+  Sinal:             EVITAR
+  Confiança:          20%
+  Riscos:            VOLUME_BAIXO, MOMENTUM_NEGATIVO, TENDENCIA_1H_FRACA
+  ✓ Concluído em 0.62s
+
+======================================================================================================================
+                                        RANKING DETALHADO V3
+======================================================================================================================
+ # MERCADO         SCORE RSI T1H T4H  MOM  VOL   ATR  RVOL  CONF CLASSIFICAÇÃO
+----------------------------------------------------------------------------------------------------------------------
+ 1 HEMI/USDT          97  19  25  20   15   15  4.34  4.21   100 EXCEPCIONAL
+ 2 GIGGLE/USDT        89  15  25  14   15   15  1.75  3.14   100 MUITO FORTE
+ 3 PAXG/USDT          89  19  25  20    7   15  0.33  3.07   100 MUITO FORTE
+ 4 ALLO/USDT          89  15  25  14   15   15  1.61  2.79   100 MUITO FORTE
+ 5 LINK/USDT          89  20  25  20    7   12  0.85  1.54   100 MUITO FORTE
+ 6 SOL/USDT           86  20  25  20    7    9  0.53  1.25    96 MUITO FORTE
+ 7 PUMP/USDT          86  19  25  20   13    4  2.18  0.80    96 MUITO FORTE
+ 8 SNXXB/USDT         83   3  25  20   15   15  2.99  5.24    93 MUITO FORTE
+ 9 SNDKB/USDT         83   3  25  20   15   15  1.82  3.18    93 MUITO FORTE
+10 MUB/USDT           83   3  25  20   15   15  0.97  2.41    93 MUITO FORTE
+11 XAUT/USDT          82  15  25  20    7   15  0.30  5.04    95 MUITO FORTE
+12 ONDO/USDT          79  19  25  14    7    9  0.88  1.31    89 FORTE
+13 ETH/USDT           79  19  25  14    7    9  0.56  1.15    89 FORTE
+14 NEAR/USDT          79  20  25  14    3   12  0.90  1.80    83 FORTE
+15 SPCXB/USDT         75   8  25   7   15   15  1.17  7.96    83 FORTE
+16 CHIP/USDT          75  20  25  20    7    0  4.90  0.50    77 FORTE
+17 DOGE/USDT          74  20  25  14    3    9  0.41  1.25    75 FORTE
+18 WLFI/USDT          74  20  25  20    0    4  0.95  0.99    75 FORTE
+19 BTC/USDT           73  15  25  14    7    9  0.38  1.29    83 FORTE
+20 ACE/USDT           73  15  25  20    0   12  8.33  1.68    74 FORTE
+21 SKHYB/USDT         70   3  25  20   13    4  1.01  0.94    77 FORTE
+22 GPS/USDT           69   8  25  20    0   15  9.03  2.51    70 FORTE
+23 DEXE/USDT          68  20  25  14    0    4  2.13  0.94    69 FORTE
+24 TUT/USDT           68  20  25   0   13    9  8.32  1.10    56 FORTE
+25 U/USDT             67  20  25   0    7   15  0.02  2.19    61 FORTE
+26 MSTRB/USDT         65   8  25   0   15   12  0.91  1.62    59 FORTE
+27 KAITO/USDT         65  15  15   0   15   15  2.55  2.93    56 FORTE
+28 ZEC/USDT           63   8  25  14    7    4  1.23  0.78    73 MODERADO
+29 PORTAL/USDT        58  20   0  20   13    4 10.16  0.76    51 MODERADO
+30 XRP/USDT           57  20  15   0    7   12  0.50  1.96    48 MODERADO
+31 BNB/USDT           57  20  15   0    7   12  0.34  1.53    48 MODERADO
+32 LTC/USDT           57  20  15   0   10    9  0.41  1.20    45 MODERADO
+33 XLM/USDT           52  20  15   0    3    9  0.57  1.11    34 NEUTRO
+34 XPL/USDT           50  16   0  20    0    9  0.81  1.27    37 NEUTRO
+35 TAO/USDT           49  20   8   0    7    9  0.73  1.02    37 NEUTRO
+36 WLD/USDT           45  16   0  20    0    4  1.46  0.89    32 NEUTRO
+37 UNI/USDT           43  20  15   0    3    0  0.92  0.62    14 FRACO
+38 FET/USDT           42  16   8   0   13    0  1.15  0.41    22 FRACO
+39 ONG/USDT           41  16   0  20    0    4  5.35  0.85    25 FRACO
+40 BEL/USDT           41  16   0  20    0    0  1.97  0.25    20 FRACO
+41 SUI/USDT           40  20   8   0    3    4  0.55  0.75    19 FRACO
+42 TRX/USDT           34  11   0  20    3    0  0.16  0.63    13 FRACO
+43 RARE/USDT          33  16   0  14    0    0  3.51  0.59    12 FRACO
+44 AVAX/USDT          33  16   0   0    3    9  0.60  1.12     4 FRACO
+45 PEPE/USDT          33  16   0   0    3    9  1.10  1.04     4 FRACO
+46 FIL/USDT           28  16   0   0    7    0  0.64  0.13     0 MUITO FRACO
+47 ADA/USDT           23  11   0   0    3    4  0.79  0.87     0 MUITO FRACO
+48 BICO/USDT          19   7   0   0    0    9  3.97  1.30     0 MUITO FRACO
+49 HOME/USDT          16   2   0   0    0    9  2.57  1.09     0 MUITO FRACO
+50 PLUME/USDT         14   2   0   7    0    0  1.42  0.43     0 MUITO FRACO
+======================================================================================================================
+
+======================================================================
+                         TOP 10 V3
+======================================================================
+ 1. HEMI/USDT        97/100 EXCEPCIONAL     CONF 100% COMPRA FORTE
+ 2. GIGGLE/USDT      89/100 MUITO FORTE     CONF 100% COMPRA FORTE
+ 3. PAXG/USDT        89/100 MUITO FORTE     CONF 100% COMPRA FORTE
+ 4. ALLO/USDT        89/100 MUITO FORTE     CONF 100% COMPRA FORTE
+ 5. LINK/USDT        89/100 MUITO FORTE     CONF 100% COMPRA FORTE
+ 6. SOL/USDT         86/100 MUITO FORTE     CONF  96% COMPRA FORTE
+ 7. PUMP/USDT        86/100 MUITO FORTE     CONF  96% COMPRA FORTE
+ 8. SNXXB/USDT       83/100 MUITO FORTE     CONF  93% COMPRA FORTE
+ 9. SNDKB/USDT       83/100 MUITO FORTE     CONF  93% COMPRA FORTE
+10. MUB/USDT         83/100 MUITO FORTE     CONF  93% COMPRA FORTE
+======================================================================
+
+======================================================================
+                        SINAIS V3
+======================================================================
+ 1. HEMI/USDT       SCORE  97  CONF 100%  COMPRA FORTE
+ 2. GIGGLE/USDT     SCORE  89  CONF 100%  COMPRA FORTE
+ 3. PAXG/USDT       SCORE  89  CONF 100%  COMPRA FORTE
+ 4. ALLO/USDT       SCORE  89  CONF 100%  COMPRA FORTE
+ 5. LINK/USDT       SCORE  89  CONF 100%  COMPRA FORTE
+ 6. SOL/USDT        SCORE  86  CONF  96%  COMPRA FORTE
+ 7. PUMP/USDT       SCORE  86  CONF  96%  COMPRA FORTE
+ 8. SNXXB/USDT      SCORE  83  CONF  93%  COMPRA FORTE
+    Riscos: RSI_SOBRECOMPRADO
+ 9. SNDKB/USDT      SCORE  83  CONF  93%  COMPRA FORTE
+    Riscos: RSI_SOBRECOMPRADO
+10. MUB/USDT        SCORE  83  CONF  93%  COMPRA FORTE
+    Riscos: RSI_SOBRECOMPRADO
+11. XAUT/USDT       SCORE  82  CONF  95%  COMPRA FORTE
+12. ONDO/USDT       SCORE  79  CONF  89%  COMPRA
+13. ETH/USDT        SCORE  79  CONF  89%  COMPRA
+14. NEAR/USDT       SCORE  79  CONF  83%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO
+15. SPCXB/USDT      SCORE  75  CONF  83%  COMPRA
+16. CHIP/USDT       SCORE  75  CONF  77%  COMPRA
+    Riscos: VOLUME_BAIXO
+17. DOGE/USDT       SCORE  74  CONF  75%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO
+18. WLFI/USDT       SCORE  74  CONF  75%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO
+19. BTC/USDT        SCORE  73  CONF  83%  COMPRA
+20. ACE/USDT        SCORE  73  CONF  74%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO, VOLATILIDADE_ALTA
+21. SKHYB/USDT      SCORE  70  CONF  77%  COMPRA
+    Riscos: RSI_SOBRECOMPRADO
+22. GPS/USDT        SCORE  69  CONF  70%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO, VOLATILIDADE_ALTA
+23. DEXE/USDT       SCORE  68  CONF  69%  COMPRA
+    Riscos: MOMENTUM_NEGATIVO
+======================================================================
+
+Salvando análises V3 no banco...
+✓ 50 análises V3 salvas
+
+======================================================================
+                        RESUMO V3
+======================================================================
+Mercados selecionados: 50
+Análises concluídas:   50
+Análises salvas:       50
+Erros/avisos:          0
+Tempo total:           38.28s
+Banco:                 /home/alex/projetos/crypto-radar/data/crypto_radar.db
+Tabela V3:             scanner_v3_results
+======================================================================

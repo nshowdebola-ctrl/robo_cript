@@ -1,0 +1,15 @@
+metric,value
+verdict,FALHA_ECONOMICA_GLOBAL
+columns,12
+trades_valid,31749
+parse_errors,0
+scenarios,104
+exact_price_return,0
+cost_compatible,0
+return_mismatch,31749
+large_implicit_cost,0
+pnl_sign_conflicts,0
+pnl_magnitude_issues,0
+flat_price,448
+median_implicit_cost_pct,0.20000000
+mean_implicit_cost_pct,0.20758449
