@@ -14,24 +14,57 @@ from __future__ import annotations
 
 import re
 
+# Cada forma (singular/plural/tempo verbal) é listada explicitamente
+# em vez de casar por radical - radical curto demais (ex: "ban", "drop")
+# bateria em palavras não relacionadas ("banana", "Dropbox").
 POSITIVE_TERMS = [
-    "surge", "surges", "soar", "soars", "rally", "rallies", "bullish",
+    "surge", "surges", "surged", "soar", "soars", "soared",
+    "rally", "rallies", "rallied", "bullish",
     "breakout", "all-time high", "record high", "outperform",
-    "adoption", "partnership", "integrates", "integration", "launches",
-    "upgrade", "approval", "approved", "etf approved", "institutional inflow",
-    "inflow", "buy the dip", "recovery", "rebound", "green",
+    "adoption", "partnership",
+    "integrates", "integration", "integrated", "launches", "launched",
+    "upgrade", "upgrades", "upgraded",
+    "approval", "approved", "approves", "etf approved",
+    "institutional inflow", "inflow", "buy the dip",
+    "recovery", "recovers", "recovered",
+    "rebound", "rebounds", "rebounded", "rebounding", "green",
+    "climb", "climbs", "climbed", "climbing",
+    "jump", "jumps", "jumped", "jumping",
+    "gain", "gains", "gained", "gaining",
+    "advance", "advances", "advanced",
+    "rise", "rises", "rose", "risen", "rising",
+    "spike", "spikes", "spiked",
+    "rocket", "rockets", "rocketed", "moons", "mooning",
+    "extends gains", "beats expectations",
     "alta", "dispara", "disparou", "recorde", "aprovação", "aprovado",
-    "parceria", "recuperação", "valorização",
+    "parceria", "recuperação", "valorização", "sobe", "subiu", "avança",
 ]
 
 NEGATIVE_TERMS = [
-    "crash", "crashes", "plunge", "plunges", "bearish", "selloff",
-    "sell-off", "dump", "dumps", "collapse", "hack", "hacked", "exploit",
-    "exploited", "lawsuit", "sues", "sued", "ban", "banned", "crackdown",
-    "investigation", "fraud", "scam", "bankruptcy", "bankrupt", "delist",
-    "delisted", "outflow", "liquidation", "liquidated", "sec sues",
-    "queda", "despenca", "despencou", "processo", "proibição", "proibido",
-    "hackeada", "hackeado", "fraude", "falência", "investigação",
+    "crash", "crashes", "crashed",
+    "plunge", "plunges", "plunged", "bearish",
+    "selloff", "sell-off", "dump", "dumps", "dumped",
+    "collapse", "collapses", "collapsed",
+    "hack", "hacked", "exploit", "exploited",
+    "lawsuit", "sues", "sued", "suing",
+    "ban", "bans", "banned", "banning", "crackdown",
+    "investigation", "investigated", "investigating",
+    "fraud", "scam", "bankruptcy", "bankrupt",
+    "delist", "delisted", "outflow",
+    "liquidation", "liquidated", "sec sues",
+    "fall", "falls", "fell", "fallen", "falling",
+    "drop", "drops", "dropped", "dropping",
+    "sink", "sinks", "sank", "sunk", "sinking",
+    "tumble", "tumbles", "tumbled",
+    "slide", "slides", "slid", "sliding",
+    "slump", "slumps", "slumped",
+    "decline", "declines", "declined",
+    "retreat", "retreats", "retreated",
+    "weaken", "weakens", "weakened",
+    "rejection", "rejected",
+    "queda", "despenca", "despencou", "processo", "proibição",
+    "proibido", "hackeada", "hackeado", "fraude", "falência",
+    "investigação", "cai", "caiu", "recua", "tomba", "afunda",
 ]
 
 

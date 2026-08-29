@@ -39,8 +39,19 @@ LOG_FILE = DATA / "news_collector.log"
 HTTP_TIMEOUT = 15
 USER_AGENT = "crypto-radar-news-collector/1.0 (+paper-only research bot)"
 
+def _compile_alias(alias: str) -> re.Pattern:
+    # "$TICKER" (cashtag) exige o "$" literal antes do ticker - usado
+    # para tickers que colidem com palavra comum (ex: $BANK, $HOME).
+    # O "$" já funciona como âncora, então não usamos \b antes dele
+    # (um \b logo antes de "$" quase nunca casa, já que "$" não é
+    # caractere de palavra).
+    if alias.startswith("$"):
+        return re.compile(r"\$" + re.escape(alias[1:]) + r"\b", re.IGNORECASE)
+    return re.compile(r"\b" + re.escape(alias) + r"\b", re.IGNORECASE)
+
+
 _SYMBOL_PATTERNS: dict[str, list[re.Pattern]] = {
-    symbol: [re.compile(r"\b" + re.escape(alias) + r"\b", re.IGNORECASE) for alias in aliases]
+    symbol: [_compile_alias(alias) for alias in aliases]
     for symbol, aliases in SYMBOL_ALIASES.items()
 }
 

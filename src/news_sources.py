@@ -20,12 +20,20 @@ FEEDS: list[dict[str, str]] = [
 ]
 
 # Ticker base (sem "/USDT") -> termos de busca na manchete.
-# Critério de inclusão: só ativos com nome próprio inconfundível.
-# Tickers curtos/ambíguos que colidem com palavras comuns do inglês
-# (ex: "U", "RE", "HOME", "GPS", "BIO", "TREE", "RED", "SPK") ficam de
-# fora de propósito - dariam falso positivo constante num scraper de
-# texto livre. Dá pra curar manualmente depois se algum desses vier a
-# importar.
+#
+# Duas formas de alias:
+#   - texto normal (ex: "Bitcoin"): casa como palavra inteira em
+#     qualquer lugar da manchete, sem diferenciar maiúsc./minúsc.
+#   - "$TICKER" (cashtag): casa só como "$TICKER" literal. Usado para
+#     tickers que colidem com palavras comuns do inglês/português (ex:
+#     BANK, HOME, GPS, RARE, PEOPLE) - a forma cashtag reduz bastante o
+#     falso positivo, ao custo de só pegar manchetes que efetivamente
+#     citam o ticker nesse formato (perde alguma cobertura).
+#
+# Símbolos excluídos por completo (não entram nem como cashtag):
+#   - "U" e "EUR": ambíguos demais mesmo com "$" (ex: $U é o ticker real
+#     da Unity Software na bolsa; EUR é a moeda Euro, aparece o tempo
+#     todo em notícia financeira comum).
 SYMBOL_ALIASES: dict[str, list[str]] = {
     "BTC": ["Bitcoin", "BTC"],
     "ETH": ["Ethereum", "Ether", "ETH"],
@@ -69,4 +77,71 @@ SYMBOL_ALIASES: dict[str, list[str]] = {
     "XAUT": ["Tether Gold", "XAUT"],
     "USDC": ["USD Coin", "USDC"],
     "USDE": ["Ethena USDe", "USDe"],
+
+    # --- Ampliação: restante dos ~108 símbolos hoje acompanhados pelo
+    #     scanner_v3.py. Tickers distintos entram como palavra normal;
+    #     tickers que colidem com palavra comum entram só como cashtag.
+    "ACE": ["$ACE"],
+    "ALLO": ["ALLO"],
+    "ALPINE": ["Alpine"],
+    "ASTER": ["Aster", "ASTER"],
+    "BANK": ["$BANK"],
+    "BEAMX": ["BEAMX"],
+    "BEL": ["$BEL"],
+    "BICO": ["Biconomy", "BICO"],
+    "BIO": ["$BIO"],
+    "BMT": ["BMT"],
+    "BOME": ["Book of Meme", "BOME"],
+    "CHIP": ["$CHIP"],
+    "CRCLB": ["CRCLB"],
+    "DEXE": ["DeXe", "DEXE"],
+    "EDEN": ["$EDEN"],
+    "ENSO": ["Enso"],
+    "ETHFI": ["Ether.fi", "ETHFI"],
+    "EURI": ["$EURI"],
+    "EWYB": ["EWYB"],
+    "FDUSD": ["FDUSD"],
+    "GIGGLE": ["$GIGGLE"],
+    "GPS": ["$GPS"],
+    "GRAM": ["$GRAM"],
+    "HEI": ["$HEI"],
+    "HEMI": ["$HEMI"],
+    "HOME": ["$HOME"],
+    "KAITO": ["Kaito"],
+    "KORUB": ["KORUB"],
+    "MORPHO": ["Morpho"],
+    "MOVR": ["Moonriver", "MOVR"],
+    "MSTRB": ["MSTRB"],
+    "MUB": ["$MUB"],
+    "MUBARAK": ["MUBARAK"],
+    "NEIRO": ["Neiro"],
+    "ONG": ["$ONG"],
+    "ONT": ["Ontology", "ONT"],
+    "OPN": ["OPN"],
+    "PAXG": ["Pax Gold", "PAXG"],
+    "PEOPLE": ["$PEOPLE"],
+    "PLUME": ["$PLUME"],
+    "POL": ["$POL"],
+    "PORTAL": ["$PORTAL"],
+    "PROM": ["$PROM"],
+    "PUMP": ["$PUMP"],
+    "RARE": ["$RARE"],
+    "RE": ["$RE"],
+    "RED": ["$RED"],
+    "RLUSD": ["RLUSD"],
+    "SKHYB": ["SKHYB"],
+    "SNDKB": ["SNDKB"],
+    "SNXXB": ["SNXXB"],
+    "SOXLB": ["SOXLB"],
+    "SPCXB": ["SPCXB"],
+    "SPK": ["$SPK"],
+    "TREE": ["$TREE"],
+    "TUT": ["$TUT"],
+    "USD1": ["USD1"],
+    "VIRTUAL": ["$VIRTUAL"],
+    "WLFI": ["WLFI", "World Liberty Financial"],
+    "XPL": ["XPL"],
+    "XUSD": ["XUSD"],
+    "ZAMA": ["Zama"],
+    "ZRO": ["LayerZero", "ZRO"],
 }
