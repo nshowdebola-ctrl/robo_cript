@@ -141,6 +141,64 @@ function safeIdentifier(?string $identifier): string
     return '"' . $identifier . '"';
 }
 
+function renderSparkline(array $prices): string
+{
+    $count = count($prices);
+
+    if ($count < 2) {
+        return '';
+    }
+
+    $width = 180;
+    $height = 40;
+    $padding = 4;
+
+    $min = min($prices);
+    $max = max($prices);
+    $range = $max - $min;
+
+    // Série flat (sem variação) - desenha uma linha reta no meio em vez
+    // de dividir por zero.
+    if ($range <= 0.0) {
+        $range = 1.0;
+    }
+
+    $stepX = ($width - $padding * 2) / ($count - 1);
+
+    $points = [];
+    foreach ($prices as $index => $price) {
+        $x = $padding + $index * $stepX;
+        $normalized = ($price - $min) / $range;
+        $y = $height - $padding - ($normalized * ($height - $padding * 2));
+        $points[] = sprintf('%.2f,%.2f', $x, $y);
+    }
+
+    $trendUp = end($prices) >= reset($prices);
+
+    // Reaproveita as mesmas cores de positive/negative já usadas no
+    // resto do dashboard - não introduz paleta nova.
+    $stroke = $trendUp ? '#65dfa0' : '#ff778b';
+
+    $lastPoint = explode(',', $points[$count - 1]);
+
+    return sprintf(
+        '<svg viewBox="0 0 %d %d" width="%d" height="%d" class="sparkline" role="img" aria-label="tendência de preço">'
+        . '<polyline points="%s" fill="none" stroke="%s" stroke-width="2" '
+        . 'stroke-linecap="round" stroke-linejoin="round" />'
+        . '<circle cx="%s" cy="%s" r="2.5" fill="%s" />'
+        . '</svg>',
+        $width,
+        $height,
+        $width,
+        $height,
+        h(implode(' ', $points)),
+        $stroke,
+        h($lastPoint[0]),
+        h($lastPoint[1]),
+        $stroke
+    );
+}
+
 function classificationUpper(string $value): string
 {
     /*
@@ -442,6 +500,47 @@ try {
                 $stmt->execute(['round' => $latestRound]);
                 $topPicks = $stmt->fetchAll();
             }
+        }
+    }
+
+    /*
+     * Histórico recente de preço por símbolo (pra desenhar o
+     * sparkline de cada card de destaque). Uma consulta por símbolo -
+     * o número de picks é pequeno (até 10), então isso não pesa.
+     */
+
+    $priceHistory = [];
+
+    if ($topPicks && $symbolColumn !== null && $priceColumn !== null) {
+        $orderColumn = $runAtColumn ?? $timestampColumn;
+        $historySql = $orderColumn !== null
+            ? safeIdentifier($orderColumn) . ' DESC'
+            : 'rowid DESC';
+
+        $stmt = $pdo->prepare(
+            'SELECT ' . safeIdentifier($priceColumn) . ' AS price
+             FROM "' . $table . '"
+             WHERE ' . safeIdentifier($symbolColumn) . ' = :symbol
+             ORDER BY ' . $historySql . '
+             LIMIT 30'
+        );
+
+        foreach ($topPicks as $pick) {
+            $sym = (string) $pick['symbol'];
+
+            if (isset($priceHistory[$sym])) {
+                continue;
+            }
+
+            $stmt->execute(['symbol' => $sym]);
+            $values = array_map(
+                static fn($row) => (float) $row['price'],
+                $stmt->fetchAll()
+            );
+
+            // Vem em ordem DESC (mais recente primeiro) - inverte pra
+            // ordem cronológica antes de desenhar.
+            $priceHistory[$sym] = array_reverse($values);
         }
     }
 
@@ -825,6 +924,17 @@ try {
             font-size: 14px;
         }
 
+        .pick-sparkline {
+            margin-top: 10px;
+            line-height: 0;
+        }
+
+        .pick-sparkline svg {
+            width: 100%;
+            height: 36px;
+            display: block;
+        }
+
         tr.row-buy td {
             background: rgba(45, 220, 120, .06);
             border-left: 3px solid #2fae66;
@@ -1049,6 +1159,19 @@ try {
                     <div class="pick-meta">
                         <span>Preço <strong><?= numberValue($pick['price'], 8) ?></strong></span>
                     </div>
+
+                    <?php
+                    $sparklinePrices = $priceHistory[(string) $pick['symbol']] ?? [];
+                    $sparklineSvg = renderSparkline($sparklinePrices);
+                    ?>
+
+                    <?php if ($sparklineSvg !== ''): ?>
+
+                        <div class="pick-sparkline">
+                            <?= $sparklineSvg ?>
+                        </div>
+
+                    <?php endif; ?>
 
                 </div>
 
