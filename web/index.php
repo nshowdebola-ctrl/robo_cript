@@ -1128,9 +1128,7 @@ try {
 
 <footer>
 
-    Crypto Radar V3 • Banco:
-
-    <?= h(DB_FILE) ?>
+    Crypto Radar V3 • Banco: crypto_radar.db
 
 </footer>
 

@@ -147,14 +147,8 @@ def load_open():
     return rows
 
 
-def already_closed(signal_id):
-    rows = read_csv(LEDGER)
-    return any(r.get("trade_id", "").startswith(signal_id + "_") for r in rows)
-
-
 def open_trade(signal):
     p = num(signal["entry_price"])
-    quantity = NOTIONAL / p
 
     # Slippage de entrada desfavorável para uma posição LONG.
     effective_entry = p * (1.0 + SLIPPAGE_ENTRY_PCT)

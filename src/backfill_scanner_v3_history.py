@@ -367,27 +367,6 @@ def trend_points_1h(price: float, ema20: float, ema50: float) -> int:
     return 0
 
 
-def trend_points_4h_from_window(df4: pd.DataFrame) -> int:
-    if len(df4) < 55:
-        return 0
-
-    close4 = df4["close"]
-    ema20 = close4.ewm(span=20, adjust=False).mean()
-    ema50 = close4.ewm(span=50, adjust=False).mean()
-
-    price = float(close4.iloc[-1])
-    e20 = float(ema20.iloc[-1])
-    e50 = float(ema50.iloc[-1])
-
-    if price > e20 > e50:
-        return 20
-    if price > e20:
-        return 14
-    if price > e50:
-        return 7
-    return 0
-
-
 def rsi_points(rsi: float) -> int:
     if rsi >= 50 and rsi < 70:
         return 20

@@ -53,7 +53,10 @@ DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "crypto_radar.db"
 
 TIMEFRAME = "1h"
-CANDLES = 120
+# 240 candles de 1h (10 dias) garantem ~55-60 candles de 4h após o
+# resample - abaixo disso, trend_points_4h() nunca teria dado
+# fechado suficiente pra calcular EMA50 de 4h e sempre pontuaria 0.
+CANDLES = 240
 
 TOP_MARKETS = 50
 MIN_VOLUME_USDT = 1_000_000
@@ -115,6 +118,7 @@ def init_database() -> None:
             """
             CREATE TABLE IF NOT EXISTS scanner_v3_results (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                run_at TEXT,
                 timestamp TEXT NOT NULL,
                 symbol TEXT NOT NULL,
                 timeframe TEXT NOT NULL,
@@ -155,6 +159,7 @@ def init_database() -> None:
         existing = {row[1] for row in db.execute("PRAGMA table_info(scanner_v3_results)")}
 
         additions = {
+            "run_at": "TEXT",
             "price_4h": "REAL NOT NULL DEFAULT 0",
             "ema20_4h": "REAL NOT NULL DEFAULT 0",
             "ema50_4h": "REAL NOT NULL DEFAULT 0",
@@ -179,15 +184,22 @@ def init_database() -> None:
     finally:
         db.close()
 
-def save_results(results: list[dict[str, Any]]) -> int:
+def save_results(results: list[dict[str, Any]], run_at: str) -> int:
     if not results:
         return 0
 
     # O banco atual possui colunas extras e várias delas são NOT NULL.
     # Gravamos explicitamente todas as colunas relevantes para evitar
     # incompatibilidade entre versões do scanner e do schema.
+    #
+    # run_at identifica esta execução do scanner (horário real em que
+    # rodou), diferente de "timestamp" (horário do candle analisado).
+    # Sem essa distinção, duas execuções dentro da mesma hora podem
+    # analisar o mesmo candle ainda não fechado na próxima vela e o
+    # adaptador V9.20 não consegue distinguir "última rodada" de
+    # "rodada anterior que caiu no mesmo candle".
     columns = [
-        "timestamp", "symbol", "timeframe", "price",
+        "run_at", "timestamp", "symbol", "timeframe", "price",
         "rsi", "ema20", "ema50",
         "price_4h", "ema20_4h", "ema50_4h",
         "momentum_4h", "relative_volume",
@@ -205,7 +217,7 @@ def save_results(results: list[dict[str, Any]]) -> int:
     for r in results:
         risks_text = ",".join(r.get("risks", []))
         rows.append((
-            r["timestamp"], r["symbol"], TIMEFRAME, r["price"],
+            run_at, r["timestamp"], r["symbol"], TIMEFRAME, r["price"],
             r["rsi"], r["ema20"], r["ema50"],
             r["price_4h"], r["ema20_4h"], r["ema50_4h"],
             r["momentum_4h"], r["relative_volume"],
@@ -372,7 +384,7 @@ def resample_4h(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def trend_points_4h(df: pd.DataFrame) -> int:
-    if len(df) < 55:
+    if len(df) < 50:
         return 0
 
     close = df["close"]
@@ -1229,6 +1241,7 @@ def print_signals(
 def main() -> None:
 
     start_time = time.time()
+    run_at = datetime.now(timezone.utc).isoformat()
 
     print_header()
 
@@ -1387,7 +1400,8 @@ def main() -> None:
         try:
 
             saved = save_results(
-                results
+                results,
+                run_at
             )
 
             print(

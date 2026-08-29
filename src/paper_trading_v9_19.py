@@ -165,11 +165,14 @@ def main():
         print("Inconsistências:")
         for e in errors:
             print(" -", e)
-    else:
-        print("APROVADA")
-        print("Integridade estrutural do ciclo forward confirmada.")
-        print("Nenhum dado foi inventado, corrigido ou composto.")
+        print("=" * 100)
+        return 1
+
+    print("APROVADA")
+    print("Integridade estrutural do ciclo forward confirmada.")
+    print("Nenhum dado foi inventado, corrigido ou composto.")
     print("=" * 100)
+    return 0
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

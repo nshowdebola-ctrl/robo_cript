@@ -75,9 +75,15 @@ def read_existing_ids() -> set[str]:
         }
 
 
-def latest_timestamp(conn: sqlite3.Connection) -> str | None:
+def latest_run(conn: sqlite3.Connection) -> str | None:
+    # run_at identifica a EXECUÇÃO do scanner (horário real em que rodou),
+    # diferente de "timestamp" (horário do candle analisado). Duas
+    # execuções dentro da mesma hora podem analisar o mesmo candle ainda
+    # não fechado na vela seguinte; usar "timestamp" para achar "a última
+    # rodada" misturava execuções diferentes que caíssem no mesmo candle,
+    # gerando sinais duplicados/reprocessados. run_at é único por execução.
     row = conn.execute(
-        "SELECT MAX(timestamp) FROM scanner_v3_results"
+        "SELECT MAX(run_at) FROM scanner_v3_results"
     ).fetchone()
     return row[0] if row and row[0] else None
 
@@ -85,9 +91,9 @@ def latest_timestamp(conn: sqlite3.Connection) -> str | None:
 def load_latest_buy_signals(
     conn: sqlite3.Connection,
 ) -> tuple[str | None, list[dict]]:
-    ts = latest_timestamp(conn)
+    run_at = latest_run(conn)
 
-    if not ts:
+    if not run_at:
         return None, []
 
     columns = {
@@ -98,6 +104,7 @@ def load_latest_buy_signals(
     }
 
     required = {
+        "run_at",
         "timestamp",
         "symbol",
         "timeframe",
@@ -125,15 +132,15 @@ def load_latest_buy_signals(
             signal,
             confidence
         FROM scanner_v3_results
-        WHERE timestamp = ?
+        WHERE run_at = ?
           AND timeframe = ?
           AND signal IN ('COMPRA', 'COMPRA FORTE')
         ORDER BY score DESC, confidence DESC, symbol ASC
         """,
-        (ts, TIMEFRAME_EXPECTED),
+        (run_at, TIMEFRAME_EXPECTED),
     ).fetchall()
 
-    return ts, [
+    return run_at, [
         {
             "timestamp": r[0],
             "symbol": r[1],
