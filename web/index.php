@@ -250,6 +250,20 @@ try {
         ]
     );
 
+    $signalColumn = firstExistingColumn(
+        $columns,
+        [
+            'signal',
+        ]
+    );
+
+    $runAtColumn = firstExistingColumn(
+        $columns,
+        [
+            'run_at',
+        ]
+    );
+
     $timestampColumn = firstExistingColumn(
         $columns,
         [
@@ -356,6 +370,14 @@ try {
         $select[] = "'' AS classification";
     }
 
+    if ($signalColumn !== null) {
+        $select[] =
+            safeIdentifier($signalColumn) .
+            ' AS signal_raw';
+    } else {
+        $select[] = "'' AS signal_raw";
+    }
+
     if ($timestampColumn !== null) {
         $select[] =
             safeIdentifier($timestampColumn) .
@@ -383,6 +405,45 @@ try {
     );
 
     $rows = $pdo->query($sql)->fetchAll();
+
+    /*
+     * Melhores oportunidades de compra (rodada mais recente do
+     * scanner). Só é possível separar "a rodada mais recente" de
+     * "rodadas anteriores que caíram no mesmo candle" quando a coluna
+     * run_at existe (execuções mais antigas do banco não têm essa
+     * coluna e caem no fallback por "timestamp").
+     */
+
+    $topPicks = [];
+
+    if ($signalColumn !== null) {
+        $roundColumn = $runAtColumn ?? $timestampColumn;
+
+        if ($roundColumn !== null) {
+            $roundSql = safeIdentifier($roundColumn);
+            $signalSql = safeIdentifier($signalColumn);
+
+            $latestRound = $pdo
+                ->query("SELECT MAX({$roundSql}) FROM \"{$table}\"")
+                ->fetchColumn();
+
+            if ($latestRound !== false && $latestRound !== null) {
+                $topSql = implode(', ', $select) . ", {$roundSql} AS round_key";
+
+                $stmt = $pdo->prepare(
+                    "SELECT {$topSql}
+                     FROM \"{$table}\"
+                     WHERE {$roundSql} = :round
+                       AND {$signalSql} IN ('COMPRA', 'COMPRA FORTE')
+                     ORDER BY "
+                    . ($scoreColumn !== null ? safeIdentifier($scoreColumn) . ' DESC' : 'rowid DESC')
+                    . " LIMIT 10"
+                );
+                $stmt->execute(['round' => $latestRound]);
+                $topPicks = $stmt->fetchAll();
+            }
+        }
+    }
 
     /*
      * Classificação dos sinais.
@@ -702,6 +763,77 @@ try {
             background: #1c2941;
         }
 
+        .badge.buy {
+            background: #103d27;
+            color: #6bf0a4;
+            border: 1px solid #1f7a4d;
+        }
+
+        .badge.buy-strong {
+            background: #123a1f;
+            color: #7dffb0;
+            border: 1px solid #2fae66;
+            box-shadow: 0 0 0 1px rgba(45, 220, 120, .25);
+        }
+
+        .picks-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(220px, 1fr));
+
+            gap: 14px;
+
+            margin-bottom: 28px;
+        }
+
+        .pick-card {
+            background:
+                linear-gradient(
+                    155deg,
+                    #0f2a1c,
+                    #111a2e
+                );
+
+            border: 1px solid #1f7a4d;
+
+            border-radius: 14px;
+
+            padding: 18px;
+        }
+
+        .pick-card .pick-symbol {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .pick-card .pick-signal {
+            margin-top: 6px;
+        }
+
+        .pick-card .pick-meta {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #9db3a6;
+        }
+
+        .pick-card .pick-meta strong {
+            color: #e8edf7;
+            font-size: 14px;
+        }
+
+        tr.row-buy td {
+            background: rgba(45, 220, 120, .06);
+            border-left: 3px solid #2fae66;
+        }
+
+        tr.row-buy:hover td {
+            background: rgba(45, 220, 120, .12);
+        }
+
         footer {
             max-width: 1400px;
 
@@ -869,6 +1001,65 @@ try {
 
     </section>
 
+    <?php if ($topPicks): ?>
+
+    <section>
+
+        <div class="section-header" style="padding: 0 0 14px;">
+
+            <h2>
+                🎯 Melhores oportunidades de compra agora
+            </h2>
+
+            <p>
+                Sinal COMPRA/COMPRA FORTE na rodada mais recente do scanner,
+                ordenado por score. Isto reflete o que o radar está
+                classificando como forte agora - não é recomendação validada
+                (ver histórico de backtest do projeto).
+            </p>
+
+        </div>
+
+        <div class="picks-grid">
+
+            <?php foreach ($topPicks as $pick): ?>
+
+                <?php
+                $pickSignal = trim((string) ($pick['signal_raw'] ?? ''));
+                $isStrong = str_contains(classificationUpper($pickSignal), 'FORTE');
+                ?>
+
+                <div class="pick-card">
+
+                    <div class="pick-symbol">
+                        <?= h($pick['symbol']) ?>
+                    </div>
+
+                    <div class="pick-signal">
+                        <span class="badge <?= $isStrong ? 'buy-strong' : 'buy' ?>">
+                            <?= h($pickSignal !== '' ? $pickSignal : 'COMPRA') ?>
+                        </span>
+                    </div>
+
+                    <div class="pick-meta">
+                        <span>Score <strong><?= numberValue($pick['score'], 0) ?></strong></span>
+                        <span>Confiança <strong><?= numberValue($pick['confidence'], 0) ?>%</strong></span>
+                    </div>
+
+                    <div class="pick-meta">
+                        <span>Preço <strong><?= numberValue($pick['price'], 8) ?></strong></span>
+                    </div>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+
+    </section>
+
+    <?php endif; ?>
+
     <section class="section">
 
         <div class="section-header">
@@ -927,6 +1118,10 @@ try {
                         </th>
 
                         <th>
+                            Sinal
+                        </th>
+
+                        <th>
                             Data
                         </th>
 
@@ -940,7 +1135,7 @@ try {
 
                     <tr>
 
-                        <td colspan="9">
+                        <td colspan="10">
 
                             Nenhuma análise encontrada.
 
@@ -1011,9 +1206,27 @@ try {
                             $row['analysis_time']
                             ?? null;
 
+                        $signalRaw =
+                            trim(
+                                (string)
+                                (
+                                    $row['signal_raw']
+                                    ?? ''
+                                )
+                            );
+
+                        $signalUpper = classificationUpper($signalRaw);
+
+                        $isBuySignal =
+                            str_contains($signalUpper, 'COMPRA');
+
+                        $isStrongBuy =
+                            $isBuySignal &&
+                            str_contains($signalUpper, 'FORTE');
+
                         ?>
 
-                        <tr>
+                        <tr<?= $isBuySignal ? ' class="row-buy"' : '' ?>>
 
                             <td class="symbol">
 
@@ -1095,6 +1308,22 @@ try {
                                     ) ?>
 
                                 </span>
+
+                            </td>
+
+                            <td>
+
+                                <?php if ($isBuySignal): ?>
+
+                                    <span class="badge <?= $isStrongBuy ? 'buy-strong' : 'buy' ?>">
+                                        <?= h($signalRaw) ?>
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <?= h($signalRaw !== '' ? $signalRaw : '-') ?>
+
+                                <?php endif; ?>
 
                             </td>
 
