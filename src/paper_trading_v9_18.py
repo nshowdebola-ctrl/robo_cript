@@ -234,7 +234,7 @@ def main():
             remaining.append(pos)
             continue
 
-        reason, target_reached = should_close(pos, price, current)
+        reason = should_close(pos, price, current)
 
         entry = float(pos["entry_price"])
         raw_ret = (price / entry - 1.0) * 100.0
@@ -249,12 +249,10 @@ def main():
                 f"reason={reason:<6} net=${float(trade['net_pnl']):+.4f}"
             )
         else:
-            pos["target_reached"] = "1" if target_reached else "0"
             remaining.append(pos)
-            flag = " (alvo travado)" if target_reached else ""
             print(
                 f"HOLD  {symbol:<12} price={price:.8f} "
-                f"ret={raw_ret:+.3f}% age={age:.2f}h{flag}"
+                f"ret={raw_ret:+.3f}% age={age:.2f}h"
             )
 
     # OPEN_FIELDS (de v9_17.py) em vez do open_fields lido do arquivo -
