@@ -15,6 +15,13 @@ Princípios:
     - NÃO cria dados financeiros.
     - Somente sinais COMPRA / COMPRA FORTE são convertidos para LONG.
     - Duplicatas são evitadas pelo signal_id.
+    - Um símbolo que já tem sinal LONG pendente (acionável: não expirado,
+      não aberto, não fechado) não recebe sinal novo - o score do
+      scanner_v3.py é recalculado do zero a cada hora, sem memória, então
+      uma moeda em tendência longa reapareceria como "sinal novo" todo
+      ciclo e inflaria a fila com dezenas de entradas redundantes pro
+      mesmo símbolo (já aconteceu: 55 símbolos geraram 500 sinais
+      "acionáveis" em ~2 dias, travando o executor).
     - Processa somente a rodada mais recente do Scanner V3.
 """
 
@@ -24,6 +31,8 @@ import csv
 import hashlib
 import sqlite3
 from pathlib import Path
+
+from paper_trading_v9_21 import ids_from_ledger, ids_from_open, is_fresh
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -62,17 +71,39 @@ def ensure_output() -> None:
             writer.writeheader()
 
 
-def read_existing_ids() -> set[str]:
+def read_existing_rows() -> list[dict]:
     if not OUTPUT_PATH.exists():
-        return set()
+        return []
 
     with OUTPUT_PATH.open("r", newline="", encoding="utf-8") as fh:
-        reader = csv.DictReader(fh)
-        return {
-            (row.get("signal_id") or "").strip()
-            for row in reader
-            if (row.get("signal_id") or "").strip()
-        }
+        return list(csv.DictReader(fh))
+
+
+def read_existing_ids(rows: list[dict]) -> set[str]:
+    return {
+        (row.get("signal_id") or "").strip()
+        for row in rows
+        if (row.get("signal_id") or "").strip()
+    }
+
+
+def pending_symbols(rows: list[dict]) -> set[str]:
+    """Símbolos com sinal LONG já acionável na fila (não expirado, não
+    aberto, não fechado) - reemitir sinal novo pra um desses símbolos
+    seria a mesma oportunidade duplicada, não uma entrada nova."""
+    open_ids = ids_from_open()
+    closed_ids = ids_from_ledger()
+    pending = set()
+    for row in rows:
+        sid = (row.get("signal_id") or "").strip()
+        if not sid or sid in open_ids or sid in closed_ids:
+            continue
+        if (row.get("signal") or "").strip().upper() != "LONG":
+            continue
+        if not is_fresh(row.get("entry_time", "")):
+            continue
+        pending.add((row.get("symbol") or "").strip().upper())
+    return pending
 
 
 def latest_run(conn: sqlite3.Connection) -> str | None:
@@ -192,24 +223,33 @@ def convert(row: dict) -> dict:
     }
 
 
-def append_new(rows: list[dict], existing_ids: set[str]) -> int:
-    new_rows = [
-        row for row in rows
-        if row["signal_id"] not in existing_ids
-    ]
+def append_new(
+    rows: list[dict], existing_ids: set[str], pending: set[str]
+) -> tuple[int, int]:
+    new_rows = []
+    skipped_pending = 0
+    blocked_symbols = set(pending)
+    for row in rows:
+        if row["signal_id"] in existing_ids:
+            continue
+        symbol = row["symbol"].strip().upper()
+        if symbol in blocked_symbols:
+            skipped_pending += 1
+            continue
+        new_rows.append(row)
+        # Também evita duas linhas novas pro mesmo símbolo na mesma rodada.
+        blocked_symbols.add(symbol)
 
-    if not new_rows:
-        return 0
+    if new_rows:
+        with OUTPUT_PATH.open("a", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(
+                fh,
+                fieldnames=OUTPUT_FIELDS,
+                lineterminator="\n",
+            )
+            writer.writerows(new_rows)
 
-    with OUTPUT_PATH.open("a", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(
-            fh,
-            fieldnames=OUTPUT_FIELDS,
-            lineterminator="\n",
-        )
-        writer.writerows(new_rows)
-
-    return len(new_rows)
+    return len(new_rows), skipped_pending
 
 
 def main() -> int:
@@ -228,7 +268,9 @@ def main() -> int:
         return 1
 
     ensure_output()
-    existing_ids = read_existing_ids()
+    existing_rows = read_existing_rows()
+    existing_ids = read_existing_ids(existing_rows)
+    pending = pending_symbols(existing_rows)
 
     conn = None
     try:
@@ -246,12 +288,14 @@ def main() -> int:
         return 0
 
     converted = [convert(row) for row in source_rows]
-    added = append_new(converted, existing_ids)
+    added, skipped_pending = append_new(converted, existing_ids, pending)
+    already_existing = len(source_rows) - added - skipped_pending
 
     print(f"Última rodada V3: {ts}")
-    print(f"Sinais COMPRA/COMPRA FORTE: {len(source_rows)}")
-    print(f"Sinais novos gravados:      {added}")
-    print(f"Sinais já existentes:       {len(source_rows) - added}")
+    print(f"Sinais COMPRA/COMPRA FORTE:              {len(source_rows)}")
+    print(f"Sinais novos gravados:                   {added}")
+    print(f"Sinais já existentes:                    {already_existing}")
+    print(f"Símbolo já com sinal pendente (ignorados): {skipped_pending}")
     print()
     print("IMPORTANTE:")
     print("  O preço, timestamp, score e confiança vêm diretamente do V3.")

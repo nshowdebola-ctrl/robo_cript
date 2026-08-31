@@ -20,9 +20,9 @@ Princípios:
   fechar uma posição vencida/stopada não é uma ação arriscada.
 - Nunca executa V9.17 se o preflight encontrar sinais acionáveis
   semanticamente duplicados (símbolo + entry_time + timeframe) ou um
-  volume de sinais muito acima da capacidade do sistema (20x
-  MAX_POSITIONS - teto de sanidade, não limite de vagas). O V9.17 já
-  limita quantas posições realmente abre por ciclo às vagas livres.
+  volume de SÍMBOLOS (não linhas) muito acima da capacidade do sistema
+  (20x MAX_POSITIONS - teto de sanidade, não limite de vagas). O V9.17
+  já limita quantas posições realmente abre por ciclo às vagas livres.
 - Sinais já associados a posição aberta ou trade fechado, ou com
   entry_time mais velho que MAX_SIGNAL_AGE_HOURS (24h), não contam
   como acionáveis.
@@ -211,15 +211,38 @@ def preflight() -> tuple[bool, str]:
     # candidatos excedentes seguem elegíveis nos próximos ciclos até serem
     # abertos ou expirarem (MAX_SIGNAL_AGE_HOURS). Um total muito acima da
     # capacidade do sistema (aqui, 20x MAX_POSITIONS) é que indica anomalia.
+    #
+    # O teto é contado por SÍMBOLO, não por linha: o score do scanner_v3.py
+    # é recalculado do zero a cada hora sem memória, então um símbolo em
+    # tendência longa reaparece como "sinal novo" em vários ciclos seguidos
+    # - isso não é uma oportunidade a mais, é o mesmo símbolo repetido (já
+    # gerou 500 linhas pra só 55 símbolos, travando o executor por ~1 dia
+    # até esta correção). scanner_v3_to_v9.py agora evita gerar essas
+    # repetições na origem; este colapso aqui é defesa adicional contra
+    # backlog antigo ou outro adaptador que não faça o mesmo.
+    by_symbol: dict[str, dict] = {}
+    for row in actionable:
+        sym = row["symbol"].strip().upper()
+        current = by_symbol.get(sym)
+        if current is None or parse_dt(row["entry_time"]) > parse_dt(
+            current["entry_time"]
+        ):
+            by_symbol[sym] = row
+    distinct_actionable = list(by_symbol.values())
+
     sanity_ceiling = MAX_POSITIONS * 20
-    if len(actionable) > sanity_ceiling:
+    if len(distinct_actionable) > sanity_ceiling:
         return False, (
-            f"{len(actionable)} sinais acionáveis excedem o teto de "
-            f"sanidade ({sanity_ceiling}, 20x MAX_POSITIONS={MAX_POSITIONS}) "
-            "neste orquestrador - possível anomalia na geração de sinais."
+            f"{len(distinct_actionable)} símbolos acionáveis excedem o teto "
+            f"de sanidade ({sanity_ceiling}, 20x MAX_POSITIONS="
+            f"{MAX_POSITIONS}) neste orquestrador - possível anomalia na "
+            "geração de sinais."
         )
 
-    return True, f"{len(actionable)} sinais acionáveis sem duplicidade"
+    return True, (
+        f"{len(distinct_actionable)} símbolos acionáveis sem duplicidade "
+        f"({len(actionable)} sinais brutos)"
+    )
 
 
 def acquire_lock():

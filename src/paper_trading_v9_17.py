@@ -301,9 +301,32 @@ def main():
 
     expired_now = 0
 
+    open_symbols = {p["symbol"].strip().upper() for p in remaining}
+
+    # Um símbolo pode ter mais de um sinal LONG pendente na fila (sinalizado
+    # em ciclos diferentes antes de virar posição) - o mais recente é a
+    # oportunidade atual, os demais são redundantes e não devem virar
+    # posições concorrentes no mesmo símbolo.
+    best_per_symbol: dict[str, dict] = {}
     for signal in signals:
         sid = signal["signal_id"]
         if sid in open_ids or sid in closed_ids:
+            continue
+        sym = signal["symbol"].strip().upper()
+        current = best_per_symbol.get(sym)
+        if current is None or parse_dt(signal["entry_time"]) > parse_dt(
+            current["entry_time"]
+        ):
+            best_per_symbol[sym] = signal
+
+    for signal in signals:
+        sid = signal["signal_id"]
+        if sid in open_ids or sid in closed_ids:
+            continue
+        sym = signal["symbol"].strip().upper()
+        if best_per_symbol.get(sym) is not signal:
+            continue
+        if sym in open_symbols:
             continue
         if slots <= 0:
             break
@@ -330,6 +353,7 @@ def main():
             pos = open_trade(signal)
             remaining.append(pos)
             open_ids.add(sid)
+            open_symbols.add(sym)
             slots -= 1
             opened_now += 1
             print(
