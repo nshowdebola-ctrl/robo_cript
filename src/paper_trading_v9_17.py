@@ -48,7 +48,10 @@ SLIPPAGE_EXIT_PCT = 0.001
 # (+1.16%, win rate 43.6%->54%). Decisão consciente do usuário após
 # ver o resultado do teste - não é ajuste feito sem validação.
 # Resultado completo em data/v9_parameter_walkforward_results.csv.
-STOP_PCT = 0.05
+#
+# Alterado em 2026-08-31 (decisão do usuário, não validada por novo
+# walkforward): STOP de 5% para 4%. TARGET permanece 6%.
+STOP_PCT = 0.04
 TARGET_PCT = 0.06
 MAX_HOLD_HOURS = 24
 
@@ -281,23 +284,16 @@ def main():
             change = price / entry - 1.0
             opened = parse_dt(pos["entry_time"])
             age = (now_utc() - opened).total_seconds() / 3600.0
-            target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
+            # Revertido em 2026-08-31 (pedido do usuário) - a "trava de
+            # lucro" voltou a ser venda imediata ao bater TARGET_PCT.
             reason = None
-            if not target_reached:
-                if change <= -STOP_PCT:
-                    reason = "STOP"
-                elif age >= MAX_HOLD_HOURS:
-                    reason = "TIME"
-                elif change >= TARGET_PCT:
-                    # Trava o lucro em vez de vender na hora - deixa
-                    # correr enquanto continuar subindo.
-                    target_reached = True
-            else:
-                if age >= MAX_HOLD_HOURS:
-                    reason = "TIME"
-                elif change < TARGET_PCT:
-                    reason = "TARGET"
+            if change <= -STOP_PCT:
+                reason = "STOP"
+            elif change >= TARGET_PCT:
+                reason = "TARGET"
+            elif age >= MAX_HOLD_HOURS:
+                reason = "TIME"
 
             if reason:
                 trade = close_trade(pos, price, reason, now_utc())
@@ -308,7 +304,6 @@ def main():
                     f"net={float(trade['net_return_pct']):+.4f}%"
                 )
             else:
-                pos["target_reached"] = "1" if target_reached else "0"
                 remaining.append(pos)
         except Exception as exc:
             print(f"AVISO monitor {pos.get('symbol')}: {exc}")

@@ -201,30 +201,21 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
         change = price / entry - 1.0
         opened = parse_dt(pos["entry_time"])
         age_hours = (datetime.now(timezone.utc) - opened).total_seconds() / 3600.0
-        target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
-        # Trava de lucro (2026-08-31, pedido do usuário - experimental,
-        # não validado por treino/teste como o STOP/TARGET em si): ao
-        # bater TARGET pela primeira vez, não vende - só marca
-        # target_reached e deixa correr. Só sai por TARGET quando o
-        # retorno cair de volta abaixo de TARGET_PCT (ou por STOP/TIME
-        # antes de bater o alvo, ou por TIME depois).
+        # Revertido em 2026-08-31 (pedido do usuário) - a "trava de
+        # lucro" (deixar correr acima de TARGET_PCT, só vender quando
+        # caísse de volta abaixo de 6%) voltou a ser venda imediata ao
+        # bater TARGET_PCT. target_reached fica no CSV sem uso (não
+        # vale a pena mexer no schema de novo só por isso).
         reason = None
-        if not target_reached:
-            if change <= -STOP_PCT:
-                reason = "STOP"
-            elif age_hours >= MAX_HOLD_HOURS:
-                reason = "TIME"
-            elif change >= TARGET_PCT:
-                target_reached = True
-        else:
-            if age_hours >= MAX_HOLD_HOURS:
-                reason = "TIME"
-            elif change < TARGET_PCT:
-                reason = "TARGET"
+        if change <= -STOP_PCT:
+            reason = "STOP"
+        elif change >= TARGET_PCT:
+            reason = "TARGET"
+        elif age_hours >= MAX_HOLD_HOURS:
+            reason = "TIME"
 
         if not reason:
-            pos["target_reached"] = "1" if target_reached else "0"
             remaining.append(pos)
             continue
 

@@ -16,7 +16,7 @@ Hipóteses financeiras da cadeia V9:
   fee por lado: 0.10%
   slippage por lado: 0.10%
   STOP: 4%
-  TARGET: 8%
+  TARGET: 6%
   tempo máximo: 24h
 """
 
@@ -180,28 +180,19 @@ def close_position(pos, market_price, reason, closed_at):
 
 
 def should_close(pos, market_price, current_time):
-    """Retorna (reason, target_reached) - reason é None se a posição
-    continua aberta. target_reached é o novo valor a persistir no CSV
-    de posições abertas (trava de lucro: ver comentário em v9_17.py)."""
+    # Revertido em 2026-08-31 (pedido do usuário) - a "trava de lucro"
+    # voltou a ser venda imediata ao bater TARGET_PCT.
     entry = float(pos["entry_price"])
     ret = market_price / entry - 1.0
     age_h = (current_time - parse_dt(pos["entry_time"])).total_seconds() / 3600.0
-    target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
-    if not target_reached:
-        if ret <= -STOP_PCT:
-            return "STOP", target_reached
-        if age_h >= MAX_HOURS:
-            return "TIME", target_reached
-        if ret >= TARGET_PCT:
-            return None, True
-        return None, target_reached
-
+    if ret <= -STOP_PCT:
+        return "STOP"
+    if ret >= TARGET_PCT:
+        return "TARGET"
     if age_h >= MAX_HOURS:
-        return "TIME", target_reached
-    if ret < TARGET_PCT:
-        return "TARGET", target_reached
-    return None, target_reached
+        return "TIME"
+    return None
 
 
 def main():
