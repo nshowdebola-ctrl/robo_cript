@@ -315,7 +315,7 @@ if (file_exists(LOG_FILE)) {
         }
 
         .header-inner {
-            max-width: 1200px;
+            max-width: 960px;
             margin: auto;
             display: flex;
             align-items: center;
@@ -373,7 +373,7 @@ if (file_exists(LOG_FILE)) {
             50% { opacity: .45; }
         }
 
-        main { max-width: 1200px; margin: 0 auto; padding: 32px 30px 60px; }
+        main { max-width: 960px; margin: 0 auto; padding: 32px 30px 60px; }
 
         .warning {
             background: linear-gradient(135deg, #34161f, #2a1420);
