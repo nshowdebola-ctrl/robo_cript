@@ -154,6 +154,39 @@ function renderEquityCurve(array $cumulativePnls): string
     );
 }
 
+function fetchLivePrices(array $symbols): array
+{
+    if (empty($symbols)) {
+        return [];
+    }
+
+    // Endpoint público (sem API key) da mesma exchange/ambiente que o
+    // executor usa - só pra mostrar P&L não realizado no portal, não
+    // decide nada sozinho (quem abre/fecha é sempre o Python).
+    $codes = array_map(static fn(string $s): string => str_replace('/', '', $s), $symbols);
+    $url = 'https://testnet.binance.vision/api/v3/ticker/price?symbols='
+        . urlencode(json_encode(array_values(array_unique($codes))));
+
+    $context = stream_context_create(['http' => ['timeout' => 4]]);
+    $raw = @file_get_contents($url, false, $context);
+    if ($raw === false) {
+        return [];
+    }
+
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    $prices = [];
+    foreach ($decoded as $entry) {
+        if (isset($entry['symbol'], $entry['price'])) {
+            $prices[$entry['symbol']] = (float) $entry['price'];
+        }
+    }
+    return $prices;
+}
+
 function loadNotional(): float
 {
     if (!file_exists(CONFIG_FILE)) {
@@ -259,6 +292,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $status = loopStatus();
 $notional = loadNotional();
 $openPositions = readCsvRows(OPEN_FILE);
+
+$livePrices = fetchLivePrices(array_column($openPositions, 'symbol'));
+foreach ($openPositions as &$pos) {
+    $code = str_replace('/', '', $pos['symbol'] ?? '');
+    $current = $livePrices[$code] ?? null;
+    $entry = (float) ($pos['entry_price'] ?? 0);
+    $pos['current_price'] = $current;
+    $pos['unrealized_pct'] = ($current !== null && $entry > 0) ? ($current / $entry - 1.0) * 100.0 : null;
+    $entryCost = is_numeric($pos['entry_cost_usdt'] ?? '') && $pos['entry_cost_usdt'] !== ''
+        ? (float) $pos['entry_cost_usdt']
+        : $entry * (float) ($pos['quantity'] ?? 0);
+    $pos['unrealized_usdt'] = ($current !== null)
+        ? ($current * (float) ($pos['quantity'] ?? 0)) - $entryCost
+        : null;
+    $openedAt = strtotime((string) ($pos['entry_time'] ?? ''));
+    $pos['age_hours'] = $openedAt !== false ? (time() - $openedAt) / 3600.0 : null;
+}
+unset($pos);
+
 $allTrades = readCsvRows(LEDGER_FILE); // ordem cronológica (mais antigo primeiro), do jeito que foi anexado
 $pnlSeries = array_map(
     static fn(array $t): float => is_numeric($t['pnl_usdt'] ?? '') ? (float) $t['pnl_usdt'] : 0.0,
@@ -712,18 +764,35 @@ if (file_exists(LOG_FILE)) {
                         <tr>
                             <th>Símbolo</th>
                             <th>Entrada</th>
-                            <th>Preço</th>
-                            <th>Quantidade</th>
+                            <th>Atual</th>
+                            <th>Tempo aberto</th>
+                            <th>P&amp;L não realizado</th>
                             <th>Score</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($openPositions as $pos): ?>
+                        <?php foreach ($openPositions as $pos):
+                            $pct = $pos['unrealized_pct'];
+                            $usdt = $pos['unrealized_usdt'];
+                            $ageHours = $pos['age_hours'];
+                        ?>
                             <tr>
                                 <td class="symbol"><?= h($pos['symbol'] ?? '') ?></td>
-                                <td><?= h($pos['entry_time'] ?? '') ?></td>
                                 <td><?= h($pos['entry_price'] ?? '') ?></td>
-                                <td><?= h($pos['quantity'] ?? '') ?></td>
+                                <td><?= $pos['current_price'] !== null ? h($pos['current_price']) : '-' ?></td>
+                                <td>
+                                    <?= $ageHours !== null
+                                        ? h(sprintf('%dh%02dm', (int) $ageHours, (int) round(($ageHours - (int) $ageHours) * 60)))
+                                        : '-' ?>
+                                </td>
+                                <td class="<?= $pct === null ? '' : ($pct >= 0 ? 'positive' : 'negative') ?>">
+                                    <?php if ($pct === null || $usdt === null): ?>
+                                        -
+                                    <?php else: ?>
+                                        <?= ($pct >= 0 ? '+' : '') . number_format($pct, 2, ',', '.') ?>%
+                                        (<?= ($usdt >= 0 ? '+' : '') . '$' . number_format($usdt, 2, ',', '.') ?>)
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= h($pos['score'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -753,6 +822,7 @@ if (file_exists(LOG_FILE)) {
                         <tr>
                             <th>Símbolo</th>
                             <th>Saída</th>
+                            <th>Duração</th>
                             <th>Motivo</th>
                             <th>Retorno bruto</th>
                             <th>Ganho/perda (USDT fictício)</th>
@@ -764,10 +834,20 @@ if (file_exists(LOG_FILE)) {
                             $ret = (float) ($trade['gross_return_pct'] ?? 0);
                             $pnlRaw = $trade['pnl_usdt'] ?? '';
                             $pnl = $pnlRaw !== '' ? (float) $pnlRaw : null;
+
+                            $enter = strtotime((string) ($trade['entry_time'] ?? ''));
+                            $exit = strtotime((string) ($trade['exit_time'] ?? ''));
+                            $durationHours = ($enter !== false && $exit !== false) ? ($exit - $enter) / 3600.0 : null;
+                            $exitLabel = $exit !== false ? date('d/m H:i', $exit) : ($trade['exit_time'] ?? '');
                         ?>
                             <tr>
                                 <td class="symbol"><?= h($trade['symbol'] ?? '') ?></td>
-                                <td><?= h($trade['exit_time'] ?? '') ?></td>
+                                <td><?= h($exitLabel) ?></td>
+                                <td>
+                                    <?= $durationHours !== null
+                                        ? h(sprintf('%dh%02dm', (int) $durationHours, (int) round(($durationHours - (int) $durationHours) * 60)))
+                                        : '-' ?>
+                                </td>
                                 <td><span class="badge <?= h($reason) ?>"><?= h($trade['exit_reason'] ?? '') ?></span></td>
                                 <td class="<?= $ret >= 0 ? 'positive' : 'negative' ?>">
                                     <?= ($ret >= 0 ? '+' : '') . number_format($ret, 2, ',', '.') ?>%
