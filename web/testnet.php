@@ -65,7 +65,7 @@ function renderEquityCurve(array $cumulativePnls): string
     }
 
     $width = 860;
-    $height = 200;
+    $height = 90;
     $padding = 10;
 
     $min = min(0.0, min($cumulativePnls));
@@ -446,7 +446,7 @@ if (file_exists(LOG_FILE)) {
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             position: relative;
         }
 
@@ -485,7 +485,7 @@ if (file_exists(LOG_FILE)) {
             width: 100%;
             position: relative;
             border-top: 1px solid #1c2841;
-            padding-top: 18px;
+            padding-top: 10px;
         }
 
         .equity-curve { display: block; width: 100%; height: auto; }
