@@ -28,3 +28,23 @@
 [2026-08-31T00:39:14.647784+00:00] CLOSE ZKP/USDT     TARGET gross=+9.1912% pnl=$+1.3635 sell_order=94581
 [2026-08-31T00:39:15.511003+00:00] OPEN  ZKP/USDT     entry=0.0595 qty=421.5 buy_order=94582
 [2026-08-31T00:39:15.511502+00:00] CICLO concluído: 1 fechada(s), 5 posição(ões) aberta(s) no testnet.
+[2026-08-31T00:59:30.286200+00:00] LOOP iniciado (pid=259499, intervalo=300s)
+[2026-08-31T00:59:33.854883+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:04:35.476287+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:09:37.026180+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:14:38.575969+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:19:40.144790+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:24:41.683374+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:29:43.579678+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:34:45.176185+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:39:46.781203+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:44:48.595342+00:00] CLOSE ZKP/USDT     STOP   gross=-5.5462% pnl=$-1.3909 sell_order=96376
+[2026-08-31T01:44:49.185111+00:00] OPEN  DEXE/USDT    entry=2.124 qty=47.19 buy_order=378647
+[2026-08-31T01:44:49.186031+00:00] LOOP ciclo: 1 fechada(s), 5 aberta(s).
+[2026-08-31T01:49:50.737501+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:54:52.287413+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T01:59:53.832740+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:00:52.841434+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:00:57.799250+00:00] LOOP iniciado (pid=264940, intervalo=300s)
+[2026-08-31T02:01:01.316916+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:04:57.142773+00:00] CICLO concluído: 0 fechada(s), 5 posição(ões) aberta(s) no testnet.
