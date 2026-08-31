@@ -48,3 +48,34 @@
 [2026-08-31T02:00:57.799250+00:00] LOOP iniciado (pid=264940, intervalo=300s)
 [2026-08-31T02:01:01.316916+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
 [2026-08-31T02:04:57.142773+00:00] CICLO concluído: 0 fechada(s), 5 posição(ões) aberta(s) no testnet.
+[2026-08-31T02:06:02.859407+00:00] ERRO no ciclo do loop: ValueError: dict contains fields not in fieldnames: 'target_reached'
+[2026-08-31T02:06:08.864594+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:06:10.916056+00:00] LOOP iniciado (pid=265772, intervalo=300s)
+[2026-08-31T02:06:13.331475+00:00] OPEN  ZKP/USDT     entry=0.0569 qty=1757.4 buy_order=96862
+[2026-08-31T02:06:13.889207+00:00] OPEN  BICO/USDT    entry=0.02093 qty=4782.4 buy_order=1490480
+[2026-08-31T02:06:14.457682+00:00] OPEN  DEXE/USDT    entry=2.124 qty=47.14 buy_order=378861
+[2026-08-31T02:06:15.026777+00:00] OPEN  USD1/USDT    entry=0.99976 qty=100.0 buy_order=110086
+[2026-08-31T02:06:15.590671+00:00] OPEN  PROM/USDT    entry=6.332 qty=15.77 buy_order=1258219
+[2026-08-31T02:06:15.591662+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:08:24.609447+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:09:45.948372+00:00] LOOP iniciado (pid=266191, intervalo=300s)
+[2026-08-31T02:09:48.405616+00:00] OPEN  ZKP/USDT     entry=0.0567 qty=1763.6 buy_order=96919
+[2026-08-31T02:09:48.961829+00:00] OPEN  BICO/USDT    entry=0.02092 qty=4786.97 buy_order=1490550
+[2026-08-31T02:09:49.544880+00:00] OPEN  DEXE/USDT    entry=2.128 qty=47.05 buy_order=378897
+[2026-08-31T02:09:50.156173+00:00] OPEN  USD1/USDT    entry=0.99976 qty=100.0 buy_order=110088
+[2026-08-31T02:09:50.964753+00:00] OPEN  PROM/USDT    entry=6.279 qty=15.85 buy_order=1258481
+[2026-08-31T02:09:50.965754+00:00] ERRO no ciclo do loop: NameError: name 'os' is not defined
+[2026-08-31T02:10:23.969807+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:11:07.971970+00:00] RESET: nenhuma posição aberta registrada, nada pra vender.
+[2026-08-31T02:11:55.768828+00:00] RESET: nenhuma posição aberta registrada, nada pra vender.
+[2026-08-31T02:11:55.769448+00:00] RESET: posições e ledger do testnet zerados.
+[2026-08-31T02:12:21.369305+00:00] LOOP iniciado (pid=266455, intervalo=300s)
+[2026-08-31T02:12:23.477647+00:00] OPEN  ZKP/USDT     entry=0.0569 qty=1748.2 buy_order=96956
+[2026-08-31T02:12:24.044342+00:00] OPEN  BICO/USDT    entry=0.02086 qty=4793.86 buy_order=1490597
+[2026-08-31T02:12:24.658122+00:00] OPEN  DEXE/USDT    entry=2.138 qty=46.79 buy_order=378943
+[2026-08-31T02:12:25.224497+00:00] OPEN  USD1/USDT    entry=0.99976 qty=100.0 buy_order=110092
+[2026-08-31T02:12:25.802905+00:00] OPEN  PROM/USDT    entry=6.348 qty=15.82 buy_order=1258743
+[2026-08-31T02:12:25.804080+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:12:26.804424+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:12:30.891259+00:00] LOOP iniciado (pid=266475, intervalo=300s)
+[2026-08-31T02:12:34.312597+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
