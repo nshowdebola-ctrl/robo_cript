@@ -315,7 +315,7 @@ if (file_exists(LOG_FILE)) {
         }
 
         .header-inner {
-            max-width: 960px;
+            max-width: 1400px;
             margin: auto;
             display: flex;
             align-items: center;
@@ -373,7 +373,7 @@ if (file_exists(LOG_FILE)) {
             50% { opacity: .45; }
         }
 
-        main { max-width: 960px; margin: 0 auto; padding: 32px 30px 60px; }
+        main { max-width: 1400px; margin: 0 auto; padding: 32px 30px 60px; }
 
         .warning {
             background: linear-gradient(135deg, #34161f, #2a1420);
@@ -394,9 +394,13 @@ if (file_exists(LOG_FILE)) {
             box-shadow: 0 10px 30px -18px rgba(40, 180, 100, .45);
         }
 
-        .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; margin-bottom: 28px; }
-
-        @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 28px;
+            max-width: 560px;
+        }
 
         .card {
             background: linear-gradient(165deg, #131d34, #0f1729);
@@ -420,7 +424,7 @@ if (file_exists(LOG_FILE)) {
 
         .highlight-card {
             margin-bottom: 28px;
-            padding: 28px 28px 22px;
+            padding: 20px 24px 18px;
             position: relative;
             overflow: hidden;
         }
@@ -452,11 +456,11 @@ if (file_exists(LOG_FILE)) {
         }
 
         .highlight-value {
-            font-size: 46px;
+            font-size: 32px;
             font-weight: 800;
             line-height: 1;
-            letter-spacing: -.5px;
-            text-shadow: 0 0 40px currentColor;
+            letter-spacing: -.3px;
+            text-shadow: 0 0 24px currentColor;
             filter: saturate(1.15);
         }
 
@@ -472,7 +476,7 @@ if (file_exists(LOG_FILE)) {
 
         .highlight-stat-label { color: #8995ad; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
 
-        .highlight-stat-value { font-size: 21px; font-weight: 700; color: #eef1fb; }
+        .highlight-stat-value { font-size: 17px; font-weight: 700; color: #eef1fb; }
 
         .equity-wrapper {
             width: 100%;
