@@ -93,3 +93,11 @@
 [2026-08-31T02:17:07.713304+00:00] OPEN  USD1/USDT    entry=0.99976 qty=100.0 buy_order=110098
 [2026-08-31T02:17:08.287759+00:00] OPEN  PROM/USDT    entry=6.208 qty=15.92 buy_order=1259154
 [2026-08-31T02:17:08.288934+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:22:09.897815+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:27:11.432672+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:32:13.041741+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:37:14.569748+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:42:16.207957+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T02:44:35.224503+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T02:44:36.967474+00:00] LOOP iniciado (pid=270729, intervalo=300s)
+[2026-08-31T02:44:40.591756+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
