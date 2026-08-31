@@ -162,8 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $status = loopStatus();
 $notional = loadNotional();
 $openPositions = readCsvRows(OPEN_FILE);
-$trades = array_reverse(readCsvRows(LEDGER_FILE));
-$trades = array_slice($trades, 0, 20);
+$allTrades = readCsvRows(LEDGER_FILE);
+$totalPnl = array_sum(array_map(
+    static fn(array $t): float => is_numeric($t['pnl_usdt'] ?? '') ? (float) $t['pnl_usdt'] : 0.0,
+    $allTrades
+));
+$trades = array_slice(array_reverse($allTrades), 0, 20);
 
 $logTail = [];
 if (file_exists(LOG_FILE)) {
@@ -431,7 +435,16 @@ if (file_exists(LOG_FILE)) {
     </div>
 
     <div class="card" style="margin-bottom: 28px;">
-        <h2>Últimos trades fechados (testnet)</h2>
+        <h2>
+            Últimos trades fechados (testnet)
+            <?php if (!empty($allTrades)): ?>
+                &middot; acumulado:
+                <span class="<?= $totalPnl >= 0 ? 'positive' : 'negative' ?>">
+                    <?= ($totalPnl >= 0 ? '+' : '') . '$' . number_format($totalPnl, 2, ',', '.') ?>
+                </span>
+                (fictício)
+            <?php endif; ?>
+        </h2>
         <?php if (empty($trades)): ?>
             <p class="empty">Nenhum trade fechado ainda.</p>
         <?php else: ?>
@@ -443,12 +456,15 @@ if (file_exists(LOG_FILE)) {
                             <th>Saída</th>
                             <th>Motivo</th>
                             <th>Retorno bruto</th>
+                            <th>Ganho/perda (USDT fictício)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($trades as $trade):
                             $reason = strtolower((string) ($trade['exit_reason'] ?? ''));
                             $ret = (float) ($trade['gross_return_pct'] ?? 0);
+                            $pnlRaw = $trade['pnl_usdt'] ?? '';
+                            $pnl = $pnlRaw !== '' ? (float) $pnlRaw : null;
                         ?>
                             <tr>
                                 <td class="symbol"><?= h($trade['symbol'] ?? '') ?></td>
@@ -456,6 +472,11 @@ if (file_exists(LOG_FILE)) {
                                 <td><span class="badge <?= h($reason) ?>"><?= h($trade['exit_reason'] ?? '') ?></span></td>
                                 <td class="<?= $ret >= 0 ? 'positive' : 'negative' ?>">
                                     <?= ($ret >= 0 ? '+' : '') . number_format($ret, 2, ',', '.') ?>%
+                                </td>
+                                <td class="<?= $pnl === null ? '' : ($pnl >= 0 ? 'positive' : 'negative') ?>">
+                                    <?= $pnl === null
+                                        ? '-'
+                                        : ($pnl >= 0 ? '+' : '') . '$' . number_format($pnl, 2, ',', '.') ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

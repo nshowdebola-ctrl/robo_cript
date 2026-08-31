@@ -25,3 +25,6 @@
 [2026-08-31T00:31:03.182537+00:00] LOOP iniciado (pid=256501, intervalo=300s)
 [2026-08-31T00:31:06.291895+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
 [2026-08-31T00:31:33.296307+00:00] LOOP encerrado (sinal recebido).
+[2026-08-31T00:39:14.647784+00:00] CLOSE ZKP/USDT     TARGET gross=+9.1912% pnl=$+1.3635 sell_order=94581
+[2026-08-31T00:39:15.511003+00:00] OPEN  ZKP/USDT     entry=0.0595 qty=421.5 buy_order=94582
+[2026-08-31T00:39:15.511502+00:00] CICLO concluído: 1 fechada(s), 5 posição(ões) aberta(s) no testnet.

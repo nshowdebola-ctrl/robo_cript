@@ -67,12 +67,12 @@ TESTNET_LEDGER = DATA / "binance_testnet_trades.csv"
 
 TESTNET_OPEN_FIELDS = [
     "signal_id", "symbol", "entry_time", "entry_price", "quantity",
-    "buy_order_id", "score", "confidence",
+    "entry_cost_usdt", "buy_order_id", "score", "confidence",
 ]
 TESTNET_LEDGER_FIELDS = [
     "trade_id", "symbol", "entry_time", "exit_time", "entry_price",
     "exit_price", "quantity", "exit_reason", "gross_return_pct",
-    "buy_order_id", "sell_order_id",
+    "pnl_usdt", "buy_order_id", "sell_order_id",
 ]
 
 CONFIG_FILE = DATA / "binance_testnet_config.json"
@@ -108,6 +108,15 @@ def write_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
 
 
 def append_csv(path: Path, fields: list[str], row: dict) -> None:
+    if path.exists():
+        with path.open("r", newline="", encoding="utf-8") as fh:
+            current_header = next(csv.reader(fh), [])
+        if current_header and current_header != fields:
+            # Schema mudou (ex: campo novo) - reescreve o arquivo inteiro
+            # com o header atual, preenchendo linhas antigas com "" nos
+            # campos que não existiam antes, em vez de desalinhar colunas.
+            write_csv(path, fields, read_csv(path))
+
     is_new = not path.exists()
     DATA.mkdir(parents=True, exist_ok=True)
     with path.open("a", newline="", encoding="utf-8") as fh:
@@ -202,6 +211,15 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
         gross_return_pct = (float(fill_price) / entry - 1.0) * 100.0
         exit_time = datetime.now(timezone.utc).isoformat()
 
+        # entry_cost_usdt só existe em posições abertas depois desta versão -
+        # posição antiga (sem o campo) cai no fallback preço*quantidade.
+        entry_cost = pos.get("entry_cost_usdt", "").strip()
+        entry_cost_usdt = float(entry_cost) if entry_cost else entry * quantity
+        exit_cost_usdt = float(
+            sell_order.get("cost") or (float(fill_price) * quantity)
+        )
+        pnl_usdt = exit_cost_usdt - entry_cost_usdt
+
         append_csv(TESTNET_LEDGER, TESTNET_LEDGER_FIELDS, {
             "trade_id": f"{pos['signal_id']}_{exit_time}",
             "symbol": symbol,
@@ -212,12 +230,14 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             "quantity": pos["quantity"],
             "exit_reason": reason,
             "gross_return_pct": f"{gross_return_pct:.6f}",
+            "pnl_usdt": f"{pnl_usdt:.6f}",
             "buy_order_id": pos.get("buy_order_id", ""),
             "sell_order_id": sell_order.get("id", ""),
         })
         log(
             f"CLOSE {symbol:12s} {reason:6s} "
-            f"gross={gross_return_pct:+.4f}% sell_order={sell_order.get('id')}"
+            f"gross={gross_return_pct:+.4f}% pnl=${pnl_usdt:+.4f} "
+            f"sell_order={sell_order.get('id')}"
         )
         closed_now += 1
 
@@ -265,6 +285,7 @@ def open_new_positions(
             continue
 
         fill_price = buy_order.get("average") or buy_order.get("price") or price
+        entry_cost_usdt = float(buy_order.get("cost") or (float(fill_price) * filled))
         entry_time = datetime.now(timezone.utc).isoformat()
 
         remaining.append({
@@ -273,6 +294,7 @@ def open_new_positions(
             "entry_time": entry_time,
             "entry_price": f"{float(fill_price):.12f}",
             "quantity": f"{filled:.12f}",
+            "entry_cost_usdt": f"{entry_cost_usdt:.6f}",
             "buy_order_id": str(buy_order.get("id", "")),
             "score": signal.get("score", ""),
             "confidence": signal.get("confidence", ""),
