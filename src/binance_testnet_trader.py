@@ -66,6 +66,7 @@ from binance_testnet_executor import (
 )
 from paper_trading_v9_17 import MAX_HOLD_HOURS, STOP_PCT, TARGET_PCT
 from paper_trading_v9_21 import SIGNALS, is_fresh, parse_dt
+from whatsapp_notify import send_whatsapp
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -272,6 +273,10 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             f"CLOSE {symbol:12s} {reason:6s} "
             f"gross={gross_return_pct:+.4f}% pnl=${pnl_usdt:+.4f} "
             f"sell_order={sell_order.get('id')}"
+        )
+        send_whatsapp(
+            f"[Testnet] {symbol} fechado por {reason}: "
+            f"{gross_return_pct:+.2f}% (${pnl_usdt:+.2f} fictício)"
         )
         closed_now += 1
 

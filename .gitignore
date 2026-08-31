@@ -4,4 +4,5 @@ __pycache__/
 .claude/
 .git-token
 .binance-testnet.env
+.callmebot.env
 data/binance_testnet_loop_stdout.log
