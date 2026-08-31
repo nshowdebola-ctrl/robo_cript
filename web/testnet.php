@@ -57,6 +57,69 @@ function readCsvRows(string $path): array
     return $rows;
 }
 
+function renderEquityCurve(array $cumulativePnls): string
+{
+    $count = count($cumulativePnls);
+    if ($count < 2) {
+        return '';
+    }
+
+    $width = 860;
+    $height = 200;
+    $padding = 10;
+
+    $min = min(0.0, min($cumulativePnls));
+    $max = max(0.0, max($cumulativePnls));
+    $range = $max - $min;
+    $isFlat = $range <= 0.0;
+    if ($isFlat) {
+        $range = 1.0;
+    }
+
+    $stepX = ($width - $padding * 2) / ($count - 1);
+    $zeroY = $height - $padding - ((0.0 - $min) / $range) * ($height - $padding * 2);
+
+    $points = [];
+    foreach ($cumulativePnls as $index => $value) {
+        $x = $padding + $index * $stepX;
+        $normalized = $isFlat ? 0.5 : ($value - $min) / $range;
+        $y = $height - $padding - ($normalized * ($height - $padding * 2));
+        $points[] = sprintf('%.2f,%.2f', $x, $y);
+    }
+
+    $final = end($cumulativePnls);
+    $stroke = $final >= 0 ? '#65dfa0' : '#ff778b';
+    $fill = $final >= 0 ? 'rgba(101, 223, 160, .12)' : 'rgba(255, 119, 139, .12)';
+    $lastPoint = explode(',', $points[$count - 1]);
+
+    $areaPoints = $points;
+    $areaPoints[] = sprintf('%.2f,%.2f', $padding + ($count - 1) * $stepX, $zeroY);
+    array_unshift($areaPoints, sprintf('%.2f,%.2f', $padding, $zeroY));
+
+    return sprintf(
+        '<svg viewBox="0 0 %d %d" width="100%%" height="%d" class="equity-curve" role="img" aria-label="curva de ganho/perda acumulado">'
+        . '<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="#2a3654" stroke-width="1" stroke-dasharray="4 4" />'
+        . '<polygon points="%s" fill="%s" />'
+        . '<polyline points="%s" fill="none" stroke="%s" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />'
+        . '<circle cx="%s" cy="%s" r="3.5" fill="%s" />'
+        . '</svg>',
+        $width,
+        $height,
+        $height,
+        $padding,
+        $zeroY,
+        $width - $padding,
+        $zeroY,
+        h(implode(' ', $areaPoints)),
+        $fill,
+        h(implode(' ', $points)),
+        $stroke,
+        h($lastPoint[0]),
+        h($lastPoint[1]),
+        $stroke
+    );
+}
+
 function loadNotional(): float
 {
     if (!file_exists(CONFIG_FILE)) {
@@ -162,11 +225,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $status = loopStatus();
 $notional = loadNotional();
 $openPositions = readCsvRows(OPEN_FILE);
-$allTrades = readCsvRows(LEDGER_FILE);
-$totalPnl = array_sum(array_map(
+$allTrades = readCsvRows(LEDGER_FILE); // ordem cronológica (mais antigo primeiro), do jeito que foi anexado
+$pnlSeries = array_map(
     static fn(array $t): float => is_numeric($t['pnl_usdt'] ?? '') ? (float) $t['pnl_usdt'] : 0.0,
     $allTrades
-));
+);
+$totalPnl = array_sum($pnlSeries);
+$wins = count(array_filter($pnlSeries, static fn(float $v): bool => $v > 0));
+$winRate = count($pnlSeries) > 0 ? ($wins / count($pnlSeries)) * 100.0 : null;
+
+$cumulative = [];
+$running = 0.0;
+foreach ($pnlSeries as $pnl) {
+    $running += $pnl;
+    $cumulative[] = $running;
+}
+$equityCurveSvg = renderEquityCurve($cumulative);
+
 $trades = array_slice(array_reverse($allTrades), 0, 20);
 
 $logTail = [];
@@ -256,6 +331,39 @@ if (file_exists(LOG_FILE)) {
         }
 
         .card h2 { margin: 0 0 14px; font-size: 15px; color: #c7cfe2; }
+
+        .highlight-card { margin-bottom: 28px; }
+
+        .highlight-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .highlight-label {
+            color: #8995ad;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 8px;
+        }
+
+        .highlight-value { font-size: 42px; font-weight: 800; line-height: 1; }
+
+        .highlight-stats { display: flex; gap: 28px; }
+
+        .highlight-stats > div { display: flex; flex-direction: column; gap: 4px; text-align: right; }
+
+        .highlight-stat-label { color: #8995ad; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
+
+        .highlight-stat-value { font-size: 20px; font-weight: 700; }
+
+        .equity-wrapper { width: 100%; }
+
+        .equity-curve { display: block; width: 100%; height: auto; }
 
         .field-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
@@ -360,6 +468,34 @@ if (file_exists(LOG_FILE)) {
             <?= h($message['text']) ?>
         </div>
     <?php endif; ?>
+
+    <div class="card highlight-card">
+        <div class="highlight-top">
+            <div>
+                <div class="highlight-label">Resultado acumulado (USDT fictício)</div>
+                <div class="highlight-value <?= $totalPnl >= 0 ? 'positive' : 'negative' ?>">
+                    <?= ($totalPnl >= 0 ? '+' : '') . '$' . number_format($totalPnl, 2, ',', '.') ?>
+                </div>
+            </div>
+            <div class="highlight-stats">
+                <div>
+                    <span class="highlight-stat-label">Trades fechados</span>
+                    <span class="highlight-stat-value"><?= count($allTrades) ?></span>
+                </div>
+                <div>
+                    <span class="highlight-stat-label">Taxa de acerto</span>
+                    <span class="highlight-stat-value">
+                        <?= $winRate === null ? '-' : number_format($winRate, 0) . '%' ?>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <?php if ($equityCurveSvg !== ''): ?>
+            <div class="equity-wrapper"><?= $equityCurveSvg ?></div>
+        <?php else: ?>
+            <p class="empty">Gráfico aparece a partir do 2º trade fechado.</p>
+        <?php endif; ?>
+    </div>
 
     <div class="grid">
         <div class="card">
