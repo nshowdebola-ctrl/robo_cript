@@ -394,12 +394,22 @@ if (file_exists(LOG_FILE)) {
             box-shadow: 0 10px 30px -18px rgba(40, 180, 100, .45);
         }
 
+        .top-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 780px) { .top-row { grid-template-columns: 1fr; } }
+
         .grid {
             display: flex;
             flex-direction: column;
             gap: 20px;
             margin-bottom: 28px;
-            max-width: 560px;
+            max-width: 360px;
         }
 
         .card {
@@ -622,35 +632,35 @@ if (file_exists(LOG_FILE)) {
         </div>
     <?php endif; ?>
 
-    <div class="card highlight-card">
-        <div class="highlight-top">
-            <div>
-                <div class="highlight-label">Resultado acumulado (USDT fictício)</div>
-                <div class="highlight-value <?= $totalPnl >= 0 ? 'positive' : 'negative' ?>">
-                    <?= ($totalPnl >= 0 ? '+' : '') . '$' . number_format($totalPnl, 2, ',', '.') ?>
+    <div class="top-row">
+        <div class="card highlight-card">
+            <div class="highlight-top">
+                <div>
+                    <div class="highlight-label">Resultado acumulado (USDT fictício)</div>
+                    <div class="highlight-value <?= $totalPnl >= 0 ? 'positive' : 'negative' ?>">
+                        <?= ($totalPnl >= 0 ? '+' : '') . '$' . number_format($totalPnl, 2, ',', '.') ?>
+                    </div>
+                </div>
+                <div class="highlight-stats">
+                    <div>
+                        <span class="highlight-stat-label">Trades</span>
+                        <span class="highlight-stat-value"><?= count($allTrades) ?></span>
+                    </div>
+                    <div>
+                        <span class="highlight-stat-label">Acerto</span>
+                        <span class="highlight-stat-value">
+                            <?= $winRate === null ? '-' : number_format($winRate, 0) . '%' ?>
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="highlight-stats">
-                <div>
-                    <span class="highlight-stat-label">Trades fechados</span>
-                    <span class="highlight-stat-value"><?= count($allTrades) ?></span>
-                </div>
-                <div>
-                    <span class="highlight-stat-label">Taxa de acerto</span>
-                    <span class="highlight-stat-value">
-                        <?= $winRate === null ? '-' : number_format($winRate, 0) . '%' ?>
-                    </span>
-                </div>
-            </div>
+            <?php if ($equityCurveSvg !== ''): ?>
+                <div class="equity-wrapper"><?= $equityCurveSvg ?></div>
+            <?php else: ?>
+                <p class="empty">Gráfico aparece a partir do 2º trade fechado.</p>
+            <?php endif; ?>
         </div>
-        <?php if ($equityCurveSvg !== ''): ?>
-            <div class="equity-wrapper"><?= $equityCurveSvg ?></div>
-        <?php else: ?>
-            <p class="empty">Gráfico aparece a partir do 2º trade fechado.</p>
-        <?php endif; ?>
-    </div>
 
-    <div class="grid">
         <div class="card">
             <h2>Valor por posição</h2>
             <form method="post" class="field-row">
@@ -672,7 +682,9 @@ if (file_exists(LOG_FILE)) {
                 até 5 posições simultâneas.
             </p>
         </div>
+    </div>
 
+    <div class="grid">
         <div class="card">
             <h2>Loop automático</h2>
             <form method="post" class="field-row">
