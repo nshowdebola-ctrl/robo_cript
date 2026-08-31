@@ -41,11 +41,12 @@ LEDGER_FILE = DATA / "paper_trading_v9_financial_trades.csv"
 FEE_RATE = 0.001
 SLIPPAGE_PCT = 0.001
 
-# STOP_PCT/TARGET_PCT importados de paper_trading_v9_17.py (fonte
-# única) - antes eram duplicados aqui com valor próprio, o que já
-# causou divergência real entre os dois monitores. Ver STOP_PCT em
-# v9_17.py para o histórico da mudança de 4%/8% para 5%/6%.
-from paper_trading_v9_17 import STOP_PCT, TARGET_PCT
+# STOP_PCT/TARGET_PCT/OPEN_FIELDS importados de paper_trading_v9_17.py
+# (fonte única) - antes eram duplicados aqui com valor próprio, o que
+# já causou divergência real entre os dois monitores. Ver STOP_PCT em
+# v9_17.py para o histórico da mudança de 4%/8% para 5%/6%, e o
+# comentário acima de target_reached lá pra regra de trava de lucro.
+from paper_trading_v9_17 import OPEN_FIELDS, STOP_PCT, TARGET_PCT
 
 MAX_HOURS = 24.0
 
@@ -179,17 +180,28 @@ def close_position(pos, market_price, reason, closed_at):
 
 
 def should_close(pos, market_price, current_time):
+    """Retorna (reason, target_reached) - reason é None se a posição
+    continua aberta. target_reached é o novo valor a persistir no CSV
+    de posições abertas (trava de lucro: ver comentário em v9_17.py)."""
     entry = float(pos["entry_price"])
     ret = market_price / entry - 1.0
     age_h = (current_time - parse_dt(pos["entry_time"])).total_seconds() / 3600.0
+    target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
-    if ret <= -STOP_PCT:
-        return "STOP"
-    if ret >= TARGET_PCT:
-        return "TARGET"
+    if not target_reached:
+        if ret <= -STOP_PCT:
+            return "STOP", target_reached
+        if age_h >= MAX_HOURS:
+            return "TIME", target_reached
+        if ret >= TARGET_PCT:
+            return None, True
+        return None, target_reached
+
     if age_h >= MAX_HOURS:
-        return "TIME"
-    return None
+        return "TIME", target_reached
+    if ret < TARGET_PCT:
+        return "TARGET", target_reached
+    return None, target_reached
 
 
 def main():
@@ -231,7 +243,7 @@ def main():
             remaining.append(pos)
             continue
 
-        reason = should_close(pos, price, current)
+        reason, target_reached = should_close(pos, price, current)
 
         entry = float(pos["entry_price"])
         raw_ret = (price / entry - 1.0) * 100.0
@@ -246,14 +258,18 @@ def main():
                 f"reason={reason:<6} net=${float(trade['net_pnl']):+.4f}"
             )
         else:
+            pos["target_reached"] = "1" if target_reached else "0"
             remaining.append(pos)
+            flag = " (alvo travado)" if target_reached else ""
             print(
                 f"HOLD  {symbol:<12} price={price:.8f} "
-                f"ret={raw_ret:+.3f}% age={age:.2f}h"
+                f"ret={raw_ret:+.3f}% age={age:.2f}h{flag}"
             )
 
-    if open_fields:
-        write_csv(OPEN_FILE, open_fields, remaining)
+    # OPEN_FIELDS (de v9_17.py) em vez do open_fields lido do arquivo -
+    # garante a coluna target_reached mesmo se o CSV existente for de
+    # antes dessa mudança de schema.
+    write_csv(OPEN_FILE, OPEN_FIELDS, remaining)
 
     if closed:
         _, ledger_rows = load_csv(LEDGER_FILE)

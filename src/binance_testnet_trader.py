@@ -28,6 +28,13 @@ Isolado do paper trading v9 de propósito:
       original, que é o que o paper trading v9 usa) - aqui a ordem é
       de verdade, então o preço real de execução é o dado que importa
       pra validar a engenharia.
+    - TARGET (2026-08-31, pedido do usuário, experimental - não
+      validado por treino/teste como o STOP/TARGET em si) virou trava
+      de lucro: ao bater TARGET_PCT pela primeira vez não vende, só
+      marca (campo target_reached na posição) e deixa correr enquanto
+      o preço continuar subindo. Só sai por TARGET quando o retorno
+      cair de volta abaixo de TARGET_PCT. Mesma regra em
+      paper_trading_v9_17.py/v9_18.py.
 
 PAPER real (v9) não é afetado. Ordem REAL (mainnet) nunca é enviada.
 Sem cron - rodar manualmente:
@@ -68,6 +75,7 @@ TESTNET_LEDGER = DATA / "binance_testnet_trades.csv"
 TESTNET_OPEN_FIELDS = [
     "signal_id", "symbol", "entry_time", "entry_price", "quantity",
     "entry_cost_usdt", "buy_order_id", "score", "confidence",
+    "target_reached",
 ]
 TESTNET_LEDGER_FIELDS = [
     "trade_id", "symbol", "entry_time", "exit_time", "entry_price",
@@ -180,16 +188,30 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
         change = price / entry - 1.0
         opened = parse_dt(pos["entry_time"])
         age_hours = (datetime.now(timezone.utc) - opened).total_seconds() / 3600.0
+        target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
+        # Trava de lucro (2026-08-31, pedido do usuário - experimental,
+        # não validado por treino/teste como o STOP/TARGET em si): ao
+        # bater TARGET pela primeira vez, não vende - só marca
+        # target_reached e deixa correr. Só sai por TARGET quando o
+        # retorno cair de volta abaixo de TARGET_PCT (ou por STOP/TIME
+        # antes de bater o alvo, ou por TIME depois).
         reason = None
-        if change <= -STOP_PCT:
-            reason = "STOP"
-        elif change >= TARGET_PCT:
-            reason = "TARGET"
-        elif age_hours >= MAX_HOLD_HOURS:
-            reason = "TIME"
+        if not target_reached:
+            if change <= -STOP_PCT:
+                reason = "STOP"
+            elif age_hours >= MAX_HOLD_HOURS:
+                reason = "TIME"
+            elif change >= TARGET_PCT:
+                target_reached = True
+        else:
+            if age_hours >= MAX_HOLD_HOURS:
+                reason = "TIME"
+            elif change < TARGET_PCT:
+                reason = "TARGET"
 
         if not reason:
+            pos["target_reached"] = "1" if target_reached else "0"
             remaining.append(pos)
             continue
 
@@ -298,6 +320,7 @@ def open_new_positions(
             "buy_order_id": str(buy_order.get("id", "")),
             "score": signal.get("score", ""),
             "confidence": signal.get("confidence", ""),
+            "target_reached": "0",
         })
         open_symbols.add(sym)
         slots -= 1

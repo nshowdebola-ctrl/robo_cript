@@ -52,6 +52,14 @@ STOP_PCT = 0.05
 TARGET_PCT = 0.06
 MAX_HOLD_HOURS = 24
 
+# Alterado em 2026-08-31 (decisão do usuário, não validada por
+# treino/teste como o STOP/TARGET acima - é experimental): TARGET não
+# fecha mais a posição na hora que bate 6%. Uma vez atingido, vira uma
+# trava de lucro - a posição segue aberta enquanto o preço continua
+# subindo, e só fecha com TARGET quando o retorno cair de volta abaixo
+# de TARGET_PCT (ou por STOP/TIME antes disso). O estado "já bateu o
+# alvo uma vez" fica no campo target_reached da posição aberta.
+
 SIGNAL_FIELDS = {
     "signal_id", "scenario", "symbol", "entry_time", "entry_price",
     "timeframe", "score", "confidence", "signal"
@@ -69,7 +77,7 @@ LEDGER_FIELDS = [
 OPEN_FIELDS = [
     "signal_id", "scenario", "symbol", "entry_time", "entry_price",
     "quantity", "notional", "entry_fee_rate", "entry_fee",
-    "slippage_entry_pct", "score", "confidence"
+    "slippage_entry_pct", "score", "confidence", "target_reached"
 ]
 
 
@@ -173,6 +181,7 @@ def open_trade(signal):
         "slippage_entry_pct": f"{SLIPPAGE_ENTRY_PCT:.8f}",
         "score": signal.get("score", ""),
         "confidence": signal.get("confidence", ""),
+        "target_reached": "0",
     }
 
 
@@ -272,14 +281,23 @@ def main():
             change = price / entry - 1.0
             opened = parse_dt(pos["entry_time"])
             age = (now_utc() - opened).total_seconds() / 3600.0
+            target_reached = (pos.get("target_reached") or "0").strip() == "1"
 
             reason = None
-            if change <= -STOP_PCT:
-                reason = "STOP"
-            elif change >= TARGET_PCT:
-                reason = "TARGET"
-            elif age >= MAX_HOLD_HOURS:
-                reason = "TIME"
+            if not target_reached:
+                if change <= -STOP_PCT:
+                    reason = "STOP"
+                elif age >= MAX_HOLD_HOURS:
+                    reason = "TIME"
+                elif change >= TARGET_PCT:
+                    # Trava o lucro em vez de vender na hora - deixa
+                    # correr enquanto continuar subindo.
+                    target_reached = True
+            else:
+                if age >= MAX_HOLD_HOURS:
+                    reason = "TIME"
+                elif change < TARGET_PCT:
+                    reason = "TARGET"
 
             if reason:
                 trade = close_trade(pos, price, reason, now_utc())
@@ -290,6 +308,7 @@ def main():
                     f"net={float(trade['net_return_pct']):+.4f}%"
                 )
             else:
+                pos["target_reached"] = "1" if target_reached else "0"
                 remaining.append(pos)
         except Exception as exc:
             print(f"AVISO monitor {pos.get('symbol')}: {exc}")
