@@ -32,11 +32,17 @@ Isolado do paper trading v9 de propósito:
 PAPER real (v9) não é afetado. Ordem REAL (mainnet) nunca é enviada.
 Sem cron - rodar manualmente:
     python3 src/binance_testnet_trader.py
+
+O valor por posição é lido de data/binance_testnet_config.json a cada
+ciclo (não é preciso reiniciar nada pra mudar) - o portal web
+(web/testnet.php) escreve esse arquivo quando o usuário atualiza o
+campo de valor.
 """
 
 from __future__ import annotations
 
 import csv
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -69,8 +75,21 @@ TESTNET_LEDGER_FIELDS = [
     "buy_order_id", "sell_order_id",
 ]
 
+CONFIG_FILE = DATA / "binance_testnet_config.json"
+
 MAX_POSITIONS_TESTNET = 5
-TESTNET_NOTIONAL_USDT = 15.0
+TESTNET_NOTIONAL_USDT = 15.0  # valor padrão, usado se o config.json não existir/for inválido
+
+
+def load_notional_usdt() -> float:
+    try:
+        raw = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+        value = float(raw["notional_usdt"])
+        if value > 0:
+            return value
+    except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        pass
+    return TESTNET_NOTIONAL_USDT
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -205,7 +224,9 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
     return remaining, closed_now
 
 
-def open_new_positions(exchange, remaining: list[dict]) -> list[dict]:
+def open_new_positions(
+    exchange, remaining: list[dict], notional_usdt: float
+) -> list[dict]:
     slots = max(0, MAX_POSITIONS_TESTNET - len(remaining))
     if slots <= 0:
         return remaining
@@ -227,7 +248,7 @@ def open_new_positions(exchange, remaining: list[dict]) -> list[dict]:
         try:
             ticker = call_with_retry(exchange.fetch_ticker, sym)
             price = ticker["last"]
-            raw_amount = TESTNET_NOTIONAL_USDT / price
+            raw_amount = notional_usdt / price
             amount = float(exchange.amount_to_precision(sym, raw_amount))
             buy_order = call_with_retry(
                 exchange.create_order, sym, "market", "buy", amount
@@ -266,6 +287,17 @@ def open_new_positions(exchange, remaining: list[dict]) -> list[dict]:
     return remaining
 
 
+def run_cycle(exchange) -> tuple[int, int]:
+    """Um ciclo completo: monitora/fecha posições, tenta abrir novas
+    com o notional atual do config.json. Usado tanto pelo modo manual
+    (main) quanto pelo loop contínuo (binance_testnet_loop.py)."""
+    notional_usdt = load_notional_usdt()
+    remaining, closed_now = monitor_open_positions(exchange)
+    remaining = open_new_positions(exchange, remaining, notional_usdt)
+    write_csv(TESTNET_OPEN_FILE, TESTNET_OPEN_FIELDS, remaining)
+    return closed_now, len(remaining)
+
+
 def main() -> int:
     print("=" * 100)
     print("CRYPTO RADAR - BINANCE TESTNET TRADER")
@@ -274,7 +306,7 @@ def main() -> int:
     print("Dinheiro real: NÃO - saldo fictício, ambiente separado do mainnet")
     print(f"Sinais: {SIGNALS}")
     print(f"STOP / TARGET / MAX_HOLD: {STOP_PCT:.2%} / {TARGET_PCT:.2%} / {MAX_HOLD_HOURS}h")
-    print(f"Notional por posição: ${TESTNET_NOTIONAL_USDT:.2f} | Máx. posições: {MAX_POSITIONS_TESTNET}")
+    print(f"Notional por posição: ${load_notional_usdt():.2f} | Máx. posições: {MAX_POSITIONS_TESTNET}")
     print("-" * 100)
 
     try:
@@ -285,13 +317,11 @@ def main() -> int:
         log(f"ERRO de configuração: {exc}")
         return 1
 
-    remaining, closed_now = monitor_open_positions(exchange)
-    remaining = open_new_positions(exchange, remaining)
-    write_csv(TESTNET_OPEN_FILE, TESTNET_OPEN_FIELDS, remaining)
+    closed_now, open_count = run_cycle(exchange)
 
     log(
         f"CICLO concluído: {closed_now} fechada(s), "
-        f"{len(remaining)} posição(ões) aberta(s) no testnet."
+        f"{open_count} posição(ões) aberta(s) no testnet."
     )
     print("=" * 100)
     print("Nenhuma ordem real foi enviada.")

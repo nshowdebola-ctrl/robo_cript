@@ -22,3 +22,6 @@
 [2026-08-31T00:21:08.434225+00:00] CLOSE PUMP/USDT    TARGET gross=+18.6842% sell_order=1011494
 [2026-08-31T00:21:10.258650+00:00] OPEN  PUMP/USDT    entry=0.004511 qty=3325.0 buy_order=1011496
 [2026-08-31T00:21:10.260055+00:00] CICLO concluído: 1 fechada(s), 5 posição(ões) aberta(s) no testnet.
+[2026-08-31T00:31:03.182537+00:00] LOOP iniciado (pid=256501, intervalo=300s)
+[2026-08-31T00:31:06.291895+00:00] LOOP ciclo: 0 fechada(s), 5 aberta(s).
+[2026-08-31T00:31:33.296307+00:00] LOOP encerrado (sinal recebido).
