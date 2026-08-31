@@ -1,0 +1,24 @@
+[2026-08-31T00:07:11.623830+00:00] AUTENTICADO. Saldo USDT livre (testnet): 10000.0
+[2026-08-31T00:07:11.898846+00:00] Preço atual BTC/USDT: 77591.73 | quantidade calculada: 0.00019
+[2026-08-31T00:07:12.182154+00:00] COMPRA enviada: id=10117818 status=closed
+[2026-08-31T00:07:12.462056+00:00] COMPRA confirmada: status=closed filled=0.00019
+[2026-08-31T00:07:12.742172+00:00] VENDA de fechamento enviada: id=10117822 status=closed
+[2026-08-31T00:07:13.039623+00:00] Saldo USDT livre após o ciclo: 9999.9999981
+[2026-08-31T00:10:55.563342+00:00] AUTENTICADO. Saldo USDT livre (testnet): 9999.9999981
+[2026-08-31T00:10:55.839514+00:00] Preço atual BTC/USDT: 77456.53 | quantidade calculada: 645.52336
+[2026-08-31T00:10:56.119716+00:00] ERRO: ordem inválida (checar minNotional/precisão): binance order amount should be evenly divisible by lot size {"code":-1013,"msg":"Filter failure: MARKET_LOT_SIZE"}
+[2026-08-31T00:11:22.176676+00:00] AUTENTICADO. Saldo USDT livre (testnet): 9999.9999981
+[2026-08-31T00:11:22.454337+00:00] Preço atual BTC/USDT: 77506.77 | quantidade calculada: 0.6451
+[2026-08-31T00:11:22.732491+00:00] ERRO: saldo insuficiente na testnet: binance Account has insufficient balance for requested action.
+[2026-08-31T00:12:08.800985+00:00] AUTENTICADO. Saldo USDT livre (testnet): 9999.9999981
+[2026-08-31T00:12:08.801242+00:00] ERRO ao calcular ordem: BadSymbol: binance does not have market symbol FOOBAR/USDT
+[2026-08-31T00:20:32.768897+00:00] OPEN  PUMP/USDT    entry=0.004505 qty=3333.0 buy_order=1011466
+[2026-08-31T00:20:33.474304+00:00] OPEN  OPG/USDT     entry=0.0939 qty=159.7 buy_order=149719
+[2026-08-31T00:20:34.133952+00:00] OPEN  UNI/USDT     entry=5.189 qty=2.88 buy_order=736272
+[2026-08-31T00:20:34.744632+00:00] OPEN  ENA/USDT     entry=0.1489 qty=100.87 buy_order=411108
+[2026-08-31T00:20:35.366288+00:00] OPEN  ZKP/USDT     entry=0.0544 qty=272.7 buy_order=93925
+[2026-08-31T00:20:35.367223+00:00] CICLO concluído: 0 fechada(s), 5 posição(ões) aberta(s) no testnet.
+[2026-08-31T00:20:47.108223+00:00] CICLO concluído: 0 fechada(s), 5 posição(ões) aberta(s) no testnet.
+[2026-08-31T00:21:08.434225+00:00] CLOSE PUMP/USDT    TARGET gross=+18.6842% sell_order=1011494
+[2026-08-31T00:21:10.258650+00:00] OPEN  PUMP/USDT    entry=0.004511 qty=3325.0 buy_order=1011496
+[2026-08-31T00:21:10.260055+00:00] CICLO concluído: 1 fechada(s), 5 posição(ões) aberta(s) no testnet.

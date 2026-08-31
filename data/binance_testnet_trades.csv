@@ -1,0 +1,2 @@
+trade_id,symbol,entry_time,exit_time,entry_price,exit_price,quantity,exit_reason,gross_return_pct,buy_order_id,sell_order_id
+20260830160000+0000_15aee811ea_2026-08-31T00:21:08.433721+00:00,PUMP/USDT,2026-08-31T00:20:32.768863+00:00,2026-08-31T00:21:08.433721+00:00,0.003800000000,0.004510000000,3333.000000000000,TARGET,18.684211,1011466,1011494
