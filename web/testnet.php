@@ -395,15 +395,24 @@ if (file_exists(LOG_FILE)) {
         }
 
         .top-row {
-            display: grid;
-            grid-template-columns: 1.7fr 1fr 1fr;
+            display: flex;
+            align-items: stretch;
             gap: 20px;
             margin-bottom: 28px;
-            align-items: stretch;
         }
 
-        @media (max-width: 980px) { .top-row { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 620px) { .top-row { grid-template-columns: 1fr; } }
+        .top-row > .card { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
+        .top-row > .highlight-card { flex: 1.7 1 0; }
+
+        @media (max-width: 980px) {
+            .top-row { flex-wrap: wrap; }
+            .top-row > .card { flex: 1 1 45%; }
+        }
+
+        @media (max-width: 620px) {
+            .top-row { flex-direction: column; }
+            .top-row > .card { flex: 1 1 auto; }
+        }
 
         .card {
             background: linear-gradient(165deg, #131d34, #0f1729);
@@ -426,10 +435,10 @@ if (file_exists(LOG_FILE)) {
         }
 
         .highlight-card {
-            margin-bottom: 28px;
             padding: 20px 24px 18px;
             position: relative;
             overflow: hidden;
+            justify-content: space-between;
         }
 
         .highlight-card::before {
