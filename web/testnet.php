@@ -12,6 +12,7 @@ declare(strict_types=1);
 const BASE_DIR    = __DIR__ . '/..';
 const PYTHON_BIN  = BASE_DIR . '/.venv/bin/python3';
 const LOOP_SCRIPT = BASE_DIR . '/src/binance_testnet_loop.py';
+const RESET_SCRIPT = BASE_DIR . '/src/binance_testnet_reset.py';
 const PID_FILE    = BASE_DIR . '/data/binance_testnet_loop.pid';
 const CONFIG_FILE = BASE_DIR . '/data/binance_testnet_config.json';
 const OPEN_FILE   = BASE_DIR . '/data/binance_testnet_open_positions.csv';
@@ -258,6 +259,18 @@ function stopLoop(): void
     usleep(800000);
 }
 
+function resetAll(): array
+{
+    // Para o loop primeiro - rodar o reset com o loop ativo arrisca os
+    // dois mexerem no mesmo CSV ao mesmo tempo.
+    stopLoop();
+
+    $cmd = escapeshellarg(PYTHON_BIN) . ' ' . escapeshellarg(RESET_SCRIPT) . ' 2>&1';
+    exec($cmd, $output, $exitCode);
+
+    return ['ok' => $exitCode === 0, 'output' => implode("\n", $output)];
+}
+
 $message = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -286,6 +299,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         stopLoop();
         header('Location: testnet.php');
         exit;
+    } elseif ($action === 'reset_all') {
+        $result = resetAll();
+        $message = $result['ok']
+            ? ['type' => 'ok', 'text' => 'Testnet zerado: posições vendidas de volta pra USDT, histórico limpo. Loop ficou desativado - ative de novo quando quiser.']
+            : ['type' => 'error', 'text' => 'Reset terminou com erro: ' . $result['output']];
     }
 }
 
@@ -602,6 +620,14 @@ if (file_exists(LOG_FILE)) {
             box-shadow: 0 10px 24px -12px rgba(177, 58, 75, .7);
         }
 
+        .btn-reset {
+            background: #1a2338;
+            color: #ffb8c6;
+            border: 1px solid #4a2530;
+            font-size: 12px;
+            padding: 8px 14px;
+        }
+
         .hint { color: #8995ad; font-size: 12px; margin-top: 12px; line-height: 1.6; }
 
         .table-wrapper { overflow-x: auto; border-radius: 12px; }
@@ -746,6 +772,15 @@ if (file_exists(LOG_FILE)) {
                     <input type="hidden" name="action" value="start_loop">
                     <button type="submit" class="btn-activate">Ativar</button>
                 <?php endif; ?>
+            </form>
+            <form
+                method="post"
+                class="field-row"
+                style="margin-top: 10px;"
+                onsubmit="return confirm('Zerar tudo: vende as posições abertas de volta pra USDT e apaga o histórico de trades. Continuar?');"
+            >
+                <input type="hidden" name="action" value="reset_all">
+                <button type="submit" class="btn-reset">Zerar tudo</button>
             </form>
             <p class="hint">
                 Ciclo a cada 5 minutos até você desativar. Ainda testnet, sem dinheiro real.
