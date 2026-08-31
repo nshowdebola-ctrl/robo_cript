@@ -50,6 +50,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -108,11 +109,22 @@ def read_csv(path: Path) -> list[dict]:
 
 
 def write_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
+    # Escreve num arquivo temporário e só troca com os.replace (atômico)
+    # ao final - escrever direto no arquivo real (open "w") trunca o
+    # conteúdo antes de gravar, então qualquer erro no meio do
+    # writerows (ex: linha com campo que não existe em `fields`, já
+    # aconteceu de verdade) apaga o arquivo em vez de só falhar.
+    # extrasaction="ignore" evita esse erro específico de schema
+    # divergente entre código e dado.
     DATA.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(
+            fh, fieldnames=fields, lineterminator="\n", extrasaction="ignore"
+        )
         writer.writeheader()
         writer.writerows(rows)
+    os.replace(tmp, path)
 
 
 def append_csv(path: Path, fields: list[str], row: dict) -> None:
