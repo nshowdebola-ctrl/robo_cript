@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 .claude/
 .git-token
+.binance-testnet.env
