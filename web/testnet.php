@@ -396,21 +396,14 @@ if (file_exists(LOG_FILE)) {
 
         .top-row {
             display: grid;
-            grid-template-columns: 1.4fr 1fr;
+            grid-template-columns: 1.7fr 1fr 1fr;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
             align-items: stretch;
         }
 
-        @media (max-width: 780px) { .top-row { grid-template-columns: 1fr; } }
-
-        .grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 28px;
-            max-width: 360px;
-        }
+        @media (max-width: 980px) { .top-row { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 620px) { .top-row { grid-template-columns: 1fr; } }
 
         .card {
             background: linear-gradient(165deg, #131d34, #0f1729);
@@ -677,14 +670,11 @@ if (file_exists(LOG_FILE)) {
                 <button type="submit" class="btn-save">Salvar</button>
             </form>
             <p class="hint">
-                Vale a partir do próximo ciclo (sem precisar reiniciar o loop). Entre
-                <?= number_format(MIN_NOTIONAL, 0) ?> e <?= number_format(MAX_NOTIONAL, 0) ?> USDT por posição,
-                até 5 posições simultâneas.
+                Vale a partir do próximo ciclo. Entre <?= number_format(MIN_NOTIONAL, 0) ?> e
+                <?= number_format(MAX_NOTIONAL, 0) ?> USDT, até 5 posições simultâneas.
             </p>
         </div>
-    </div>
 
-    <div class="grid">
         <div class="card">
             <h2>Loop automático</h2>
             <form method="post" class="field-row">
@@ -697,8 +687,7 @@ if (file_exists(LOG_FILE)) {
                 <?php endif; ?>
             </form>
             <p class="hint">
-                "Ativar" liga um processo que roda o ciclo sozinho a cada 5 minutos até você desativar
-                (ou reiniciar a máquina). Ainda testnet, ainda sem dinheiro real.
+                Ciclo a cada 5 minutos até você desativar. Ainda testnet, sem dinheiro real.
             </p>
         </div>
     </div>
