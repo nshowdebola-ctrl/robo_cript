@@ -14,6 +14,12 @@ Metodologia:
 - Compara retorno médio/mediano entre manchetes POSITIVO vs NEGATIVO
   vs NEUTRO, e calcula correlação (Pearson) entre sentiment_score
   contínuo e o retorno em cada horizonte.
+- Além do retorno bruto, calcula também o retorno em EXCESSO ao BTC
+  (retorno do símbolo menos retorno do BTC na mesma janela) - remove
+  o efeito de "todo o mercado subiu/caiu junto", que é ruído grande
+  demais pra tentar isolar o efeito de uma notícia específica.
+  Observações do próprio BTC não entram nessa parte (excesso de BTC
+  contra BTC é sempre ~0, não informa nada).
 - Não abre posição nem inventa trade - é um estudo de correlação, não
   uma simulação de carteira.
 
@@ -150,6 +156,14 @@ def main() -> int:
         price_history[symbol] = df
         print(f"  {symbol:10s} {len(df)} candles")
 
+    if "BTC" in price_history:
+        btc_df = price_history["BTC"]
+    else:
+        btc_start = min(o.published_at for o in observations) - timedelta(hours=1)
+        btc_end = max(o.published_at for o in observations) + timedelta(hours=max(HORIZONS_HOURS) + 2)
+        btc_df = fetch_history(exchange, "BTC", btc_start, btc_end)
+        print(f"  {'BTC':10s} {len(btc_df)} candles (referência p/ retorno em excesso)")
+
     print()
     print("Calculando retornos por horizonte...")
 
@@ -170,14 +184,28 @@ def main() -> int:
             "sentiment_label": o.sentiment_label,
             "title": o.title,
         }
+        btc_base_price = None
+        if o.symbol != "BTC" and not btc_df.empty:
+            btc_base_price = price_at_or_before(btc_df, o.published_at)
+
         has_any_horizon = False
         for h in HORIZONS_HOURS:
             future_price = price_at_or_before(df, o.published_at + timedelta(hours=h))
             if future_price is None:
                 row[f"return_{h}h"] = None
+                row[f"return_{h}h_ex_btc"] = None
                 continue
-            row[f"return_{h}h"] = (future_price / base_price - 1.0) * 100.0
+            symbol_return = (future_price / base_price - 1.0) * 100.0
+            row[f"return_{h}h"] = symbol_return
             has_any_horizon = True
+
+            excess = None
+            if btc_base_price is not None and btc_base_price > 0:
+                btc_future_price = price_at_or_before(btc_df, o.published_at + timedelta(hours=h))
+                if btc_future_price is not None:
+                    btc_return = (btc_future_price / btc_base_price - 1.0) * 100.0
+                    excess = symbol_return - btc_return
+            row[f"return_{h}h_ex_btc"] = excess
 
         if has_any_horizon:
             records.append(row)
@@ -203,14 +231,14 @@ def main() -> int:
         )
         print()
 
-    for h in HORIZONS_HOURS:
-        col = f"return_{h}h"
-        valid = result_df.dropna(subset=[col])
+    def print_block(col: str, title: str, df_in: pd.DataFrame) -> None:
+        valid = df_in.dropna(subset=[col])
         if valid.empty:
-            continue
+            print(f"--- {title} (n=0) ---")
+            print()
+            return
 
-        print(f"--- Horizonte {h}h (n={len(valid)}) ---")
-
+        print(f"--- {title} (n={len(valid)}) ---")
         for label in ["POSITIVO", "NEUTRO", "NEGATIVO"]:
             subset = valid[valid["sentiment_label"] == label][col]
             if len(subset) == 0:
@@ -226,6 +254,22 @@ def main() -> int:
             corr = valid["sentiment_score"].corr(valid[col])
             print(f"  Correlação (Pearson, score contínuo x retorno): {corr:+.3f}")
         print()
+
+    for h in HORIZONS_HOURS:
+        col = f"return_{h}h"
+        valid = result_df.dropna(subset=[col])
+        if valid.empty:
+            continue
+
+        print_block(col, f"Horizonte {h}h - retorno BRUTO", result_df)
+
+        excess_col = f"return_{h}h_ex_btc"
+        excess_df = result_df[result_df["symbol"] != "BTC"]
+        print_block(
+            excess_col,
+            f"Horizonte {h}h - retorno em EXCESSO ao BTC (exclui obs. de BTC)",
+            excess_df,
+        )
 
     print("=" * 100)
     print("Isto mede correlação, não causalidade, e o tamanho de amostra atual é")
