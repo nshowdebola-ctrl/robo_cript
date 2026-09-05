@@ -220,11 +220,27 @@ function loopPid(): ?int
 
 function isLoopAlive(int $pid): bool
 {
-    $cmdlinePath = "/proc/$pid/cmdline";
-    if (!file_exists($cmdlinePath)) {
+    // Sinal primário: o processo existe (equivalente a kill -0). Ao
+    // contrário de checar só /proc/$pid/cmdline (que já causou falso
+    // "morto" neste projeto por corrida de leitura - ver memória do
+    // projeto, feedback-monitor-proc-check), a existência do PID nunca
+    // é sujeita a essa corrida. Mesma correção aplicada em live.php.
+    exec('kill -0 ' . $pid . ' 2>/dev/null', $unused, $exitCode);
+    if ($exitCode !== 0) {
         return false;
     }
+    // /proc/cmdline aqui é só uma confirmação EXTRA pra descartar
+    // reaproveitamento do PID por outro processo - se não der pra ler
+    // (corrida, permissão, kernel sem /proc/pid/cmdline), não trata
+    // como morto: a existência do PID já é suficiente.
+    $cmdlinePath = "/proc/$pid/cmdline";
+    if (!file_exists($cmdlinePath)) {
+        return true;
+    }
     $cmdline = (string) file_get_contents($cmdlinePath);
+    if ($cmdline === '') {
+        return true;
+    }
     return str_contains($cmdline, 'binance_testnet_loop.py');
 }
 
@@ -255,8 +271,26 @@ function stopLoop(): void
     if (!$status['running']) {
         return;
     }
-    exec('kill -TERM ' . (int) $status['pid']);
-    usleep(800000);
+    $pid = (int) $status['pid'];
+    exec('kill -TERM ' . $pid);
+
+    // Espera de verdade o processo sair (até 10s) em vez de confiar
+    // num sleep fixo - o loop só checa a flag de parada no topo do
+    // laço externo, então pode continuar rodando um ciclo em
+    // andamento (com retry de rede) bem além de um sleep curto. Mesma
+    // correção aplicada em live.php.
+    $deadline = microtime(true) + 10.0;
+    while (microtime(true) < $deadline) {
+        usleep(300000);
+        if (!isLoopAlive($pid)) {
+            return;
+        }
+    }
+
+    // Ainda vivo depois de 10s - força encerramento antes de deixar
+    // quem chamou (ex: resetAll) prosseguir com o mesmo CSV/exchange.
+    exec('kill -KILL ' . $pid);
+    usleep(500000);
 }
 
 function resetAll(): array

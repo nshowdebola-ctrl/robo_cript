@@ -1,0 +1,5 @@
+[2026-09-05T21:49:43.757233+00:00] ERRO de configuração: /home/alex/projetos/crypto-radar/.binance-live.env não encontrado - nenhuma chave real configurada ainda. Engenharia pronta, trading real desabilitado até este arquivo existir (crie com BINANCE_LIVE_API_KEY e BINANCE_LIVE_API_SECRET quando decidir ativar de verdade, com o usuário presente).
+[2026-09-05T21:50:19.906576+00:00] [LIVE] RESET: nenhuma posição aberta registrada, nada pra vender.
+[2026-09-05T21:50:19.907090+00:00] [LIVE] RESET: posições e ledger live zerados (circuit breaker não foi alterado).
+[2026-09-05T22:03:26.243068+00:00] [LIVE] RESET: nenhuma posição aberta registrada, nada pra vender.
+[2026-09-05T22:03:26.243513+00:00] [LIVE] RESET: posições abertas zeradas. Ledger de trades e circuit breaker preservados (não alterados por este reset).
