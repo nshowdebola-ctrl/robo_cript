@@ -6175,3 +6175,22 @@ TheBlock         itens_no_feed=20   novos_gravados=0
 Total no ciclo: 177 itens vistos, 0 novos gravados.
 ====================================================================================================
 [2026-09-05T01:00:13.254472+00:00] CICLO concluído: vistos=177 novos=0
+====================================================================================================
+CRYPTO RADAR - NEWS RADAR V1 -- COLETOR DE NOTÍCIAS
+====================================================================================================
+Banco:   /home/alex/projetos/crypto-radar/data/news_radar.db
+Feeds:   8
+Escopo:  somente coleta + sentimento léxico. Nenhuma ação de trading.
+----------------------------------------------------------------------------------------------------
+CoinDesk         itens_no_feed=25   novos_gravados=0
+Cointelegraph    itens_no_feed=30   novos_gravados=0
+Decrypt          itens_no_feed=37   novos_gravados=0
+CryptoSlate      itens_no_feed=10   novos_gravados=0
+BitcoinMagazine  itens_no_feed=10   novos_gravados=0
+NewsBTC          itens_no_feed=9    novos_gravados=0
+CryptoPotato     itens_no_feed=36   novos_gravados=0
+TheBlock         itens_no_feed=20   novos_gravados=0
+----------------------------------------------------------------------------------------------------
+Total no ciclo: 177 itens vistos, 0 novos gravados.
+====================================================================================================
+[2026-09-05T01:30:16.970234+00:00] CICLO concluído: vistos=177 novos=0

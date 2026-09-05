@@ -31502,3 +31502,1378 @@ Nenhum dado foi inventado, corrigido ou composto.
 V9.21 CONCLUÍDA: ciclo forward seguro.
 Nenhuma ordem real foi enviada.
 ====================================================================================================
+====================================================================================================
+CRYPTO RADAR - PAPER TRADING V9.21 -- ORQUESTRADOR FORWARD SEGURO
+====================================================================================================
+Modo: PAPER ONLY
+Ordens reais: NÃO
+CSV legado V8: NÃO UTILIZADO
+Projeto: /home/alex/projetos/crypto-radar
+Lock:    /home/alex/projetos/crypto-radar/data/v9_forward_orchestrator.lock
+Log:     /home/alex/projetos/crypto-radar/data/v9_21_orchestrator.log
+----------------------------------------------------------------------------------------------------
+[2026-09-05T01:25:02.446415+00:00] CICLO V9.21 iniciado
+[2026-09-05T01:25:02.446825+00:00] INÍCIO SCANNER_V3: scanner_v3.py
+
+======================================================================
+                      CRYPTO RADAR - SCANNER V3
+======================================================================
+Timeframe:        1h
+Candles:          240
+TOP mercados:     50
+Volume mínimo:    $1.00M
+Timeout rede:     15s
+Retry OHLCV:      3
+Usando somente candles fechados.
+
+Inicializando banco...
+✓ Banco OK
+Inicializando Binance...
+✓ Binance OK
+
+Carregando mercados...
+Mercados candidatos: 487
+Buscando tickers...
+Mercados selecionados: 50
+
+Filtrando por idade de listagem (mín. 90d)...
+  Ignorando MARSCOIN/USDT: listado há 1d (< 90d mínimo)
+  Ignorando SNDKB/USDT: listado há 86d (< 90d mínimo)
+  Ignorando CRCLB/USDT: listado há 86d (< 90d mínimo)
+  Ignorando GRAM/USDT: listado há 65d (< 90d mínimo)
+  Ignorando SPCXB/USDT: listado há 85d (< 90d mínimo)
+Mercados após filtro de idade: 45
+
+Analisando mercados...
+----------------------------------------------------------------------
+[01/45] USDC/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.99967000
+  RSI:                       36.94
+  EMA20:                     0.99981160
+  EMA50:                     0.99994776
+  Momentum 4h:               -0.00%
+  Volume relativo:           0.62x
+  ATR:                       0.01%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               18/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.41s
+[02/45] BTC/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     79573.36000000
+  RSI:                       44.67
+  EMA20:                     79884.98921618
+  EMA50:                     79627.53509388
+  Momentum 4h:               -0.16%
+  Volume relativo:           0.21x
+  ATR:                       0.63%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:       20/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               38/100
+  Classificação:     NEUTRO
+  Sinal:             SEM SINAL
+  Confiança:           2%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.63s
+[03/45] ETH/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     2452.14000000
+  RSI:                       43.31
+  EMA20:                     2465.34396544
+  EMA50:                     2462.19065680
+  Momentum 4h:               +0.04%
+  Volume relativo:           0.18x
+  ATR:                       0.75%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               22/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.58s
+[04/45] ZEC/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     1018.48000000
+  RSI:                       60.31
+  EMA20:                     999.62251053
+  EMA50:                     950.56479927
+  Momentum 4h:               -0.47%
+  Volume relativo:           0.32x
+  ATR:                       2.78%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               68/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          40%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[05/45] USD1/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.99957000
+  RSI:                       41.17
+  EMA20:                     0.99965950
+  EMA50:                     0.99970908
+  Momentum 4h:               -0.00%
+  Volume relativo:           0.94x
+  ATR:                       0.01%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               22/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.31s
+[06/45] XRP/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     1.39540000
+  RSI:                       39.60
+  EMA20:                     1.41022987
+  EMA50:                     1.40806848
+  Momentum 4h:               -0.34%
+  Volume relativo:           0.33x
+  ATR:                       1.06%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               14/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.33s
+[07/45] SOL/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     101.81000000
+  RSI:                       44.70
+  EMA20:                     102.20907684
+  EMA50:                     102.27103978
+  Momentum 4h:               +0.05%
+  Volume relativo:           0.44x
+  ATR:                       0.88%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               22/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[08/45] BNB/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     719.69000000
+  RSI:                       53.04
+  EMA20:                     718.62713595
+  EMA50:                     713.34206953
+  Momentum 4h:               +0.21%
+  Volume relativo:           0.68x
+  ATR:                       0.68%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:             7/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               76/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA
+  Confiança:          71%
+  ✓ Concluído em 0.31s
+[09/45] ENSO/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.84500000
+  RSI:                       45.13
+  EMA20:                     0.84790781
+  EMA50:                     0.85499656
+  Momentum 4h:               +0.72%
+  Volume relativo:           0.02x
+  ATR:                       0.92%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:            10/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               29/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.35s
+[10/45] PROM/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     5.01300000
+  RSI:                       46.20
+  EMA20:                     5.09641168
+  EMA50:                     5.06046539
+  Momentum 4h:               -2.17%
+  Volume relativo:           0.13x
+  ATR:                       2.27%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               19/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[11/45] DOGE/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.08464000
+  RSI:                       41.79
+  EMA20:                     0.08529635
+  EMA50:                     0.08518848
+  Momentum 4h:               -0.12%
+  Volume relativo:           0.30x
+  ATR:                       1.04%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               18/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.40s
+[12/45] NEAR/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     2.22200000
+  RSI:                       71.27
+  EMA20:                     2.05147932
+  EMA50:                     1.98820215
+  Momentum 4h:               +5.46%
+  Volume relativo:           1.74x
+  ATR:                       3.04%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            15/15
+  Volume:              12/15
+  -------------------------------------------------------------
+  SCORE:               87/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          92%
+  ✓ Concluído em 0.47s
+[13/45] DASH/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     64.75000000
+  RSI:                       81.72
+  EMA20:                     55.35186315
+  EMA50:                     50.66202664
+  Momentum 4h:               +12.37%
+  Volume relativo:           2.03x
+  ATR:                       4.04%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                 3/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            15/15
+  Volume:              15/15
+  -------------------------------------------------------------
+  SCORE:               78/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA
+  Confiança:          83%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.34s
+[14/45] UNI/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     6.16900000
+  RSI:                       47.98
+  EMA20:                     6.20463368
+  EMA50:                     6.13527019
+  Momentum 4h:               -0.37%
+  Volume relativo:           0.42x
+  ATR:                       2.11%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               57/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          26%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[15/45] ZKC/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.04920000
+  RSI:                       54.31
+  EMA20:                     0.04886517
+  EMA50:                     0.04882661
+  Momentum 4h:               +0.00%
+  Volume relativo:           0.08x
+  ATR:                       1.29%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               72/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          59%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.34s
+[16/45] RLUSD/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.99990000
+  RSI:                       46.30
+  EMA20:                     0.99995545
+  EMA50:                     1.00009905
+  Momentum 4h:               +0.01%
+  Volume relativo:           0.15x
+  ATR:                       0.02%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               26/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[17/45] SUI/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.76150000
+  RSI:                       50.35
+  EMA20:                     0.75982450
+  EMA50:                     0.75986591
+  Momentum 4h:               +0.59%
+  Volume relativo:           1.42x
+  ATR:                       1.32%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:            10/15
+  Volume:               9/15
+  -------------------------------------------------------------
+  SCORE:               74/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          70%
+  ✓ Concluído em 0.33s
+[18/45] ADA/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.21040000
+  RSI:                       40.00
+  EMA20:                     0.21416799
+  EMA50:                     0.21293445
+  Momentum 4h:               -1.17%
+  Volume relativo:           0.44x
+  ATR:                       1.47%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        7/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               18/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.83s
+[19/45] ENA/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.16160000
+  RSI:                       43.84
+  EMA20:                     0.16426930
+  EMA50:                     0.16266455
+  Momentum 4h:               -1.34%
+  Volume relativo:           0.43x
+  ATR:                       2.29%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:       20/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               35/100
+  Classificação:     NEUTRO
+  Sinal:             SEM SINAL
+  Confiança:           2%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.34s
+[20/45] FDUSD/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.99860000
+  RSI:                       37.26
+  EMA20:                     0.99891397
+  EMA50:                     0.99905927
+  Momentum 4h:               -0.01%
+  Volume relativo:           0.11x
+  ATR:                       0.03%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               14/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.33s
+[21/45] TRUMP/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     2.32400000
+  RSI:                       53.29
+  EMA20:                     2.30155688
+  EMA50:                     2.31196123
+  Momentum 4h:               +2.88%
+  Volume relativo:           0.96x
+  ATR:                       2.12%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       15/25
+  Tendência 4h:        0/20
+  Momentum:            15/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               54/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          38%
+  ✓ Concluído em 0.30s
+[22/45] PUMP/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.00422000
+  RSI:                       46.16
+  EMA20:                     0.00426341
+  EMA50:                     0.00428540
+  Momentum 4h:               -1.17%
+  Volume relativo:           0.32x
+  ATR:                       2.30%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               19/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.31s
+[23/45] ARB/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.13120000
+  RSI:                       46.13
+  EMA20:                     0.13302471
+  EMA50:                     0.13107459
+  Momentum 4h:               -0.30%
+  Volume relativo:           0.59x
+  ATR:                       2.58%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:             3/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               61/100
+  Classificação:     FORTE
+  Sinal:             SEM SINAL
+  Confiança:          44%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.34s
+[24/45] PEPE/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.00000349
+  RSI:                       39.41
+  EMA20:                     0.00000357
+  EMA50:                     0.00000358
+  Momentum 4h:               -2.51%
+  Volume relativo:           1.13x
+  ATR:                       1.76%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             0/15
+  Volume:               9/15
+  -------------------------------------------------------------
+  SCORE:               20/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 1.18s
+[25/45] LINK/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     11.62100000
+  RSI:                       45.27
+  EMA20:                     11.69881484
+  EMA50:                     11.62932980
+  Momentum 4h:               -0.43%
+  Volume relativo:           0.93x
+  ATR:                       1.22%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:       20/20
+  Momentum:             3/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               46/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          20%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.40s
+[26/45] TRX/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.33160000
+  RSI:                       61.09
+  EMA20:                     0.33053968
+  EMA50:                     0.32943065
+  Momentum 4h:               +0.03%
+  Volume relativo:           0.38x
+  ATR:                       0.26%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       14/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               66/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          46%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.40s
+[27/45] PAXG/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     4432.16000000
+  RSI:                       45.07
+  EMA20:                     4440.73762365
+  EMA50:                     4440.13433363
+  Momentum 4h:               +0.00%
+  Volume relativo:           0.07x
+  ATR:                       0.48%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               26/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.86s
+[28/45] U/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.99940000
+  RSI:                       48.48
+  EMA20:                     0.99941612
+  EMA50:                     0.99947572
+  Momentum 4h:               -0.01%
+  Volume relativo:           0.20x
+  ATR:                       0.01%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               22/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.31s
+[29/45] XAUT/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     4428.10000000
+  RSI:                       46.51
+  EMA20:                     4434.04958345
+  EMA50:                     4432.06464266
+  Momentum 4h:               +0.05%
+  Volume relativo:           0.11x
+  ATR:                       0.46%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               26/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.33s
+[30/45] XPL/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.09302000
+  RSI:                       47.96
+  EMA20:                     0.09393872
+  EMA50:                     0.09226469
+  Momentum 4h:               -1.73%
+  Volume relativo:           0.34x
+  ATR:                       3.16%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               54/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          26%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.33s
+[31/45] ZEN/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     7.11200000
+  RSI:                       76.65
+  EMA20:                     6.53405933
+  EMA50:                     6.15492752
+  Momentum 4h:               +6.02%
+  Volume relativo:           0.96x
+  ATR:                       3.23%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                 3/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            15/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               67/100
+  Classificação:     FORTE
+  Sinal:             COMPRA
+  Confiança:          65%
+  Riscos:            RSI_SOBRECOMPRADO
+  ✓ Concluído em 0.36s
+[32/45] TAO/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     227.70000000
+  RSI:                       56.12
+  EMA20:                     225.23534929
+  EMA50:                     224.98300689
+  Momentum 4h:               +1.56%
+  Volume relativo:           1.58x
+  ATR:                       1.60%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       14/20
+  Momentum:            13/15
+  Volume:              12/15
+  -------------------------------------------------------------
+  SCORE:               84/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          84%
+  ✓ Concluído em 0.31s
+[33/45] AAVE/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     130.95000000
+  RSI:                       47.80
+  EMA20:                     131.25265212
+  EMA50:                     130.99255205
+  Momentum 4h:               +0.75%
+  Volume relativo:           0.95x
+  ATR:                       1.29%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:        0/25
+  Tendência 4h:       20/20
+  Momentum:            10/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               53/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          41%
+  ✓ Concluído em 0.32s
+[34/45] ASTER/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.74400000
+  RSI:                       57.18
+  EMA20:                     0.73564474
+  EMA50:                     0.72913911
+  Momentum 4h:               +0.68%
+  Volume relativo:           0.91x
+  ATR:                       1.70%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            10/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               79/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA
+  Confiança:          74%
+  ✓ Concluído em 0.33s
+[35/45] AVAX/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     7.38500000
+  RSI:                       47.77
+  EMA20:                     7.39737060
+  EMA50:                     7.38116175
+  Momentum 4h:               +0.00%
+  Volume relativo:           0.40x
+  ATR:                       0.76%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                19/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               61/100
+  Classificação:     FORTE
+  Sinal:             SEM SINAL
+  Confiança:          44%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[36/45] CHIP/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.05465000
+  RSI:                       50.04
+  EMA20:                     0.05486497
+  EMA50:                     0.05294036
+  Momentum 4h:               -1.18%
+  Volume relativo:           0.62x
+  ATR:                       3.77%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       15/25
+  Tendência 4h:       20/20
+  Momentum:             0/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               59/100
+  Classificação:     MODERADO
+  Sinal:             SEM SINAL
+  Confiança:          38%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.32s
+[37/45] WLD/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.38580000
+  RSI:                       53.89
+  EMA20:                     0.38262901
+  EMA50:                     0.38137338
+  Momentum 4h:               +1.31%
+  Volume relativo:           1.04x
+  ATR:                       1.44%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            13/15
+  Volume:               9/15
+  -------------------------------------------------------------
+  SCORE:               87/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          86%
+  ✓ Concluído em 0.35s
+[38/45] LTC/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     51.01000000
+  RSI:                       55.21
+  EMA20:                     50.75990840
+  EMA50:                     50.61540590
+  Momentum 4h:               +0.41%
+  Volume relativo:           0.83x
+  ATR:                       0.84%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:             7/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               76/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA
+  Confiança:          71%
+  ✓ Concluído em 0.32s
+[39/45] EUR/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     1.16070000
+  RSI:                       42.68
+  EMA20:                     1.16124330
+  EMA50:                     1.16128417
+  Momentum 4h:               +0.00%
+  Volume relativo:           0.32x
+  ATR:                       0.09%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               22/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[40/45] PENGU/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.00830400
+  RSI:                       43.78
+  EMA20:                     0.00838300
+  EMA50:                     0.00846753
+  Momentum 4h:               +0.02%
+  Volume relativo:           0.53x
+  ATR:                       1.92%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             7/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               26/100
+  Classificação:     FRACO
+  Sinal:             SEM SINAL
+  Confiança:           6%
+  ✓ Concluído em 0.33s
+[41/45] XLM/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.17880000
+  RSI:                       41.84
+  EMA20:                     0.18036336
+  EMA50:                     0.18034655
+  Momentum 4h:               -0.33%
+  Volume relativo:           0.33x
+  ATR:                       0.98%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             3/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               18/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.32s
+[42/45] HEMI/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.01412000
+  RSI:                       34.77
+  EMA20:                     0.01503528
+  EMA50:                     0.01545019
+  Momentum 4h:               -1.94%
+  Volume relativo:           0.50x
+  ATR:                       3.97%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                11/20
+  Tendência 1h:        0/25
+  Tendência 4h:        7/20
+  Momentum:             0/15
+  Volume:               0/15
+  -------------------------------------------------------------
+  SCORE:               18/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO, VOLUME_BAIXO
+  ✓ Concluído em 0.33s
+[43/45] ONDO/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.36410000
+  RSI:                       57.66
+  EMA20:                     0.35862796
+  EMA50:                     0.35733172
+  Momentum 4h:               +1.99%
+  Volume relativo:           1.16x
+  ATR:                       1.40%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            13/15
+  Volume:               9/15
+  -------------------------------------------------------------
+  SCORE:               87/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          86%
+  ✓ Concluído em 0.31s
+[44/45] TUT/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.02324000
+  RSI:                       43.77
+  EMA20:                     0.02366803
+  EMA50:                     0.02462188
+  Momentum 4h:               -1.57%
+  Volume relativo:           0.71x
+  ATR:                       3.58%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                15/20
+  Tendência 1h:        0/25
+  Tendência 4h:        0/20
+  Momentum:             0/15
+  Volume:               4/15
+  -------------------------------------------------------------
+  SCORE:               19/100
+  Classificação:     MUITO FRACO
+  Sinal:             SEM SINAL
+  Confiança:           0%
+  Riscos:            MOMENTUM_NEGATIVO
+  ✓ Concluído em 0.32s
+[45/45] ZKP/USDT
+  Buscando OHLCV (tentativa 1/3)...
+  ✓ 240 candles fechados
+  Preço:                     0.04820000
+  RSI:                       58.82
+  EMA20:                     0.04761850
+  EMA50:                     0.04689813
+  Momentum 4h:               +0.63%
+  Volume relativo:           1.90x
+  ATR:                       2.46%
+
+  COMPONENTES DO SCORE
+  -------------------------------------------------------------
+  RSI:                20/20
+  Tendência 1h:       25/25
+  Tendência 4h:       20/20
+  Momentum:            10/15
+  Volume:              12/15
+  -------------------------------------------------------------
+  SCORE:               87/100
+  Classificação:     MUITO FORTE
+  Sinal:             COMPRA FORTE
+  Confiança:          87%
+  ✓ Concluído em 0.33s
+
+========================================================================================================================
+                                        RANKING DETALHADO V3
+========================================================================================================================
+ # MERCADO         SCORE RSI T1H T4H  MOM  VOL   ATR  RVOL  CONF CLASSIFICAÇÃO
+------------------------------------------------------------------------------------------------------------------------
+ 1 NEAR/USDT           87  15  25  20   15   12  3.04  1.74    92 MUITO FORTE
+ 2 ZKP/USDT            87  20  25  20   10   12  2.46  1.90    87 MUITO FORTE
+ 3 ONDO/USDT           87  20  25  20   13    9  1.40  1.16    86 MUITO FORTE
+ 4 WLD/USDT            87  20  25  20   13    9  1.44  1.04    86 MUITO FORTE
+ 5 TAO/USDT            84  20  25  14   13   12  1.60  1.58    84 MUITO FORTE
+ 6 ASTER/USDT          79  20  25  20   10    4  1.70  0.91    74 MUITO FORTE
+ 7 DASH/USDT           78   3  25  20   15   15  4.04  2.03    83 MUITO FORTE
+ 8 LTC/USDT            76  20  25  20    7    4  0.84  0.83    71 MUITO FORTE
+ 9 BNB/USDT            76  20  25  20    7    4  0.68  0.68    71 MUITO FORTE
+10 SUI/USDT            74  20  15  20   10    9  1.32  1.42    70 FORTE
+11 ZKC/USDT            72  20  25  20    7    0  1.29  0.08    59 FORTE
+12 ZEC/USDT            68  20  25  20    3    0  2.78  0.32    40 FORTE
+13 ZEN/USDT            67   3  25  20   15    4  3.23  0.96    65 FORTE
+14 TRX/USDT            66  20  25  14    7    0  0.26  0.38    46 FORTE
+15 ARB/USDT            61  19  15  20    3    4  2.58  0.59    44 FORTE
+16 AVAX/USDT           61  19  15  20    7    0  0.76  0.40    44 FORTE
+17 CHIP/USDT           59  20  15  20    0    4  3.77  0.62    38 MODERADO
+18 UNI/USDT            57  19  15  20    3    0  2.11  0.42    26 MODERADO
+19 TRUMP/USDT          54  20  15   0   15    4  2.12  0.96    38 MODERADO
+20 XPL/USDT            54  19  15  20    0    0  3.16  0.34    26 MODERADO
+21 AAVE/USDT           53  19   0  20   10    4  1.29  0.95    41 MODERADO
+22 LINK/USDT           46  19   0  20    3    4  1.22  0.93    20 MODERADO
+23 BTC/USDT            38  15   0  20    3    0  0.63  0.21     2 NEUTRO
+24 ENA/USDT            35  15   0  20    0    0  2.29  0.43     2 NEUTRO
+25 ENSO/USDT           29  19   0   0   10    0  0.92  0.02     0 FRACO
+26 PENGU/USDT          26  15   0   0    7    4  1.92  0.53     6 FRACO
+27 RLUSD/USDT          26  19   0   0    7    0  0.02  0.15     0 FRACO
+28 XAUT/USDT           26  19   0   0    7    0  0.46  0.11     0 FRACO
+29 PAXG/USDT           26  19   0   0    7    0  0.48  0.07     0 FRACO
+30 USD1/USDT           22  15   0   0    3    4  0.01  0.94     0 FRACO
+31 SOL/USDT            22  15   0   0    7    0  0.88  0.44     0 FRACO
+32 EUR/USDT            22  15   0   0    7    0  0.09  0.32     0 FRACO
+33 U/USDT              22  19   0   0    3    0  0.01  0.20     0 FRACO
+34 ETH/USDT            22  15   0   0    7    0  0.75  0.18     0 FRACO
+35 PEPE/USDT           20  11   0   0    0    9  1.76  1.13     0 FRACO
+36 TUT/USDT            19  15   0   0    0    4  3.58  0.71     0 MUITO FRACO
+37 PUMP/USDT           19  19   0   0    0    0  2.30  0.32     0 MUITO FRACO
+38 PROM/USDT           19  19   0   0    0    0  2.27  0.13     0 MUITO FRACO
+39 USDC/USDT           18  11   0   0    3    4  0.01  0.62     0 MUITO FRACO
+40 HEMI/USDT           18  11   0   7    0    0  3.97  0.50     0 MUITO FRACO
+41 ADA/USDT            18  11   0   7    0    0  1.47  0.44     0 MUITO FRACO
+42 XLM/USDT            18  15   0   0    3    0  0.98  0.33     0 MUITO FRACO
+43 DOGE/USDT           18  15   0   0    3    0  1.04  0.30     0 MUITO FRACO
+44 XRP/USDT            14  11   0   0    3    0  1.06  0.33     0 MUITO FRACO
+45 FDUSD/USDT          14  11   0   0    3    0  0.03  0.11     0 MUITO FRACO
+========================================================================================================================
+
+======================================================================
+                         TOP 10 V3
+======================================================================
+ 1. NEAR/USDT        87/100 MUITO FORTE     CONF  92% COMPRA FORTE
+ 2. ZKP/USDT         87/100 MUITO FORTE     CONF  87% COMPRA FORTE
+ 3. ONDO/USDT        87/100 MUITO FORTE     CONF  86% COMPRA FORTE
+ 4. WLD/USDT         87/100 MUITO FORTE     CONF  86% COMPRA FORTE
+ 5. TAO/USDT         84/100 MUITO FORTE     CONF  84% COMPRA FORTE
+ 6. ASTER/USDT       79/100 MUITO FORTE     CONF  74% COMPRA
+ 7. DASH/USDT        78/100 MUITO FORTE     CONF  83% COMPRA
+ 8. LTC/USDT         76/100 MUITO FORTE     CONF  71% COMPRA
+ 9. BNB/USDT         76/100 MUITO FORTE     CONF  71% COMPRA
+10. SUI/USDT         74/100 FORTE           CONF  70% COMPRA
+======================================================================
+
+======================================================================
+                        SINAIS V3
+======================================================================
+ 1. NEAR/USDT       SCORE  87  CONF  92%  COMPRA FORTE
+ 2. ZKP/USDT        SCORE  87  CONF  87%  COMPRA FORTE
+ 3. ONDO/USDT       SCORE  87  CONF  86%  COMPRA FORTE
+ 4. WLD/USDT        SCORE  87  CONF  86%  COMPRA FORTE
+ 5. TAO/USDT        SCORE  84  CONF  84%  COMPRA FORTE
+ 6. ASTER/USDT      SCORE  79  CONF  74%  COMPRA
+ 7. DASH/USDT       SCORE  78  CONF  83%  COMPRA
+    Riscos: RSI_SOBRECOMPRADO
+ 8. LTC/USDT        SCORE  76  CONF  71%  COMPRA
+ 9. BNB/USDT        SCORE  76  CONF  71%  COMPRA
+10. SUI/USDT        SCORE  74  CONF  70%  COMPRA
+11. ZEN/USDT        SCORE  67  CONF  65%  COMPRA
+    Riscos: RSI_SOBRECOMPRADO
+======================================================================
+
+Salvando análises V3 no banco...
+✓ 45 análises V3 salvas
+
+======================================================================
+                        RESUMO V3
+======================================================================
+Mercados selecionados: 45
+Análises concluídas:   45
+Análises salvas:       45
+Erros/avisos:          0
+Tempo total:           46.06s
+Banco:                 /home/alex/projetos/crypto-radar/data/crypto_radar.db
+Tabela V3:             scanner_v3_results
+======================================================================
+[2026-09-05T01:25:50.313553+00:00] FIM SCANNER_V3: rc=0
+[2026-09-05T01:25:50.313971+00:00] INÍCIO ADAPTER_V9.20: scanner_v3_to_v9.py
+==========================================================================================
+CRYPTO RADAR - PAPER TRADING V9.20 -- V3 -> FORWARD SIGNALS
+==========================================================================================
+Banco V3:       /home/alex/projetos/crypto-radar/data/crypto_radar.db
+Saída V9:       /home/alex/projetos/crypto-radar/data/forward_signals.csv
+Modo:           PAPER ONLY
+Ordens reais:   NÃO
+CSV legado V8:  NÃO UTILIZADO
+------------------------------------------------------------------------------------------
+Última rodada V3: 2026-09-05T01:25:03.837451+00:00
+Sinais COMPRA/COMPRA FORTE:              14
+Sinais novos gravados:                   0
+Sinais já existentes:                    0
+Símbolo já com sinal pendente (ignorados): 14
+
+IMPORTANTE:
+  O preço, timestamp, score e confiança vêm diretamente do V3.
+  O adaptador não cria fees, quantity, notional ou P&L.
+  LONG é somente a tradução de COMPRA/COMPRA FORTE para o schema V9.
+
+Próximo fluxo:
+  scanner_v3.py -> SQLite -> V9.20 -> forward_signals.csv -> V9.15/V9.17
+==========================================================================================
+[2026-09-05T01:25:51.130569+00:00] FIM ADAPTER_V9.20: rc=0
+[2026-09-05T01:25:51.130845+00:00] INÍCIO MONITOR_CLOSE_V9.18: paper_trading_v9_18.py
+====================================================================================================
+CRYPTO RADAR - PAPER TRADING V9.18 -- MONITOR / CLOSE
+====================================================================================================
+Posições abertas:    /home/alex/projetos/crypto-radar/data/paper_trading_v9_open_positions.csv
+Ledger financeiro:   /home/alex/projetos/crypto-radar/data/paper_trading_v9_financial_trades.csv
+Fee saída:            0.100% [HIPÓTESE V9]
+Slippage saída:      0.100% [HIPÓTESE V9]
+STOP / TARGET:        5.00% / 6.00%
+Tempo máximo:         24h
+Modo: PAPER ONLY
+Ordens reais: NÃO
+CSV legado V8: NÃO UTILIZADO
+----------------------------------------------------------------------------------------------------
+CLOSE XPL/USDT     price=0.09415000 ret=-1.254% age=24.43h reason=TIME   net=$-1.5510
+HOLD  ASTER/USDT   price=0.74200000 ret=+2.810% age=23.43h
+HOLD  LTC/USDT     price=51.47000000 ret=+0.486% age=23.43h
+HOLD  MUBARAK/USDT price=0.02980000 ret=+1.570% age=23.43h
+HOLD  EUR/USDT     price=1.16090000 ret=-0.280% age=23.43h
+HOLD  UNI/USDT     price=6.15000000 ret=-3.231% age=22.43h
+HOLD  TRUMP/USDT   price=2.32100000 ret=-2.617% age=22.43h
+HOLD  ENA/USDT     price=0.16250000 ret=-2.383% age=22.43h
+HOLD  LINK/USDT    price=11.65000000 ret=-2.436% age=21.43h
+HOLD  ETH/USDT     price=2453.00000000 ret=-2.345% age=21.43h
+----------------------------------------------------------------------------------------------------
+Posições antes:      10
+Novos CLOSE:         1
+Posições abertas:    9
+Trades no ledger:    316
+====================================================================================================
+V9.18 concluiu um ciclo PAPER. Nenhuma ordem real foi enviada.
+====================================================================================================
+[2026-09-05T01:25:56.360009+00:00] FIM MONITOR_CLOSE_V9.18: rc=0
+[2026-09-05T01:25:56.380474+00:00] PREFLIGHT_PÓS_MONITOR: OK - 28 símbolos acionáveis sem duplicidade (28 sinais brutos)
+[2026-09-05T01:25:56.380753+00:00] INÍCIO EXECUTOR_V9.17: paper_trading_v9_17.py
+====================================================================================================
+CRYPTO RADAR - PAPER TRADING V9.17 -- FORWARD TRADE EXECUTOR
+====================================================================================================
+Sinais:                 /home/alex/projetos/crypto-radar/data/forward_signals.csv
+Posições abertas:       /home/alex/projetos/crypto-radar/data/paper_trading_v9_open_positions.csv
+Ledger financeiro:      /home/alex/projetos/crypto-radar/data/paper_trading_v9_financial_trades.csv
+Capital referência:     $1,000.00
+Notional por trade:     $100.00 [HIPÓTESE V9.17]
+Máx. posições:          10
+Fee entrada/saída:      0.100% / 0.100% [HIPÓTESE]
+Slippage entrada/saída:  0.100% / 0.100% [HIPÓTESE]
+STOP / TARGET:           5.00% / 6.00%
+Tempo máximo:            24h
+Modo: PAPER ONLY
+Ordens reais: NÃO
+CSV legado V8: NÃO UTILIZADO
+----------------------------------------------------------------------------------------------------
+OPEN  SOL/USDT     entry=104.01391000 notional=$100.00
+----------------------------------------------------------------------------------------------------
+Sinais válidos:         1126
+Posições antes:         9
+Novos OPEN:             1
+Sinais expirados (>=24h, não abertos): 34
+Novos CLOSE:            0
+Posições abertas agora: 10
+Trades no ledger:       316
+====================================================================================================
+V9.17 concluiu um ciclo PAPER. Nenhuma ordem real foi enviada.
+[2026-09-05T01:26:06.331518+00:00] FIM EXECUTOR_V9.17: rc=0
+[2026-09-05T01:26:06.332048+00:00] INÍCIO AUDITORIA_V9.19: paper_trading_v9_19.py
+====================================================================================================
+CRYPTO RADAR - PAPER TRADING V9.19 -- AUDITORIA DO CICLO FORWARD
+====================================================================================================
+Posições abertas: /home/alex/projetos/crypto-radar/data/paper_trading_v9_open_positions.csv
+Ledger financeiro: /home/alex/projetos/crypto-radar/data/paper_trading_v9_financial_trades.csv
+Modo: AUDITORIA — NÃO ALTERA DADOS
+CSV legado V8: NÃO UTILIZADO
+----------------------------------------------------------------------------------------------------
+Posições abertas: 10
+Trades financeiros fechados: 316
+Net P&L acumulado do ledger: $-768.02171593
+Duplicidades abertas: 0
+Duplicidades no ledger: 0
+
+====================================================================================================
+VEREDITO V9.19
+====================================================================================================
+APROVADA
+Integridade estrutural do ciclo forward confirmada.
+Nenhum dado foi inventado, corrigido ou composto.
+====================================================================================================
+[2026-09-05T01:26:06.424470+00:00] FIM AUDITORIA_V9.19: rc=0
+[2026-09-05T01:26:06.424842+00:00] CICLO V9.21 concluído com sucesso.
+====================================================================================================
+V9.21 CONCLUÍDA: ciclo forward seguro.
+Nenhuma ordem real foi enviada.
+====================================================================================================

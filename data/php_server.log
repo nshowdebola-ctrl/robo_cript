@@ -77002,3 +77002,258 @@
 [Fri Sep  4 22:10:02 2026] 127.0.0.1:49644 Accepted
 [Fri Sep  4 22:10:02 2026] 127.0.0.1:49644 [200]: GET /index.php
 [Fri Sep  4 22:10:02 2026] 127.0.0.1:49644 Closing
+[Fri Sep  4 22:10:19 2026] 127.0.0.1:37010 Accepted
+[Fri Sep  4 22:10:20 2026] 127.0.0.1:37010 [200]: GET /testnet.php
+[Fri Sep  4 22:10:20 2026] 127.0.0.1:37010 Closing
+[Fri Sep  4 22:10:40 2026] 127.0.0.1:42884 Accepted
+[Fri Sep  4 22:10:40 2026] 127.0.0.1:42884 [200]: GET /testnet.php
+[Fri Sep  4 22:10:40 2026] 127.0.0.1:42884 Closing
+[Fri Sep  4 22:11:01 2026] 127.0.0.1:33828 Accepted
+[Fri Sep  4 22:11:02 2026] 127.0.0.1:33828 [200]: GET /testnet.php
+[Fri Sep  4 22:11:02 2026] 127.0.0.1:33828 Closing
+[Fri Sep  4 22:11:02 2026] 127.0.0.1:33836 Accepted
+[Fri Sep  4 22:11:02 2026] 127.0.0.1:33836 [200]: GET /index.php
+[Fri Sep  4 22:11:02 2026] 127.0.0.1:33836 Closing
+[Fri Sep  4 22:11:22 2026] 127.0.0.1:39554 Accepted
+[Fri Sep  4 22:11:22 2026] 127.0.0.1:39554 [200]: GET /testnet.php
+[Fri Sep  4 22:11:22 2026] 127.0.0.1:39554 Closing
+[Fri Sep  4 22:11:42 2026] 127.0.0.1:46790 Accepted
+[Fri Sep  4 22:11:43 2026] 127.0.0.1:46790 [200]: GET /testnet.php
+[Fri Sep  4 22:11:43 2026] 127.0.0.1:46790 Closing
+[Fri Sep  4 22:11:51 2026] 127.0.0.1:52220 Accepted
+[Fri Sep  4 22:11:51 2026] 127.0.0.1:52220 [200]: GET /testnet.php
+[Fri Sep  4 22:11:51 2026] 127.0.0.1:52220 Closing
+[Fri Sep  4 22:12:02 2026] 127.0.0.1:34150 Accepted
+[Fri Sep  4 22:12:03 2026] 127.0.0.1:34150 [200]: GET /index.php
+[Fri Sep  4 22:12:03 2026] 127.0.0.1:34150 Closing
+[Fri Sep  4 22:12:11 2026] 127.0.0.1:56928 Accepted
+[Fri Sep  4 22:12:11 2026] 127.0.0.1:56928 [200]: GET /testnet.php
+[Fri Sep  4 22:12:11 2026] 127.0.0.1:56928 Closing
+[Fri Sep  4 22:12:31 2026] 127.0.0.1:53564 Accepted
+[Fri Sep  4 22:12:32 2026] 127.0.0.1:53564 [200]: GET /testnet.php
+[Fri Sep  4 22:12:32 2026] 127.0.0.1:53564 Closing
+[Fri Sep  4 22:12:52 2026] 127.0.0.1:39444 Accepted
+[Fri Sep  4 22:12:52 2026] 127.0.0.1:39444 [200]: GET /testnet.php
+[Fri Sep  4 22:12:52 2026] 127.0.0.1:39444 Closing
+[Fri Sep  4 22:13:03 2026] 127.0.0.1:36154 Accepted
+[Fri Sep  4 22:13:04 2026] 127.0.0.1:36154 [200]: GET /index.php
+[Fri Sep  4 22:13:04 2026] 127.0.0.1:36154 Closing
+[Fri Sep  4 22:13:12 2026] 127.0.0.1:36686 Accepted
+[Fri Sep  4 22:13:13 2026] 127.0.0.1:36686 [200]: GET /testnet.php
+[Fri Sep  4 22:13:13 2026] 127.0.0.1:36686 Closing
+[Fri Sep  4 22:13:33 2026] 127.0.0.1:58678 Accepted
+[Fri Sep  4 22:13:34 2026] 127.0.0.1:58678 [200]: GET /testnet.php
+[Fri Sep  4 22:13:34 2026] 127.0.0.1:58678 Closing
+[Fri Sep  4 22:13:54 2026] 127.0.0.1:39904 Accepted
+[Fri Sep  4 22:13:54 2026] 127.0.0.1:39904 [200]: GET /testnet.php
+[Fri Sep  4 22:13:54 2026] 127.0.0.1:39904 Closing
+[Fri Sep  4 22:14:04 2026] 127.0.0.1:40094 Accepted
+[Fri Sep  4 22:14:04 2026] 127.0.0.1:40094 [200]: GET /index.php
+[Fri Sep  4 22:14:04 2026] 127.0.0.1:40094 Closing
+[Fri Sep  4 22:14:14 2026] 127.0.0.1:60704 Accepted
+[Fri Sep  4 22:14:15 2026] 127.0.0.1:60704 [200]: GET /testnet.php
+[Fri Sep  4 22:14:15 2026] 127.0.0.1:60704 Closing
+[Fri Sep  4 22:14:35 2026] 127.0.0.1:50826 Accepted
+[Fri Sep  4 22:14:35 2026] 127.0.0.1:50826 [200]: GET /testnet.php
+[Fri Sep  4 22:14:35 2026] 127.0.0.1:50826 Closing
+[Fri Sep  4 22:14:55 2026] 127.0.0.1:53200 Accepted
+[Fri Sep  4 22:14:56 2026] 127.0.0.1:53200 [200]: GET /testnet.php
+[Fri Sep  4 22:14:56 2026] 127.0.0.1:53200 Closing
+[Fri Sep  4 22:15:04 2026] 127.0.0.1:57638 Accepted
+[Fri Sep  4 22:15:05 2026] 127.0.0.1:57638 [200]: GET /index.php
+[Fri Sep  4 22:15:05 2026] 127.0.0.1:57638 Closing
+[Fri Sep  4 22:15:16 2026] 127.0.0.1:33102 Accepted
+[Fri Sep  4 22:15:22 2026] 127.0.0.1:33102 [200]: GET /testnet.php
+[Fri Sep  4 22:15:22 2026] 127.0.0.1:33102 Closing
+[Fri Sep  4 22:15:42 2026] 127.0.0.1:38622 Accepted
+[Fri Sep  4 22:15:42 2026] 127.0.0.1:38622 [200]: GET /testnet.php
+[Fri Sep  4 22:15:42 2026] 127.0.0.1:38622 Closing
+[Fri Sep  4 22:16:02 2026] 127.0.0.1:57592 Accepted
+[Fri Sep  4 22:16:03 2026] 127.0.0.1:57592 [200]: GET /testnet.php
+[Fri Sep  4 22:16:03 2026] 127.0.0.1:57592 Closing
+[Fri Sep  4 22:16:05 2026] 127.0.0.1:57596 Accepted
+[Fri Sep  4 22:16:05 2026] 127.0.0.1:57596 [200]: GET /index.php
+[Fri Sep  4 22:16:05 2026] 127.0.0.1:57596 Closing
+[Fri Sep  4 22:16:23 2026] 127.0.0.1:58346 Accepted
+[Fri Sep  4 22:16:23 2026] 127.0.0.1:58346 [200]: GET /testnet.php
+[Fri Sep  4 22:16:23 2026] 127.0.0.1:58346 Closing
+[Fri Sep  4 22:16:43 2026] 127.0.0.1:48666 Accepted
+[Fri Sep  4 22:16:44 2026] 127.0.0.1:48666 [200]: GET /testnet.php
+[Fri Sep  4 22:16:44 2026] 127.0.0.1:48666 Closing
+[Fri Sep  4 22:17:04 2026] 127.0.0.1:56324 Accepted
+[Fri Sep  4 22:17:04 2026] 127.0.0.1:56324 [200]: GET /testnet.php
+[Fri Sep  4 22:17:04 2026] 127.0.0.1:56324 Closing
+[Fri Sep  4 22:17:05 2026] 127.0.0.1:56338 Accepted
+[Fri Sep  4 22:17:05 2026] 127.0.0.1:56338 [200]: GET /index.php
+[Fri Sep  4 22:17:05 2026] 127.0.0.1:56338 Closing
+[Fri Sep  4 22:17:25 2026] 127.0.0.1:50678 Accepted
+[Fri Sep  4 22:17:25 2026] 127.0.0.1:50678 [200]: GET /testnet.php
+[Fri Sep  4 22:17:25 2026] 127.0.0.1:50678 Closing
+[Fri Sep  4 22:17:45 2026] 127.0.0.1:49232 Accepted
+[Fri Sep  4 22:17:45 2026] 127.0.0.1:49232 [200]: GET /testnet.php
+[Fri Sep  4 22:17:45 2026] 127.0.0.1:49232 Closing
+[Fri Sep  4 22:18:05 2026] 127.0.0.1:41526 Accepted
+[Fri Sep  4 22:18:06 2026] 127.0.0.1:41526 [200]: GET /index.php
+[Fri Sep  4 22:18:06 2026] 127.0.0.1:41526 Closing
+[Fri Sep  4 22:18:06 2026] 127.0.0.1:41530 Accepted
+[Fri Sep  4 22:18:11 2026] 127.0.0.1:41530 [200]: GET /testnet.php
+[Fri Sep  4 22:18:11 2026] 127.0.0.1:41530 Closing
+[Fri Sep  4 22:18:31 2026] 127.0.0.1:39388 Accepted
+[Fri Sep  4 22:18:32 2026] 127.0.0.1:39388 [200]: GET /testnet.php
+[Fri Sep  4 22:18:32 2026] 127.0.0.1:39388 Closing
+[Fri Sep  4 22:18:52 2026] 127.0.0.1:50924 Accepted
+[Fri Sep  4 22:18:52 2026] 127.0.0.1:50924 [200]: GET /testnet.php
+[Fri Sep  4 22:18:52 2026] 127.0.0.1:50924 Closing
+[Fri Sep  4 22:19:06 2026] 127.0.0.1:56436 Accepted
+[Fri Sep  4 22:19:06 2026] 127.0.0.1:56436 [200]: GET /index.php
+[Fri Sep  4 22:19:06 2026] 127.0.0.1:56436 Closing
+[Fri Sep  4 22:19:12 2026] 127.0.0.1:43408 Accepted
+[Fri Sep  4 22:19:13 2026] 127.0.0.1:43408 [200]: GET /testnet.php
+[Fri Sep  4 22:19:13 2026] 127.0.0.1:43408 Closing
+[Fri Sep  4 22:19:33 2026] 127.0.0.1:46508 Accepted
+[Fri Sep  4 22:19:33 2026] 127.0.0.1:46508 [200]: GET /testnet.php
+[Fri Sep  4 22:19:33 2026] 127.0.0.1:46508 Closing
+[Fri Sep  4 22:19:53 2026] 127.0.0.1:54582 Accepted
+[Fri Sep  4 22:19:53 2026] 127.0.0.1:54582 [200]: GET /testnet.php
+[Fri Sep  4 22:19:53 2026] 127.0.0.1:54582 Closing
+[Fri Sep  4 22:20:06 2026] 127.0.0.1:43200 Accepted
+[Fri Sep  4 22:20:07 2026] 127.0.0.1:43200 [200]: GET /index.php
+[Fri Sep  4 22:20:07 2026] 127.0.0.1:43200 Closing
+[Fri Sep  4 22:20:14 2026] 127.0.0.1:39172 Accepted
+[Fri Sep  4 22:20:14 2026] 127.0.0.1:39172 [200]: GET /testnet.php
+[Fri Sep  4 22:20:14 2026] 127.0.0.1:39172 Closing
+[Fri Sep  4 22:20:34 2026] 127.0.0.1:36794 Accepted
+[Fri Sep  4 22:20:35 2026] 127.0.0.1:36794 [200]: GET /testnet.php
+[Fri Sep  4 22:20:35 2026] 127.0.0.1:36794 Closing
+[Fri Sep  4 22:20:55 2026] 127.0.0.1:42124 Accepted
+[Fri Sep  4 22:20:56 2026] 127.0.0.1:42124 [200]: GET /testnet.php
+[Fri Sep  4 22:20:56 2026] 127.0.0.1:42124 Closing
+[Fri Sep  4 22:21:07 2026] 127.0.0.1:57296 Accepted
+[Fri Sep  4 22:21:07 2026] 127.0.0.1:57296 [200]: GET /index.php
+[Fri Sep  4 22:21:07 2026] 127.0.0.1:57296 Closing
+[Fri Sep  4 22:21:16 2026] 127.0.0.1:60130 Accepted
+[Fri Sep  4 22:21:16 2026] 127.0.0.1:60130 [200]: GET /testnet.php
+[Fri Sep  4 22:21:16 2026] 127.0.0.1:60130 Closing
+[Fri Sep  4 22:21:36 2026] 127.0.0.1:35000 Accepted
+[Fri Sep  4 22:21:37 2026] 127.0.0.1:35000 [200]: GET /testnet.php
+[Fri Sep  4 22:21:37 2026] 127.0.0.1:35000 Closing
+[Fri Sep  4 22:21:57 2026] 127.0.0.1:39588 Accepted
+[Fri Sep  4 22:21:57 2026] 127.0.0.1:39588 [200]: GET /testnet.php
+[Fri Sep  4 22:21:57 2026] 127.0.0.1:39588 Closing
+[Fri Sep  4 22:22:08 2026] 127.0.0.1:37966 Accepted
+[Fri Sep  4 22:22:08 2026] 127.0.0.1:37966 [200]: GET /index.php
+[Fri Sep  4 22:22:08 2026] 127.0.0.1:37966 Closing
+[Fri Sep  4 22:22:17 2026] 127.0.0.1:53162 Accepted
+[Fri Sep  4 22:22:18 2026] 127.0.0.1:53162 [200]: GET /testnet.php
+[Fri Sep  4 22:22:18 2026] 127.0.0.1:53162 Closing
+[Fri Sep  4 22:22:38 2026] 127.0.0.1:44672 Accepted
+[Fri Sep  4 22:22:38 2026] 127.0.0.1:44672 [200]: GET /testnet.php
+[Fri Sep  4 22:22:38 2026] 127.0.0.1:44672 Closing
+[Fri Sep  4 22:22:58 2026] 127.0.0.1:47872 Accepted
+[Fri Sep  4 22:22:59 2026] 127.0.0.1:47872 [200]: GET /testnet.php
+[Fri Sep  4 22:22:59 2026] 127.0.0.1:47872 Closing
+[Fri Sep  4 22:23:08 2026] 127.0.0.1:56018 Accepted
+[Fri Sep  4 22:23:09 2026] 127.0.0.1:56018 [200]: GET /index.php
+[Fri Sep  4 22:23:09 2026] 127.0.0.1:56018 Closing
+[Fri Sep  4 22:23:19 2026] 127.0.0.1:40740 Accepted
+[Fri Sep  4 22:23:19 2026] 127.0.0.1:40740 [200]: GET /testnet.php
+[Fri Sep  4 22:23:19 2026] 127.0.0.1:40740 Closing
+[Fri Sep  4 22:23:39 2026] 127.0.0.1:43946 Accepted
+[Fri Sep  4 22:23:40 2026] 127.0.0.1:43946 [200]: GET /testnet.php
+[Fri Sep  4 22:23:40 2026] 127.0.0.1:43946 Closing
+[Fri Sep  4 22:24:00 2026] 127.0.0.1:34524 Accepted
+[Fri Sep  4 22:24:00 2026] 127.0.0.1:34524 [200]: GET /testnet.php
+[Fri Sep  4 22:24:00 2026] 127.0.0.1:34524 Closing
+[Fri Sep  4 22:24:09 2026] 127.0.0.1:34532 Accepted
+[Fri Sep  4 22:24:09 2026] 127.0.0.1:34532 [200]: GET /index.php
+[Fri Sep  4 22:24:09 2026] 127.0.0.1:34532 Closing
+[Fri Sep  4 22:24:20 2026] 127.0.0.1:59930 Accepted
+[Fri Sep  4 22:24:27 2026] 127.0.0.1:59930 [200]: GET /testnet.php
+[Fri Sep  4 22:24:27 2026] 127.0.0.1:59930 Closing
+[Fri Sep  4 22:24:47 2026] 127.0.0.1:50806 Accepted
+[Fri Sep  4 22:24:48 2026] 127.0.0.1:50806 [200]: GET /testnet.php
+[Fri Sep  4 22:24:48 2026] 127.0.0.1:50806 Closing
+[Fri Sep  4 22:25:08 2026] 127.0.0.1:59336 Accepted
+[Fri Sep  4 22:25:09 2026] 127.0.0.1:59336 [200]: GET /testnet.php
+[Fri Sep  4 22:25:09 2026] 127.0.0.1:59336 Closing
+[Fri Sep  4 22:25:09 2026] 127.0.0.1:59350 Accepted
+[Fri Sep  4 22:25:10 2026] 127.0.0.1:59350 [200]: GET /index.php
+[Fri Sep  4 22:25:10 2026] 127.0.0.1:59350 Closing
+[Fri Sep  4 22:25:29 2026] 127.0.0.1:42160 Accepted
+[Fri Sep  4 22:25:30 2026] 127.0.0.1:42160 [200]: GET /testnet.php
+[Fri Sep  4 22:25:30 2026] 127.0.0.1:42160 Closing
+[Fri Sep  4 22:25:50 2026] 127.0.0.1:41302 Accepted
+[Fri Sep  4 22:25:50 2026] 127.0.0.1:41302 [200]: GET /testnet.php
+[Fri Sep  4 22:25:50 2026] 127.0.0.1:41302 Closing
+[Fri Sep  4 22:26:10 2026] 127.0.0.1:36870 Accepted
+[Fri Sep  4 22:26:11 2026] 127.0.0.1:36870 [200]: GET /testnet.php
+[Fri Sep  4 22:26:11 2026] 127.0.0.1:36870 Closing
+[Fri Sep  4 22:26:11 2026] 127.0.0.1:36876 Accepted
+[Fri Sep  4 22:26:11 2026] 127.0.0.1:36876 [200]: GET /index.php
+[Fri Sep  4 22:26:11 2026] 127.0.0.1:36876 Closing
+[Fri Sep  4 22:26:31 2026] 127.0.0.1:49060 Accepted
+[Fri Sep  4 22:26:31 2026] 127.0.0.1:49060 [200]: GET /testnet.php
+[Fri Sep  4 22:26:31 2026] 127.0.0.1:49060 Closing
+[Fri Sep  4 22:26:52 2026] 127.0.0.1:39862 Accepted
+[Fri Sep  4 22:26:52 2026] 127.0.0.1:39862 [200]: GET /testnet.php
+[Fri Sep  4 22:26:52 2026] 127.0.0.1:39862 Closing
+[Fri Sep  4 22:27:11 2026] 127.0.0.1:58340 Accepted
+[Fri Sep  4 22:27:12 2026] 127.0.0.1:58340 [200]: GET /index.php
+[Fri Sep  4 22:27:12 2026] 127.0.0.1:58340 Closing
+[Fri Sep  4 22:27:12 2026] 127.0.0.1:58352 Accepted
+[Fri Sep  4 22:27:13 2026] 127.0.0.1:58352 [200]: GET /testnet.php
+[Fri Sep  4 22:27:13 2026] 127.0.0.1:58352 Closing
+[Fri Sep  4 22:27:33 2026] 127.0.0.1:35076 Accepted
+[Fri Sep  4 22:27:33 2026] 127.0.0.1:35076 [200]: GET /testnet.php
+[Fri Sep  4 22:27:33 2026] 127.0.0.1:35076 Closing
+[Fri Sep  4 22:27:54 2026] 127.0.0.1:46736 Accepted
+[Fri Sep  4 22:27:55 2026] 127.0.0.1:46736 [200]: GET /testnet.php
+[Fri Sep  4 22:27:55 2026] 127.0.0.1:46736 Closing
+[Fri Sep  4 22:28:13 2026] 127.0.0.1:33576 Accepted
+[Fri Sep  4 22:28:13 2026] 127.0.0.1:33576 [200]: GET /index.php
+[Fri Sep  4 22:28:13 2026] 127.0.0.1:33576 Closing
+[Fri Sep  4 22:28:15 2026] 127.0.0.1:33580 Accepted
+[Fri Sep  4 22:28:15 2026] 127.0.0.1:33580 [200]: GET /testnet.php
+[Fri Sep  4 22:28:15 2026] 127.0.0.1:33580 Closing
+[Fri Sep  4 22:28:35 2026] 127.0.0.1:36094 Accepted
+[Fri Sep  4 22:28:36 2026] 127.0.0.1:36094 [200]: GET /testnet.php
+[Fri Sep  4 22:28:36 2026] 127.0.0.1:36094 Closing
+[Fri Sep  4 22:28:56 2026] 127.0.0.1:39340 Accepted
+[Fri Sep  4 22:28:56 2026] 127.0.0.1:39340 [200]: GET /testnet.php
+[Fri Sep  4 22:28:56 2026] 127.0.0.1:39340 Closing
+[Fri Sep  4 22:29:14 2026] 127.0.0.1:35700 Accepted
+[Fri Sep  4 22:29:14 2026] 127.0.0.1:35700 [200]: GET /index.php
+[Fri Sep  4 22:29:14 2026] 127.0.0.1:35700 Closing
+[Fri Sep  4 22:29:16 2026] 127.0.0.1:35704 Accepted
+[Fri Sep  4 22:29:17 2026] 127.0.0.1:35704 [200]: GET /testnet.php
+[Fri Sep  4 22:29:17 2026] 127.0.0.1:35704 Closing
+[Fri Sep  4 22:29:37 2026] 127.0.0.1:48188 Accepted
+[Fri Sep  4 22:29:39 2026] 127.0.0.1:48188 [200]: GET /testnet.php
+[Fri Sep  4 22:29:39 2026] 127.0.0.1:48188 Closing
+[Fri Sep  4 22:29:59 2026] 127.0.0.1:35302 Accepted
+[Fri Sep  4 22:30:00 2026] 127.0.0.1:35302 [200]: GET /testnet.php
+[Fri Sep  4 22:30:00 2026] 127.0.0.1:35302 Closing
+[Fri Sep  4 22:30:15 2026] 127.0.0.1:57704 Accepted
+[Fri Sep  4 22:30:15 2026] 127.0.0.1:57704 [200]: GET /index.php
+[Fri Sep  4 22:30:15 2026] 127.0.0.1:57704 Closing
+[Fri Sep  4 22:30:20 2026] 127.0.0.1:55596 Accepted
+[Fri Sep  4 22:30:27 2026] 127.0.0.1:55596 [200]: GET /testnet.php
+[Fri Sep  4 22:30:27 2026] 127.0.0.1:55596 Closing
+[Fri Sep  4 22:30:48 2026] 127.0.0.1:33920 Accepted
+[Fri Sep  4 22:30:48 2026] 127.0.0.1:33920 [200]: GET /testnet.php
+[Fri Sep  4 22:30:48 2026] 127.0.0.1:33920 Closing
+[Fri Sep  4 22:31:09 2026] 127.0.0.1:44424 Accepted
+[Fri Sep  4 22:31:09 2026] 127.0.0.1:44424 [200]: GET /testnet.php
+[Fri Sep  4 22:31:09 2026] 127.0.0.1:44424 Closing
+[Fri Sep  4 22:31:16 2026] 127.0.0.1:45728 Accepted
+[Fri Sep  4 22:31:16 2026] 127.0.0.1:45728 [200]: GET /index.php
+[Fri Sep  4 22:31:16 2026] 127.0.0.1:45728 Closing
+[Fri Sep  4 22:31:29 2026] 127.0.0.1:55700 Accepted
+[Fri Sep  4 22:31:30 2026] 127.0.0.1:55700 [200]: GET /testnet.php
+[Fri Sep  4 22:31:30 2026] 127.0.0.1:55700 Closing
+[Fri Sep  4 22:31:50 2026] 127.0.0.1:57352 Accepted
+[Fri Sep  4 22:31:51 2026] 127.0.0.1:57352 [200]: GET /testnet.php
+[Fri Sep  4 22:31:51 2026] 127.0.0.1:57352 Closing
+[Fri Sep  4 22:32:11 2026] 127.0.0.1:35200 Accepted
+[Fri Sep  4 22:32:12 2026] 127.0.0.1:35200 [200]: GET /testnet.php
+[Fri Sep  4 22:32:12 2026] 127.0.0.1:35200 Closing
