@@ -47,21 +47,24 @@ SLIPPAGE_EXIT_PCT = 0.001
 # no teste fora da amostra (-1.06%), enquanto 5%/6% virou positiva
 # (+1.16%, win rate 43.6%->54%). Decisão consciente do usuário após
 # ver o resultado do teste - não é ajuste feito sem validação.
-# Resultado completo em data/v9_parameter_walkforward_results.csv.
 #
-# Alterado em 2026-08-31 (decisão do usuário, não validada por novo
-# walkforward): STOP de 5% para 4%. TARGET permanece 6%.
-STOP_PCT = 0.04
+# Em 2026-08-31 o STOP foi mudado pra 4% sem validação nova (decisão do
+# usuário). Revalidado em 2026-09-04 rodando o walkforward de novo com
+# o baseline atual (4%/6%): no teste fora da amostra, 4%/6% teve
+# mediana -2.10%/PF 0.80, contra -0.58%/PF 0.86 do 5%/6% - o par 5%/6%
+# segue sendo o melhor já visto nessa metodologia (nenhum dos dois
+# prova lucro, mas 5%/6% > 4%/6%). Revertido de volta pra 5%/6% no
+# mesmo dia por isso. Resultado completo em
+# data/v9_parameter_walkforward_results.csv.
+STOP_PCT = 0.05
 TARGET_PCT = 0.06
 MAX_HOLD_HOURS = 24
 
-# Alterado em 2026-08-31 (decisão do usuário, não validada por
-# treino/teste como o STOP/TARGET acima - é experimental): TARGET não
-# fecha mais a posição na hora que bate 6%. Uma vez atingido, vira uma
-# trava de lucro - a posição segue aberta enquanto o preço continua
-# subindo, e só fecha com TARGET quando o retorno cair de volta abaixo
-# de TARGET_PCT (ou por STOP/TIME antes disso). O estado "já bateu o
-# alvo uma vez" fica no campo target_reached da posição aberta.
+# A "trava de lucro" no TARGET (posição seguir aberta acima do alvo
+# enquanto o preço sobe) foi testada em 2026-08-30/31 e revertida ~8h
+# depois (commit 9b4e881) - TARGET fecha na hora, sem trava. O campo
+# target_reached ainda existe no schema do CSV de posições abertas por
+# compatibilidade, mas não é mais lido pra decisão nenhuma.
 
 SIGNAL_FIELDS = {
     "signal_id", "scenario", "symbol", "entry_time", "entry_price",

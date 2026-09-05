@@ -28,12 +28,11 @@ Isolado do paper trading v9 de propósito:
       original, que é o que o paper trading v9 usa) - aqui a ordem é
       de verdade, então o preço real de execução é o dado que importa
       pra validar a engenharia.
-    - TARGET (2026-08-31, pedido do usuário, experimental - não
-      validado por treino/teste como o STOP/TARGET em si) virou trava
-      de lucro: ao bater TARGET_PCT pela primeira vez não vende, só
-      marca (campo target_reached na posição) e deixa correr enquanto
-      o preço continuar subindo. Só sai por TARGET quando o retorno
-      cair de volta abaixo de TARGET_PCT. Mesma regra em
+    - A "trava de lucro" no TARGET (testada 2026-08-30/31, deixar
+      correr acima do alvo em vez de vender na hora) foi revertida ~8h
+      depois - TARGET fecha direto ao bater TARGET_PCT, sem trava. O
+      campo target_reached ainda existe no CSV por compatibilidade,
+      não é mais lido pra decisão nenhuma. Mesma regra em
       paper_trading_v9_17.py/v9_18.py.
 
 PAPER real (v9) não é afetado. Ordem REAL (mainnet) nunca é enviada.
