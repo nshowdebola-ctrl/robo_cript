@@ -61,6 +61,15 @@ CANDLES = 240
 TOP_MARKETS = 50
 MIN_VOLUME_USDT = 1_000_000
 
+# Stablecoins pareadas 1:1 com USDT não têm tendência de preço real pra
+# capturar - só geram sinal ruído (achado real: 8.7% dos trades do
+# regime 5%/6% em 09/2026 eram stablecoin, retorno ~0%, só pagando taxa
+# à toa e ocupando slot de MAX_POSITIONS).
+STABLE_BASES = {
+    "USDC", "FDUSD", "RLUSD", "USD1", "TUSD", "DAI", "BUSD",
+    "USDP", "PYUSD", "FRAX", "EURI", "USDE", "GUSD", "USDD",
+}
+
 # Idade mínima de listagem na Binance para um símbolo ser analisado.
 # Justificado por dado real: no backtest histórico das regras da V9
 # (src/v9_backtest_listing_age_analysis.py), símbolos com < 90 dias de
@@ -914,6 +923,9 @@ def load_candidate_markets(
             continue
 
         if market.get("base") == "USDT":
+            continue
+
+        if market.get("base") in STABLE_BASES:
             continue
 
         candidates.append(symbol)
