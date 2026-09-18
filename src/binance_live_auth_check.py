@@ -59,7 +59,7 @@ def main() -> int:
     print(f"Saldo USDT: livre={usdt.get('free', 0.0)} | travado={usdt.get('used', 0.0)} | total={usdt.get('total', 0.0)}")
 
     non_zero = {
-        asset: info.get("total", 0.0)
+        asset: info
         for asset, info in balance.get("total", {}).items() if isinstance(info, (int, float)) and info > 0
     } if isinstance(balance.get("total"), dict) else {}
     if non_zero:
