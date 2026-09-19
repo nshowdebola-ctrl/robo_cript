@@ -744,7 +744,7 @@ if (file_exists(LOG_FILE)) {
             </form>
             <p class="hint">
                 <?= $envConfigured
-                    ? 'Ciclo a cada 5 minutos até você desativar. DINHEIRO REAL.'
+                    ? 'Ciclo a cada 1 minuto até você desativar. DINHEIRO REAL.'
                     : 'Desabilitado - chave real não configurada.' ?>
             </p>
         </div>

@@ -26,7 +26,7 @@ from binance_live_trader import run_cycle
 
 ROOT = Path(__file__).resolve().parents[1]
 PID_FILE = ROOT / "data" / "binance_live_loop.pid"
-LOOP_INTERVAL_SECONDS = 300
+LOOP_INTERVAL_SECONDS = 60
 
 _stop = False
 
