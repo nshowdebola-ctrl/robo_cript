@@ -142,6 +142,7 @@ def live_closed_ids(ledger_rows: list[dict]) -> set[str]:
 def monitor_open_positions(exchange) -> tuple[list[dict], int]:
     remaining = []
     closed_now = 0
+    balance = None
     for pos in read_csv(LIVE_OPEN_FILE):
         symbol = pos["symbol"]
         try:
@@ -169,8 +170,36 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             remaining.append(pos)
             continue
 
+        base = symbol.split("/")[0]
+        if balance is None:
+            try:
+                balance = call_with_retry(exchange.fetch_balance)
+            except Exception as exc:
+                log(
+                    f"AVISO: falha ao consultar saldo pra fechar {symbol} "
+                    f"({type(exc).__name__}: {exc}) - mantendo posição aberta "
+                    "pra tentar de novo no próximo ciclo."
+                )
+                remaining.append(pos)
+                continue
+
+        free = balance.get(base, {}).get("free", 0.0) or 0.0
+        tracked_qty = float(pos["quantity"])
+        # Nunca vende mais do que o saldo livre real - a diferença pra
+        # quantidade rastreada na compra normalmente vem da taxa de
+        # negociação cobrada no próprio ativo (sem BNB pra pagar com
+        # desconto), que reduz o saldo líquido recebido.
+        sell_qty = min(tracked_qty, free)
+        if sell_qty <= 0:
+            log(
+                f"AVISO: {symbol} bateu {reason} mas saldo livre de {base} "
+                "está zerado - mantendo posição aberta pra investigar."
+            )
+            remaining.append(pos)
+            continue
+
         try:
-            quantity = float(exchange.amount_to_precision(symbol, float(pos["quantity"])))
+            quantity = float(exchange.amount_to_precision(symbol, sell_qty))
             sell_order = call_with_retry(
                 exchange.create_order, symbol, "market", "sell", quantity
             )
