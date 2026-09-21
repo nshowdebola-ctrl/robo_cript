@@ -92,6 +92,12 @@ LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for 
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
 
+# Reserva mínima de BNB livre pra pagar taxa (a opção "pagar taxa com BNB"
+# está ligada na conta). Sem BNB livre a Binance cobra a taxa no próprio
+# ativo comprado, o saldo líquido fica ~0,1% menor que o registrado e a
+# venda deixa resto na carteira. Cada trade gasta ~0.0000065 BNB.
+BNB_RESERVE_MIN = 0.002
+
 NOTIONAL_BOUNDS = (5.0, 100.0)
 BASELINE_CAPITAL_BOUNDS = (10.0, 1_000_000.0)
 MAX_DRAWDOWN_BOUNDS = (2.0, 50.0)
@@ -198,6 +204,53 @@ def _alert_order_state_unknown(
             f"[LIVE] ATENÇÃO: não sei se a {kind} de {symbol} foi executada "
             "(erro de rede ao confirmar). Não vou reenviar - confira a conta "
             "na Binance e o CSV de posições."
+        )
+
+
+_bnb_reserve_alerted = False
+
+
+def check_bnb_reserve(exchange, open_positions: list[dict]) -> None:
+    """Avisa (uma vez, até recuperar) se a reserva de BNB livre está
+    abaixo de BNB_RESERVE_MIN. Nunca levanta exceção: é só um aviso e
+    não pode derrubar o ciclo."""
+    global _bnb_reserve_alerted
+    try:
+        balance = call_with_retry(exchange.fetch_balance)
+    except Exception as exc:
+        log(f"AVISO reserva de BNB: falha ao consultar saldo ({type(exc).__name__}: {exc})")
+        return
+
+    free = balance.get("BNB", {}).get("free", 0.0) or 0.0
+    # O BNB de uma posição aberta é da posição (vai ser vendido), não conta
+    # como reserva de taxa.
+    in_position = sum(
+        float(p.get("quantity") or 0.0)
+        for p in open_positions
+        if (p.get("symbol") or "").strip().upper() == "BNB/USDT"
+    )
+    reserve = free - in_position
+    if reserve >= BNB_RESERVE_MIN:
+        _bnb_reserve_alerted = False
+        return
+
+    earn = balance.get("LDBNB", {}).get("total", 0.0) or 0.0
+    where = (
+        f" Há {earn:g} BNB no Simple Earn (LDBNB) - resgate pra Spot e "
+        "confira se a assinatura automática do BNB está desligada."
+        if earn > 0 else ""
+    )
+    log(
+        f"AVISO: reserva de BNB livre baixa ({reserve:.6f} < {BNB_RESERVE_MIN}) "
+        "- a taxa passa a ser cobrada no próprio ativo e as vendas deixam "
+        f"resto na carteira.{where}"
+    )
+    if not _bnb_reserve_alerted:
+        _bnb_reserve_alerted = True
+        send_whatsapp(
+            f"[LIVE] ATENÇÃO: reserva de BNB livre baixa ({reserve:.6f} BNB, "
+            f"mínimo {BNB_RESERVE_MIN}). Sem BNB a taxa é cobrada no ativo "
+            f"e as vendas deixam resto.{where}"
         )
 
 
@@ -470,6 +523,7 @@ def run_cycle(exchange) -> tuple[int, int, bool]:
     circuit breaker, e só abre posição nova se não estiver travado."""
     cfg = load_live_config()
     remaining, closed_now = monitor_open_positions(exchange)
+    check_bnb_reserve(exchange, remaining)
 
     ledger_rows = read_csv(LIVE_LEDGER)
     cb_state = check_and_maybe_trip(
