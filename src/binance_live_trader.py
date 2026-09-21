@@ -50,9 +50,12 @@ from binance_live_executor import (
     ENV_FILE,
     LOG_FILE,
     build_exchange,
+    OrderStateUnknown,
+    _find_order_by_client_id,
     call_with_retry,
     load_env,
     log,
+    place_market_order,
 )
 from binance_live_circuit_breaker import check_and_maybe_trip
 from binance_testnet_trader import (
@@ -145,6 +148,59 @@ def live_closed_ids(ledger_rows: list[dict]) -> set[str]:
 _blocked_alerted: set[str] = set()
 
 
+_unknown_alerted: set[str] = set()
+
+# (tipo, chave) -> client id de ordem com destino incerto. No ciclo
+# seguinte a checagem é retomada por esse id ANTES de qualquer novo
+# envio; sem isso, um novo id reenviaria uma ordem que talvez já tenha
+# sido executada. Só em memória: se o loop reiniciar, vale o alerta.
+_pending_orders: dict[tuple[str, str], str] = {}
+
+
+def _place_or_resume(exchange, kind: str, key: str, symbol: str, side: str, amount: float):
+    pending_id = _pending_orders.get((kind, key))
+    if pending_id:
+        # Pode levantar OrderStateUnknown de novo - e o pendente continua.
+        found = _find_order_by_client_id(exchange, symbol, pending_id)
+        if found is not None:
+            status = found.get("status")
+            if status == "closed" and float(found.get("filled") or 0.0) > 0:
+                _pending_orders.pop((kind, key), None)
+                log(
+                    f"[LIVE] {symbol}: ordem incerta do ciclo anterior estava "
+                    f"executada (id {found.get('id')}) - usando, sem reenviar."
+                )
+                return found
+            if status not in ("canceled", "expired", "rejected"):
+                raise OrderStateUnknown(
+                    f"ordem {pending_id} ({symbol}) com status {status!r} - "
+                    "conferir na conta.",
+                    client_id=pending_id,
+                )
+        _pending_orders.pop((kind, key), None)  # confirmado que não executou
+    try:
+        return place_market_order(exchange, symbol, side, amount)
+    except OrderStateUnknown as exc:
+        if exc.client_id:
+            _pending_orders[(kind, key)] = exc.client_id
+        raise
+
+
+def _alert_order_state_unknown(
+    kind: str, symbol: str, key: str, exc: Exception
+) -> None:
+    """Ordem com destino incerto: nunca reenviar sozinho. Alerta uma vez
+    por posição/sinal e deixa a conferência pra você na conta."""
+    log(f"[LIVE] ALERTA: {kind} de {symbol} com estado incerto - {exc}")
+    if key not in _unknown_alerted:
+        _unknown_alerted.add(key)
+        send_whatsapp(
+            f"[LIVE] ATENÇÃO: não sei se a {kind} de {symbol} foi executada "
+            "(erro de rede ao confirmar). Não vou reenviar - confira a conta "
+            "na Binance e o CSV de posições."
+        )
+
+
 def _warn_sell_blocked(
     pos: dict, symbol: str, base: str, reason: str, balance: dict
 ) -> None:
@@ -174,11 +230,36 @@ def _warn_sell_blocked(
         )
 
 
+def _drop_already_closed(positions: list[dict]) -> list[dict]:
+    """Tira do CSV de abertas o que o ledger já registra como fechado.
+
+    Cobre a janela entre gravar o fechamento no ledger e reescrever o
+    CSV (crash no meio, ou o incidente do ARB): sem isso a posição
+    fantasma seria vendida de novo - e uma sobra de saldo viraria uma
+    segunda linha no ledger."""
+    closed_ids = live_closed_ids(read_csv(LIVE_LEDGER))
+    kept = []
+    for pos in positions:
+        if (pos.get("signal_id") or "").strip() in closed_ids:
+            log(
+                f"[LIVE] {pos.get('symbol')}: já consta como fechada no "
+                "ledger - removendo do CSV de abertas sem vender de novo."
+            )
+        else:
+            kept.append(pos)
+    return kept
+
+
 def monitor_open_positions(exchange) -> tuple[list[dict], int]:
     remaining = []
     closed_now = 0
     balance = None
-    for pos in read_csv(LIVE_OPEN_FILE):
+    positions = read_csv(LIVE_OPEN_FILE)
+    reconciled = _drop_already_closed(positions)
+    if len(reconciled) != len(positions):
+        write_csv(LIVE_OPEN_FILE, LIVE_OPEN_FIELDS, reconciled)
+    positions = reconciled
+    for index, pos in enumerate(positions):
         symbol = pos["symbol"]
         try:
             ticker = call_with_retry(exchange.fetch_ticker, symbol)
@@ -237,9 +318,13 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
                 raise ValueError(
                     f"saldo {sell_qty} abaixo do lote mínimo de {symbol}"
                 )
-            sell_order = call_with_retry(
-                exchange.create_order, symbol, "market", "sell", quantity
+            sell_order = _place_or_resume(
+                exchange, "sell", pos["signal_id"], symbol, "sell", quantity
             )
+        except OrderStateUnknown as exc:
+            _alert_order_state_unknown("venda", symbol, pos["signal_id"], exc)
+            remaining.append(pos)
+            continue
         except Exception as exc:
             log(
                 f"AVISO: {symbol} bateu {reason} mas venda de fechamento "
@@ -297,6 +382,12 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             f"{gross_return_pct:+.2f}% (${pnl_usdt:+.2f} dinheiro real)"
         )
         closed_now += 1
+        # Reescreve o CSV já agora, a cada fechamento: se algo falhar
+        # mais adiante no ciclo, a posição vendida não volta a aparecer
+        # como aberta no ciclo seguinte.
+        write_csv(
+            LIVE_OPEN_FILE, LIVE_OPEN_FIELDS, remaining + positions[index + 1:]
+        )
 
     return remaining, closed_now
 
@@ -327,11 +418,14 @@ def open_new_positions(
             price = ticker["last"]
             raw_amount = notional_usdt / price
             amount = float(exchange.amount_to_precision(sym, raw_amount))
-            buy_order = call_with_retry(
-                exchange.create_order, sym, "market", "buy", amount
+            buy_order = _place_or_resume(
+                exchange, "buy", signal["signal_id"], sym, "buy", amount
             )
         except ccxt.BadSymbol:
             continue
+        except OrderStateUnknown as exc:
+            _alert_order_state_unknown("compra", sym, signal["signal_id"], exc)
+            break  # sem saber o que houve, não abre mais nada neste ciclo
         except Exception as exc:
             log(f"[LIVE] AVISO abertura {sym}: {type(exc).__name__}: {exc}")
             continue
@@ -357,6 +451,10 @@ def open_new_positions(
             "confidence": signal.get("confidence", ""),
             "target_reached": "0",
         })
+        # Grava já a cada compra: se o ciclo falhar depois, o ativo
+        # comprado não fica sem registro (e o mesmo sinal não é
+        # recomprado no ciclo seguinte).
+        write_csv(LIVE_OPEN_FILE, LIVE_OPEN_FIELDS, remaining)
         open_symbols.add(sym)
         slots -= 1
         log(
