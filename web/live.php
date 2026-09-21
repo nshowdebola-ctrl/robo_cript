@@ -28,7 +28,9 @@ const LOG_FILE         = BASE_DIR . '/data/binance_live.log';
 const LOOP_LOG         = BASE_DIR . '/data/binance_live_loop_stdout.log';
 
 const DEFAULT_NOTIONAL = 10.0;
-const MIN_NOTIONAL     = 5.0;
+// Piso $6, não $5: a Binance recusa ordem < $5 e um STOP de -5% numa posição
+// de $5 vale $4,75 (venda de saída recusada, posição presa).
+const MIN_NOTIONAL     = 6.0;
 const MAX_NOTIONAL     = 100.0;
 
 const DEFAULT_BASELINE_CAPITAL = 500.0;

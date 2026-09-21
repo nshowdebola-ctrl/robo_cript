@@ -87,7 +87,7 @@ LIVE_LEDGER_FIELDS = [
 
 LIVE_CONFIG_FILE = DATA / "binance_live_config.json"
 
-MAX_POSITIONS_LIVE = 5
+MAX_POSITIONS_LIVE = 6
 LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
@@ -98,7 +98,10 @@ MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente ant
 # venda deixa resto na carteira. Cada trade gasta ~0.0000065 BNB.
 BNB_RESERVE_MIN = 0.002
 
-NOTIONAL_BOUNDS = (5.0, 100.0)
+# Piso de $6, não $5: a Binance recusa ordem abaixo de $5 (inclusive a
+# mercado). Uma posição de $5 que cai 5% no STOP vale $4,75 e a venda de
+# saída seria recusada, prendendo a posição. Com $6 o STOP sai a $5,70.
+NOTIONAL_BOUNDS = (6.0, 100.0)
 BASELINE_CAPITAL_BOUNDS = (10.0, 1_000_000.0)
 MAX_DRAWDOWN_BOUNDS = (2.0, 50.0)
 
@@ -208,6 +211,7 @@ def _alert_order_state_unknown(
 
 
 _bnb_reserve_alerted = False
+_low_usdt_logged = False
 
 
 def check_bnb_reserve(exchange, open_positions: list[dict]) -> None:
@@ -448,9 +452,32 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
 def open_new_positions(
     exchange, remaining: list[dict], notional_usdt: float
 ) -> list[dict]:
+    global _low_usdt_logged
     slots = max(0, MAX_POSITIONS_LIVE - len(remaining))
     if slots <= 0:
         return remaining
+
+    # Só abre o que o USDT livre paga. Sem isso, com vaga sobrando e saldo
+    # curto o loop tentaria comprar todo ciclo e falharia (log repetido).
+    try:
+        free_usdt = float(
+            call_with_retry(exchange.fetch_balance).get("USDT", {}).get("free", 0.0)
+            or 0.0
+        )
+    except Exception as exc:
+        log(f"AVISO abertura: falha ao consultar USDT livre ({type(exc).__name__}: {exc}) - sem abrir posição neste ciclo.")
+        return remaining
+    affordable = int(free_usdt // notional_usdt)
+    if affordable <= 0:
+        if not _low_usdt_logged:
+            _low_usdt_logged = True
+            log(
+                f"[LIVE] {slots} vaga(s) livre(s), mas USDT livre (${free_usdt:.2f}) "
+                f"não cobre uma posição de ${notional_usdt:.2f} - aguardando saldo."
+            )
+        return remaining
+    _low_usdt_logged = False
+    slots = min(slots, affordable)
 
     open_rows = read_csv(LIVE_OPEN_FILE)
     ledger_rows = read_csv(LIVE_LEDGER)
