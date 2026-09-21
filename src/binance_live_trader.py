@@ -139,6 +139,41 @@ def live_closed_ids(ledger_rows: list[dict]) -> set[str]:
     return result
 
 
+# signal_ids já alertados por venda bloqueada, pra não mandar WhatsApp
+# a cada ciclo de 60s. Vive só no processo do loop - se reiniciar, avisa
+# de novo uma vez, o que é aceitável.
+_blocked_alerted: set[str] = set()
+
+
+def _warn_sell_blocked(
+    pos: dict, symbol: str, base: str, reason: str, balance: dict
+) -> None:
+    """Posição bateu STOP/TARGET/TIME mas não há saldo livre pra vender.
+
+    Caso conhecido: a Binance move o ativo parado da Spot pro Simple
+    Earn (assinatura automática), e ele passa a aparecer como LD<ativo>
+    - fora do alcance da ordem de venda spot."""
+    earn = balance.get(f"LD{base}", {}).get("total", 0.0) or 0.0
+    if earn > 0:
+        where = (
+            f"O saldo está no Simple Earn (LD{base}={earn:g}) - resgate "
+            "pra Spot no app e o loop vende sozinho."
+        )
+    else:
+        where = "Não achei saldo em LD* também - investigar na conta."
+    log(
+        f"AVISO: {symbol} bateu {reason} mas saldo livre de {base} está "
+        f"zerado - mantendo posição aberta. {where}"
+    )
+    signal_id = pos["signal_id"]
+    if signal_id not in _blocked_alerted:
+        _blocked_alerted.add(signal_id)
+        send_whatsapp(
+            f"[LIVE] ATENÇÃO: {symbol} bateu {reason} mas não consigo "
+            f"vender (saldo livre de {base} zerado). {where}"
+        )
+
+
 def monitor_open_positions(exchange) -> tuple[list[dict], int]:
     remaining = []
     closed_now = 0
@@ -191,15 +226,17 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
         # desconto), que reduz o saldo líquido recebido.
         sell_qty = min(tracked_qty, free)
         if sell_qty <= 0:
-            log(
-                f"AVISO: {symbol} bateu {reason} mas saldo livre de {base} "
-                "está zerado - mantendo posição aberta pra investigar."
-            )
+            _warn_sell_blocked(pos, symbol, base, reason, balance)
             remaining.append(pos)
             continue
+        _blocked_alerted.discard(pos["signal_id"])
 
         try:
             quantity = float(exchange.amount_to_precision(symbol, sell_qty))
+            if quantity <= 0:
+                raise ValueError(
+                    f"saldo {sell_qty} abaixo do lote mínimo de {symbol}"
+                )
             sell_order = call_with_retry(
                 exchange.create_order, symbol, "market", "sell", quantity
             )
@@ -216,12 +253,25 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
         gross_return_pct = (float(fill_price) / entry - 1.0) * 100.0
         exit_time = datetime.now(timezone.utc).isoformat()
 
+        sold_qty = float(sell_order.get("filled") or quantity)
         entry_cost = (pos.get("entry_cost_usdt") or "").strip()
-        entry_cost_usdt = float(entry_cost) if entry_cost else entry * quantity
+        entry_cost_usdt = float(entry_cost) if entry_cost else entry * tracked_qty
         exit_cost_usdt = float(
-            sell_order.get("cost") or (float(fill_price) * quantity)
+            sell_order.get("cost") or (float(fill_price) * sold_qty)
         )
-        pnl_usdt = exit_cost_usdt - entry_cost_usdt
+        # O lote mínimo do par arredonda a venda pra baixo e deixa uma
+        # sobra na carteira (ex.: BNB com passo 0.001). O custo dessa
+        # sobra não pode ser cobrado do PnL da parte vendida - senão um
+        # trade com +7% aparece como prejuízo. A perda de quantidade por
+        # taxa no ativo, essa sim, continua contando (sell_qty já é o
+        # que realmente sobrou dela).
+        sold_fraction = min(1.0, sold_qty / sell_qty)
+        pnl_usdt = exit_cost_usdt - entry_cost_usdt * sold_fraction
+        if sold_fraction < 1.0:
+            log(
+                f"[LIVE] {symbol}: sobra de {sell_qty - sold_qty:.8f} {base} "
+                "ficou na carteira (lote mínimo do par)."
+            )
 
         append_csv(LIVE_LEDGER, LIVE_LEDGER_FIELDS, {
             "trade_id": f"{pos['signal_id']}_{exit_time}",
@@ -230,7 +280,7 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             "exit_time": exit_time,
             "entry_price": pos["entry_price"],
             "exit_price": f"{float(fill_price):.12f}",
-            "quantity": pos["quantity"],
+            "quantity": f"{sold_qty:.12f}",
             "exit_reason": reason,
             "gross_return_pct": f"{gross_return_pct:.6f}",
             "pnl_usdt": f"{pnl_usdt:.6f}",
