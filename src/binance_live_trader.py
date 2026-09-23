@@ -87,7 +87,7 @@ LIVE_LEDGER_FIELDS = [
 
 LIVE_CONFIG_FILE = DATA / "binance_live_config.json"
 
-MAX_POSITIONS_LIVE = 6
+MAX_POSITIONS_LIVE = 8
 LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
