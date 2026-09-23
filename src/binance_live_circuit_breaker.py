@@ -34,7 +34,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-from whatsapp_notify import send_whatsapp
+from telegram_notify import send_telegram
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -119,17 +119,17 @@ def check_and_maybe_trip(
 
     O alerta e a persistência de `tripped` andam juntos numa única
     `save_cb_state` (não duas, como numa versão anterior) - se o
-    processo morrer entre enviar o WhatsApp e salvar, `tripped` nunca
+    processo morrer entre enviar o Telegram e salvar, `tripped` nunca
     fica gravado como True sem o alerta correspondente, então o
     próximo ciclo recalcula do zero e tenta alertar de novo em vez de
     achar "já tripped" e desistir silenciosamente. Se já estiver
-    tripped mas `alerted` for False (alerta falhou por rede/CallMeBot
+    tripped mas `alerted` for False (alerta falhou por rede/Telegram
     fora do ar), tenta reenviar a cada ciclo até confirmar - nunca dá
     só uma tentativa e desiste pra sempre."""
     state = load_cb_state()
     if state["tripped"]:
         if not state.get("alerted"):
-            ok = send_whatsapp(
+            ok = send_telegram(
                 "[LIVE] ALERTA (reenvio) - circuit breaker acionado em "
                 f"{state.get('tripped_at')}: perda acumulada de "
                 f"${-state.get('cumulative_pnl_usdt_at_trip', 0.0):.2f} "
@@ -149,7 +149,7 @@ def check_and_maybe_trip(
         return state
 
     now = datetime.now(timezone.utc).isoformat()
-    alerted = send_whatsapp(
+    alerted = send_telegram(
         "[LIVE] ALERTA - circuit breaker acionado: perda acumulada de "
         f"${-cumulative:.2f} ({drawdown_pct:.1f}% do capital-base de "
         f"${baseline_capital_usdt:.2f}) passou do limite de "

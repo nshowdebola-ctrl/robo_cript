@@ -4,7 +4,7 @@ CRYPTO RADAR - WATCHDOG DO LOOP LIVE (mainnet, DINHEIRO REAL)
 
 Paralelo de binance_testnet_watchdog.py: checa se
 src/binance_live_loop.py está vivo (via PID em
-data/binance_live_loop.pid) e avisa no WhatsApp se caiu. Feito pra
+data/binance_live_loop.pid) e avisa no Telegram se caiu. Feito pra
 rodar via cron do sistema (não faz parte desta Fase 3 - só entra no
 crontab quando a Fase 4 realmente ligar o loop live; até lá, rodar
 isto só reporta "não rodando" a cada execução, inofensivo).
@@ -24,7 +24,7 @@ import json
 import os
 from pathlib import Path
 
-from whatsapp_notify import send_whatsapp
+from telegram_notify import send_telegram
 
 ROOT = Path(__file__).resolve().parents[1]
 PID_FILE = ROOT / "data" / "binance_live_loop.pid"
@@ -70,11 +70,11 @@ def main() -> int:
 
     if alive:
         if was_alerted:
-            send_whatsapp("Crypto Radar: [LIVE] loop live voltou a rodar.")
+            send_telegram("Crypto Radar: [LIVE] loop live voltou a rodar.")
         save_state({"alerted": False})
     else:
         if not was_alerted:
-            send_whatsapp(
+            send_telegram(
                 "Crypto Radar: [LIVE] ALERTA - loop live caiu ou foi "
                 "desativado e não está rodando."
             )

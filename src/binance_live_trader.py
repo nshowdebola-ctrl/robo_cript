@@ -66,7 +66,7 @@ from binance_testnet_trader import (
 )
 from paper_trading_v9_17 import MAX_HOLD_HOURS, STOP_PCT, TARGET_PCT
 from paper_trading_v9_21 import SIGNALS, parse_dt
-from whatsapp_notify import send_whatsapp
+from telegram_notify import send_telegram
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -152,7 +152,7 @@ def live_closed_ids(ledger_rows: list[dict]) -> set[str]:
     return result
 
 
-# signal_ids já alertados por venda bloqueada, pra não mandar WhatsApp
+# signal_ids já alertados por venda bloqueada, pra não mandar Telegram
 # a cada ciclo de 60s. Vive só no processo do loop - se reiniciar, avisa
 # de novo uma vez, o que é aceitável.
 _blocked_alerted: set[str] = set()
@@ -204,7 +204,7 @@ def _alert_order_state_unknown(
     log(f"[LIVE] ALERTA: {kind} de {symbol} com estado incerto - {exc}")
     if key not in _unknown_alerted:
         _unknown_alerted.add(key)
-        send_whatsapp(
+        send_telegram(
             f"[LIVE] ATENÇÃO: não sei se a {kind} de {symbol} foi executada "
             "(erro de rede ao confirmar). Não vou reenviar - confira a conta "
             "na Binance e o CSV de posições."
@@ -252,7 +252,7 @@ def check_bnb_reserve(exchange, open_positions: list[dict]) -> None:
     )
     if not _bnb_reserve_alerted:
         _bnb_reserve_alerted = True
-        send_whatsapp(
+        send_telegram(
             f"[LIVE] ATENÇÃO: reserva de BNB livre baixa ({reserve:.6f} BNB, "
             f"mínimo {BNB_RESERVE_MIN}). Sem BNB a taxa é cobrada no ativo "
             f"e as vendas deixam resto.{where}"
@@ -282,7 +282,7 @@ def _warn_sell_blocked(
     signal_id = pos["signal_id"]
     if signal_id not in _blocked_alerted:
         _blocked_alerted.add(signal_id)
-        send_whatsapp(
+        send_telegram(
             f"[LIVE] ATENÇÃO: {symbol} bateu {reason} mas não consigo "
             f"vender (saldo livre de {base} zerado). {where}"
         )
@@ -470,7 +470,7 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             f"gross={gross_return_pct:+.4f}% pnl=${pnl_usdt:+.4f} "
             f"sell_order={sell_order.get('id')}"
         )
-        send_whatsapp(
+        send_telegram(
             f"[LIVE] {symbol} fechado por {reason}: "
             f"{gross_return_pct:+.2f}% (${pnl_usdt:+.2f} dinheiro real)"
         )
