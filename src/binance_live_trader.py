@@ -88,6 +88,7 @@ LIVE_LEDGER_FIELDS = [
 LIVE_CONFIG_FILE = DATA / "binance_live_config.json"
 
 MAX_POSITIONS_LIVE = 8
+PORTFOLIO_TARGET_PCT = 0.04          # soma do P&L não realizado de todas as posições abertas >= 4% do custo de entrada delas -> fecha tudo
 LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
@@ -316,6 +317,14 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
     if len(reconciled) != len(positions):
         write_csv(LIVE_OPEN_FILE, LIVE_OPEN_FIELDS, reconciled)
     positions = reconciled
+
+    # Uma passada só pra cotar tudo de uma vez - reaproveitada pro
+    # cálculo da carteira inteira e pro loop por posição abaixo (evita
+    # bater a API duas vezes pro mesmo símbolo no mesmo ciclo).
+    prices: dict[int, float] = {}
+    total_entry_cost = 0.0
+    total_current_value = 0.0
+    priced_all = True
     for index, pos in enumerate(positions):
         symbol = pos["symbol"]
         try:
@@ -323,8 +332,33 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             price = ticker["last"]
         except Exception as exc:
             log(f"AVISO monitor {symbol}: {type(exc).__name__}: {exc}")
+            priced_all = False
+            continue
+        prices[index] = price
+        total_entry_cost += float(pos.get("entry_cost_usdt") or 0.0)
+        total_current_value += price * float(pos["quantity"])
+
+    # Meta da carteira: soma do P&L não realizado de TODAS as posições
+    # abertas >= PORTFOLIO_TARGET_PCT do que foi investido nelas. Só
+    # decide com o preço de todas cotado (se uma falhou, tenta de novo
+    # no próximo ciclo em vez de decidir com visão parcial).
+    portfolio_triggered = False
+    if priced_all and positions and total_entry_cost > 0:
+        portfolio_pnl_pct = (total_current_value - total_entry_cost) / total_entry_cost
+        if portfolio_pnl_pct >= PORTFOLIO_TARGET_PCT:
+            portfolio_triggered = True
+            log(
+                f"[LIVE] Carteira bateu meta de {PORTFOLIO_TARGET_PCT:.0%} "
+                f"({portfolio_pnl_pct:+.2%} sobre ${total_entry_cost:.2f} "
+                "investido) - fechando todas as posições abertas."
+            )
+
+    for index, pos in enumerate(positions):
+        symbol = pos["symbol"]
+        if index not in prices:
             remaining.append(pos)
             continue
+        price = prices[index]
 
         entry = float(pos["entry_price"])
         change = price / entry - 1.0
@@ -338,6 +372,8 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             reason = "TARGET"
         elif age_hours >= MAX_HOLD_HOURS:
             reason = "TIME"
+        elif portfolio_triggered:
+            reason = "PORTFOLIO_TARGET"
 
         if not reason:
             remaining.append(pos)

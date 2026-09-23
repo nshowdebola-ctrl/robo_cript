@@ -422,6 +422,9 @@ $cbState = loadCbState();
 $openPositions = readCsvRows(OPEN_FILE);
 
 $livePrices = fetchLivePrices(array_column($openPositions, 'symbol'));
+$portfolioEntryCost = 0.0;
+$portfolioCurrentValue = 0.0;
+$portfolioPricedAll = count($openPositions) > 0;
 foreach ($openPositions as &$pos) {
     $code = str_replace('/', '', $pos['symbol'] ?? '');
     $current = $livePrices[$code] ?? null;
@@ -436,8 +439,24 @@ foreach ($openPositions as &$pos) {
         : null;
     $openedAt = strtotime((string) ($pos['entry_time'] ?? ''));
     $pos['age_hours'] = $openedAt !== false ? (time() - $openedAt) / 3600.0 : null;
+
+    // Mesma conta do gatilho PORTFOLIO_TARGET_PCT do loop live
+    // (src/binance_live_trader.py) - só fecha certo se cotou todas.
+    if ($current === null) {
+        $portfolioPricedAll = false;
+    } else {
+        $portfolioEntryCost += $entryCost;
+        $portfolioCurrentValue += $current * (float) ($pos['quantity'] ?? 0);
+    }
 }
 unset($pos);
+$portfolioTargetPct = 4.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
+$portfolioPnlPct = ($portfolioPricedAll && $portfolioEntryCost > 0)
+    ? ($portfolioCurrentValue - $portfolioEntryCost) / $portfolioEntryCost * 100.0
+    : null;
+$portfolioPnlUsdt = ($portfolioPricedAll && $portfolioEntryCost > 0)
+    ? $portfolioCurrentValue - $portfolioEntryCost
+    : null;
 
 $allTrades = readCsvRows(LEDGER_FILE);
 $pnlSeries = array_map(
@@ -822,6 +841,17 @@ if (file_exists(LOG_FILE)) {
 
     <div class="card" style="margin-bottom: 28px;">
         <h2>Posições abertas (<?= count($openPositions) ?>)</h2>
+        <?php if (!empty($openPositions)): ?>
+            <p class="hint">
+                P&amp;L agregado da carteira:
+                <strong class="<?= $portfolioPnlPct === null ? '' : ($portfolioPnlPct >= 0 ? 'positive' : 'negative') ?>">
+                    <?= $portfolioPnlPct === null ? '-' : ($portfolioPnlPct >= 0 ? '+' : '') . number_format($portfolioPnlPct, 2, ',', '.') . '%' ?>
+                    <?= $portfolioPnlUsdt === null ? '' : '(' . ($portfolioPnlUsdt >= 0 ? '+' : '') . '$' . number_format($portfolioPnlUsdt, 2, ',', '.') . ')' ?>
+                </strong>
+                de meta <?= h(number_format($portfolioTargetPct, 0, ',', '.')) ?>% pra fechar tudo automaticamente.
+                <?= $portfolioPricedAll ? '' : ' (algum preço faltou cotar agora - valor pode estar incompleto)' ?>
+            </p>
+        <?php endif; ?>
         <?php if (empty($openPositions)): ?>
             <p class="empty">Nenhuma posição aberta no momento.</p>
         <?php else: ?>
