@@ -796,8 +796,8 @@ if (file_exists(LOG_FILE)) {
         </div>
     <?php else: ?>
         <div class="banner banner-danger">
-            AMBIENTE: BINANCE SPOT MAINNET - DINHEIRO REAL. O loop, quando ativo, roda um ciclo a cada 5
-            minutos sozinho (compra/vende de verdade). Drawdown atual desde a última reativação:
+            AMBIENTE: BINANCE SPOT MAINNET - DINHEIRO REAL. O loop, quando ativo, roda um ciclo a cada 1
+            minuto sozinho (compra/vende de verdade). Drawdown atual desde a última reativação:
             <?= h(number_format($currentDrawdownPct, 1, ',', '.')) ?>% de
             <?= h(number_format($config['max_drawdown_pct'], 1, ',', '.')) ?>% permitido.
         </div>
