@@ -210,6 +210,14 @@ def main() -> int:
     print("=" * 100)
 
     log(f"CICLO concluído: vistos={total_seen} novos={total_inserted}")
+
+    # Rodapé do portal (notícia x preço da cripto). Falha aqui nunca
+    # derruba a coleta - o rodapé só fica com os dados do ciclo anterior.
+    try:
+        import news_footer
+        news_footer.main()
+    except Exception as exc:
+        log(f"AVISO rodapé de notícias: {type(exc).__name__}: {exc}")
     return 0
 
 

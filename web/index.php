@@ -592,6 +592,43 @@ try {
     $error = $e->getMessage();
 }
 
+// Rodapé de notícias: gerado por src/news_footer.py a cada ciclo do
+// coletor (cron). Aqui só lê o JSON - nenhuma chamada de rede na página.
+$newsFooter = null;
+$newsFooterFile = BASE_DIR . '/data/news_footer.json';
+if (is_file($newsFooterFile)) {
+    $decoded = json_decode((string) file_get_contents($newsFooterFile), true);
+    if (is_array($decoded)) {
+        $newsFooter = $decoded;
+    }
+}
+
+function newsTimeLabel(string $iso): string
+{
+    try {
+        $dt = new DateTimeImmutable($iso);
+    } catch (Exception $e) {
+        return '-';
+    }
+    $minutes = (int) floor((time() - $dt->getTimestamp()) / 60);
+    if ($minutes < 60) {
+        return 'há ' . max(0, $minutes) . ' min';
+    }
+    if ($minutes < 48 * 60) {
+        return 'há ' . intdiv($minutes, 60) . 'h';
+    }
+    return $dt->setTimezone(new DateTimeZone('America/Sao_Paulo'))->format('d/m H:i');
+}
+
+function sentimentClass(string $label): string
+{
+    return match ($label) {
+        'POSITIVO' => 'positive',
+        'NEGATIVO' => 'negative',
+        default => 'neutral',
+    };
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -957,6 +994,98 @@ try {
             color: #66738d;
 
             font-size: 12px;
+        }
+
+        .news-footer {
+            border-top: 1px solid #202a43;
+            padding-top: 20px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #8995ad;
+        }
+
+        .news-footer h2 {
+            margin: 0 0 4px;
+            font-size: 15px;
+            color: #e8edf7;
+        }
+
+        .news-footer .news-meta {
+            margin: 0 0 12px;
+            font-size: 12px;
+        }
+
+        .news-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .news-list li {
+            display: grid;
+            grid-template-columns: 70px 78px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: baseline;
+            padding: 7px 0;
+            border-bottom: 1px solid #16203a;
+        }
+
+        .news-list a {
+            color: #c9d3e6;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        .news-list a:hover {
+            text-decoration: underline;
+        }
+
+        .news-source {
+            color: #66738d;
+            font-size: 11px;
+        }
+
+        .news-coins {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        .news-coin {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+            background: #121b31;
+            border: 1px solid #202a43;
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 12px;
+        }
+
+        .news-coin.holding {
+            border-color: #2fae66;
+        }
+
+        .news-coin .ex-btc {
+            color: #66738d;
+            font-size: 11px;
+        }
+
+        .news-corr {
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .news-list li {
+                grid-template-columns: 70px minmax(0, 1fr);
+            }
+
+            .news-list .news-coins {
+                grid-column: 1 / -1;
+                justify-content: flex-start;
+            }
         }
 
         @media (max-width: 900px) {
@@ -1481,6 +1610,84 @@ try {
 </main>
 
 <footer>
+
+    <?php if ($newsFooter !== null && !empty($newsFooter['items'])): ?>
+
+        <section class="news-footer">
+
+            <h2>Notícias x preço</h2>
+
+            <p class="news-meta">
+                Últimas notícias que citam uma cripto, com a variação do preço desde a notícia
+                (entre parênteses: descontando o BTC no mesmo período). Borda verde = o robô live
+                está posicionado na moeda. Atualizado <?= h(newsTimeLabel((string) $newsFooter['generated_at'])) ?>
+                • <?= h(number_format((int) $newsFooter['total_news'], 0, ',', '.')) ?> notícias coletadas.
+            </p>
+
+            <ul class="news-list">
+
+                <?php foreach ($newsFooter['items'] as $item): ?>
+
+                    <li>
+
+                        <span><?= h(newsTimeLabel((string) $item['published_at'])) ?></span>
+
+                        <span class="<?= sentimentClass((string) $item['sentiment_label']) ?>">
+                            <?= h($item['sentiment_label']) ?>
+                        </span>
+
+                        <span>
+                            <a href="<?= h($item['link']) ?>" target="_blank" rel="noopener noreferrer"><?= h($item['title']) ?></a>
+                            <span class="news-source">• <?= h($item['source']) ?></span>
+                        </span>
+
+                        <span class="news-coins">
+
+                            <?php foreach ($item['coins'] as $coin): ?>
+
+                                <?php $chg = $coin['change_pct']; ?>
+
+                                <span class="news-coin<?= !empty($coin['live_holding']) ? ' holding' : '' ?>"
+                                      title="Preço na notícia: <?= h($coin['price_at_news'] ?? '-') ?> • agora: <?= h($coin['price_now'] ?? '-') ?>">
+                                    <?= h($coin['symbol']) ?>
+                                    <span class="<?= $chg === null ? '' : ($chg >= 0 ? 'positive' : 'negative') ?>">
+                                        <?= percentValue($chg) ?>
+                                    </span>
+                                    <?php if ($coin['change_ex_btc_pct'] !== null): ?>
+                                        <span class="ex-btc">(<?= percentValue($coin['change_ex_btc_pct']) ?>)</span>
+                                    <?php endif; ?>
+                                </span>
+
+                            <?php endforeach; ?>
+
+                        </span>
+
+                    </li>
+
+                <?php endforeach; ?>
+
+            </ul>
+
+            <?php $corr = $newsFooter['correlation'] ?? null; ?>
+
+            <?php if (is_array($corr)): ?>
+
+                <p class="news-corr">
+                    <strong>Correlação histórica</strong>
+                    (<?= h(number_format((int) $corr['n'], 0, ',', '.')) ?> casos, retorno 24h descontando o BTC):
+                    <?php foreach ($corr['avg_24h_ex_btc'] as $label => $stat): ?>
+                        <span class="<?= sentimentClass((string) $label) ?>"><?= h($label) ?></span>
+                        <?= percentValue($stat['avg_pct']) ?> (n=<?= h($stat['n']) ?>) •
+                    <?php endforeach; ?>
+                    Pearson <?= h(number_format((float) $corr['pearson_24h_ex_btc'], 3, ',', '.')) ?>.
+                    Perto de zero = sentimento da notícia ainda não prevê o preço.
+                </p>
+
+            <?php endif; ?>
+
+        </section>
+
+    <?php endif; ?>
 
     Crypto Radar V3 • Banco: crypto_radar.db
 
