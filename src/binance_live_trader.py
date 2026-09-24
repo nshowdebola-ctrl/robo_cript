@@ -41,7 +41,7 @@ pra mudar) - o portal (web/live.php) escreve esse arquivo.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import ccxt
@@ -105,6 +105,19 @@ BNB_RESERVE_MIN = 0.002
 NOTIONAL_BOUNDS = (6.0, 100.0)
 BASELINE_CAPITAL_BOUNDS = (10.0, 1_000_000.0)
 MAX_DRAWDOWN_BOUNDS = (2.0, 50.0)
+
+# Pausa após queda do mercado: 2+ STOPs com até 15min entre eles ->
+# nenhuma compra nova por 90min contados do último STOP. Em 23/09
+# 4 STOPs saíram entre 14:10 e 14:17 e o robô recomprou LTC/AVAX/ADA
+# no mesmo minuto, no meio da queda.
+STOP_CLUSTER_MIN = 2
+STOP_CLUSTER_WINDOW = timedelta(minutes=15)
+STOP_CLUSTER_PAUSE = timedelta(minutes=90)
+
+# Pausa por moeda: não recompra um símbolo fechado (por qualquer motivo)
+# há menos de 4h. Em 23/09 ZRO bateu TARGET, foi recomprado na hora e
+# saiu por STOP 1h depois.
+SYMBOL_COOLDOWN = timedelta(hours=4)
 
 
 def _clamped(value, bounds, default):
@@ -213,6 +226,42 @@ def _alert_order_state_unknown(
 
 _bnb_reserve_alerted = False
 _low_usdt_logged = False
+# Fim da pausa por STOPs em série já avisada (log/Telegram uma vez por pausa).
+_stop_cluster_alerted_until: datetime | None = None
+
+
+def stop_cluster_pause_until(
+    ledger_rows: list[dict], now: datetime
+) -> datetime | None:
+    """Se houve STOP_CLUSTER_MIN+ STOPs com no máximo STOP_CLUSTER_WINDOW
+    entre o primeiro e o último, devolve até quando as compras ficam
+    pausadas (último STOP do grupo + STOP_CLUSTER_PAUSE), se ainda for
+    no futuro. Lido do ledger: sobrevive a reinício do loop."""
+    horizon = now - STOP_CLUSTER_PAUSE - STOP_CLUSTER_WINDOW
+    stops = sorted(
+        t for t in (
+            parse_dt(r["exit_time"]) for r in ledger_rows
+            if (r.get("exit_reason") or "").strip() == "STOP"
+        )
+        if t is not None and t >= horizon
+    )
+    pause_until = None
+    for i in range(STOP_CLUSTER_MIN - 1, len(stops)):
+        if stops[i] - stops[i - STOP_CLUSTER_MIN + 1] <= STOP_CLUSTER_WINDOW:
+            pause_until = stops[i] + STOP_CLUSTER_PAUSE
+    if pause_until and pause_until > now:
+        return pause_until
+    return None
+
+
+def symbols_in_cooldown(ledger_rows: list[dict], now: datetime) -> set[str]:
+    """Símbolos fechados há menos de SYMBOL_COOLDOWN."""
+    cooling = set()
+    for r in ledger_rows:
+        closed_at = parse_dt(r.get("exit_time") or "")
+        if closed_at is not None and now - closed_at < SYMBOL_COOLDOWN:
+            cooling.add(r["symbol"].strip().upper())
+    return cooling
 
 
 def check_bnb_reserve(exchange, open_positions: list[dict]) -> None:
@@ -488,9 +537,25 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
 def open_new_positions(
     exchange, remaining: list[dict], notional_usdt: float
 ) -> list[dict]:
-    global _low_usdt_logged
+    global _low_usdt_logged, _stop_cluster_alerted_until
     slots = max(0, MAX_POSITIONS_LIVE - len(remaining))
     if slots <= 0:
+        return remaining
+
+    now = datetime.now(timezone.utc)
+    ledger_rows = read_csv(LIVE_LEDGER)
+    pause_until = stop_cluster_pause_until(ledger_rows, now)
+    if pause_until is not None:
+        if _stop_cluster_alerted_until != pause_until:
+            _stop_cluster_alerted_until = pause_until
+            msg = (
+                f"[LIVE] {STOP_CLUSTER_MIN}+ STOPs em até "
+                f"{int(STOP_CLUSTER_WINDOW.total_seconds() // 60)}min - compras "
+                f"pausadas até {pause_until:%H:%M} UTC (posições abertas "
+                "continuam saindo normalmente)."
+            )
+            log(msg)
+            send_telegram(msg)
         return remaining
 
     # Só abre o que o USDT livre paga. Sem isso, com vaga sobrando e saldo
@@ -516,17 +581,17 @@ def open_new_positions(
     slots = min(slots, affordable)
 
     open_rows = read_csv(LIVE_OPEN_FILE)
-    ledger_rows = read_csv(LIVE_LEDGER)
     open_ids = live_open_ids(open_rows)
     closed_ids = live_closed_ids(ledger_rows)
     open_symbols = {p["symbol"].strip().upper() for p in remaining}
+    cooling = symbols_in_cooldown(ledger_rows, now)
 
     candidates = best_actionable_per_symbol(open_ids, closed_ids)
 
     for sym, signal in candidates.items():
         if slots <= 0:
             break
-        if sym in open_symbols:
+        if sym in open_symbols or sym.strip().upper() in cooling:
             continue
 
         try:
