@@ -88,10 +88,11 @@ LIVE_LEDGER_FIELDS = [
 LIVE_CONFIG_FILE = DATA / "binance_live_config.json"
 
 MAX_POSITIONS_LIVE = 8
-PORTFOLIO_TARGET_PCT = 0.04          # soma do P&L não realizado de todas as posições abertas >= 4% do custo de entrada delas -> fecha tudo
+PORTFOLIO_TARGET_PCT = 0.03          # soma do P&L não realizado de todas as posições abertas >= 3% do custo de entrada delas -> fecha tudo
 LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
+DAILY_LOSS_LIMIT_USDT = 2.0          # P&L realizado do dia (UTC) <= -isto -> sem compra nova até o dia seguinte
 
 # Reserva mínima de BNB livre pra pagar taxa (a opção "pagar taxa com BNB"
 # está ligada na conta). Sem BNB livre a Binance cobra a taxa no próprio
@@ -105,6 +106,7 @@ BNB_RESERVE_MIN = 0.002
 NOTIONAL_BOUNDS = (6.0, 100.0)
 BASELINE_CAPITAL_BOUNDS = (10.0, 1_000_000.0)
 MAX_DRAWDOWN_BOUNDS = (2.0, 50.0)
+DAILY_LOSS_LIMIT_BOUNDS = (0.3, 50.0)
 
 # Pausa após queda do mercado: 2+ STOPs com até 15min entre eles ->
 # nenhuma compra nova por 90min contados do último STOP. Em 23/09
@@ -118,6 +120,12 @@ STOP_CLUSTER_PAUSE = timedelta(minutes=90)
 # há menos de 4h. Em 23/09 ZRO bateu TARGET, foi recomprado na hora e
 # saiu por STOP 1h depois.
 SYMBOL_COOLDOWN = timedelta(hours=4)
+
+# Limite de perda diária (valor em DAILY_LOSS_LIMIT_USDT / config.json):
+# no paper (1.267 trades, 27/08-24/09) parar de comprar depois de um
+# prejuízo realizado no dia melhorou as duas metades do período sem
+# mexer nos melhores dias - perda vem em série e comprar mais no mesmo
+# dia costuma piorar.
 
 
 def _clamped(value, bounds, default):
@@ -136,6 +144,7 @@ def load_live_config() -> dict:
         "notional_usdt": LIVE_NOTIONAL_USDT,
         "baseline_capital_usdt": BASELINE_CAPITAL_USDT,
         "max_drawdown_pct": MAX_DRAWDOWN_PCT,
+        "daily_loss_limit_usdt": DAILY_LOSS_LIMIT_USDT,
     }
     try:
         raw = json.loads(LIVE_CONFIG_FILE.read_text(encoding="utf-8"))
@@ -148,6 +157,10 @@ def load_live_config() -> dict:
         ),
         "max_drawdown_pct": _clamped(
             raw.get("max_drawdown_pct"), MAX_DRAWDOWN_BOUNDS, defaults["max_drawdown_pct"]
+        ),
+        "daily_loss_limit_usdt": _clamped(
+            raw.get("daily_loss_limit_usdt"), DAILY_LOSS_LIMIT_BOUNDS,
+            defaults["daily_loss_limit_usdt"],
         ),
     }
 
@@ -228,6 +241,8 @@ _bnb_reserve_alerted = False
 _low_usdt_logged = False
 # Fim da pausa por STOPs em série já avisada (log/Telegram uma vez por pausa).
 _stop_cluster_alerted_until: datetime | None = None
+# Dia (UTC) em que o limite de perda diária já foi avisado.
+_daily_limit_alerted_day: str | None = None
 
 
 def stop_cluster_pause_until(
@@ -252,6 +267,19 @@ def stop_cluster_pause_until(
     if pause_until and pause_until > now:
         return pause_until
     return None
+
+
+def realized_pnl_today(ledger_rows: list[dict], now: datetime) -> float:
+    """Soma do pnl_usdt dos trades fechados hoje (dia UTC)."""
+    total = 0.0
+    for r in ledger_rows:
+        closed_at = parse_dt(r.get("exit_time") or "")
+        if closed_at is not None and closed_at.date() == now.date():
+            try:
+                total += float(r.get("pnl_usdt") or 0.0)
+            except ValueError:
+                pass
+    return total
 
 
 def symbols_in_cooldown(ledger_rows: list[dict], now: datetime) -> set[str]:
@@ -535,9 +563,10 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
 
 
 def open_new_positions(
-    exchange, remaining: list[dict], notional_usdt: float
+    exchange, remaining: list[dict], notional_usdt: float,
+    daily_loss_limit_usdt: float = DAILY_LOSS_LIMIT_USDT,
 ) -> list[dict]:
-    global _low_usdt_logged, _stop_cluster_alerted_until
+    global _low_usdt_logged, _stop_cluster_alerted_until, _daily_limit_alerted_day
     slots = max(0, MAX_POSITIONS_LIVE - len(remaining))
     if slots <= 0:
         return remaining
@@ -553,6 +582,21 @@ def open_new_positions(
                 f"{int(STOP_CLUSTER_WINDOW.total_seconds() // 60)}min - compras "
                 f"pausadas até {pause_until:%H:%M} UTC (posições abertas "
                 "continuam saindo normalmente)."
+            )
+            log(msg)
+            send_telegram(msg)
+        return remaining
+
+    pnl_today = realized_pnl_today(ledger_rows, now)
+    if pnl_today <= -daily_loss_limit_usdt:
+        today = now.date().isoformat()
+        if _daily_limit_alerted_day != today:
+            _daily_limit_alerted_day = today
+            msg = (
+                f"[LIVE] Limite de perda diária atingido: ${pnl_today:+.2f} "
+                f"realizado hoje (limite -${daily_loss_limit_usdt:.2f}) - sem "
+                "compra nova até 00:00 UTC (posições abertas continuam "
+                "saindo normalmente)."
             )
             log(msg)
             send_telegram(msg)
@@ -660,7 +704,9 @@ def run_cycle(exchange) -> tuple[int, int, bool]:
     halted = bool(cb_state["tripped"])
 
     if not halted:
-        remaining = open_new_positions(exchange, remaining, cfg["notional_usdt"])
+        remaining = open_new_positions(
+            exchange, remaining, cfg["notional_usdt"], cfg["daily_loss_limit_usdt"]
+        )
     else:
         log("[LIVE] CIRCUIT BREAKER ATIVO: pulando abertura de novas posições neste ciclo.")
 
@@ -680,7 +726,8 @@ def main() -> int:
         f"Notional por posição: ${cfg['notional_usdt']:.2f} | "
         f"Máx. posições: {MAX_POSITIONS_LIVE} | "
         f"Capital-base: ${cfg['baseline_capital_usdt']:.2f} | "
-        f"Limite drawdown: {cfg['max_drawdown_pct']:.1f}%"
+        f"Limite drawdown: {cfg['max_drawdown_pct']:.1f}% | "
+        f"Limite perda diária: -${cfg['daily_loss_limit_usdt']:.2f}"
     )
     print("-" * 100)
 

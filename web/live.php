@@ -41,6 +41,10 @@ const DEFAULT_MAX_DRAWDOWN_PCT = 10.0;
 const MIN_MAX_DRAWDOWN_PCT     = 2.0;
 const MAX_MAX_DRAWDOWN_PCT     = 50.0;
 
+const DEFAULT_DAILY_LOSS_LIMIT = 2.0;
+const MIN_DAILY_LOSS_LIMIT     = 0.3;
+const MAX_DAILY_LOSS_LIMIT     = 50.0;
+
 function h(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -214,6 +218,7 @@ function loadConfig(): array
         'notional_usdt' => DEFAULT_NOTIONAL,
         'baseline_capital_usdt' => DEFAULT_BASELINE_CAPITAL,
         'max_drawdown_pct' => DEFAULT_MAX_DRAWDOWN_PCT,
+        'daily_loss_limit_usdt' => DEFAULT_DAILY_LOSS_LIMIT,
     ];
     if (!file_exists(CONFIG_FILE)) {
         return $defaults;
@@ -359,6 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notional = filter_input(INPUT_POST, 'notional_usdt', FILTER_VALIDATE_FLOAT);
         $baseline = filter_input(INPUT_POST, 'baseline_capital_usdt', FILTER_VALIDATE_FLOAT);
         $maxDd = filter_input(INPUT_POST, 'max_drawdown_pct', FILTER_VALIDATE_FLOAT);
+        $dailyLimit = filter_input(INPUT_POST, 'daily_loss_limit_usdt', FILTER_VALIDATE_FLOAT);
 
         if ($notional === false || $notional < MIN_NOTIONAL || $notional > MAX_NOTIONAL) {
             $message = ['type' => 'error', 'text' => sprintf(
@@ -375,11 +381,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Limite de drawdown inválido. Use entre %s%% e %s%%.',
                 number_format(MIN_MAX_DRAWDOWN_PCT, 1, ',', '.'), number_format(MAX_MAX_DRAWDOWN_PCT, 1, ',', '.')
             )];
+        } elseif ($dailyLimit === false || $dailyLimit < MIN_DAILY_LOSS_LIMIT || $dailyLimit > MAX_DAILY_LOSS_LIMIT) {
+            $message = ['type' => 'error', 'text' => sprintf(
+                'Limite de perda diária inválido. Use entre %s e %s USDT.',
+                number_format(MIN_DAILY_LOSS_LIMIT, 2, ',', '.'), number_format(MAX_DAILY_LOSS_LIMIT, 2, ',', '.')
+            )];
         } else {
             saveConfig([
                 'notional_usdt' => $notional,
                 'baseline_capital_usdt' => $baseline,
                 'max_drawdown_pct' => $maxDd,
+                'daily_loss_limit_usdt' => $dailyLimit,
             ]);
             $message = ['type' => 'ok', 'text' => 'Configuração de risco atualizada.'];
         }
@@ -450,7 +462,7 @@ foreach ($openPositions as &$pos) {
     }
 }
 unset($pos);
-$portfolioTargetPct = 4.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
+$portfolioTargetPct = 3.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
 $portfolioPnlPct = ($portfolioPricedAll && $portfolioEntryCost > 0)
     ? ($portfolioCurrentValue - $portfolioEntryCost) / $portfolioEntryCost * 100.0
     : null;
@@ -805,6 +817,11 @@ if (file_exists(LOG_FILE)) {
                     <span class="field-label">Limite de drawdown (%)</span>
                     <input type="number" name="max_drawdown_pct" step="0.1" min="<?= MIN_MAX_DRAWDOWN_PCT ?>" max="<?= MAX_MAX_DRAWDOWN_PCT ?>"
                         value="<?= h(number_format($config['max_drawdown_pct'], 1, '.', '')) ?>">
+                </div>
+                <div class="field-row">
+                    <span class="field-label">Limite de perda diária (USDT)</span>
+                    <input type="number" name="daily_loss_limit_usdt" step="0.01" min="<?= MIN_DAILY_LOSS_LIMIT ?>" max="<?= MAX_DAILY_LOSS_LIMIT ?>"
+                        value="<?= h(number_format($config['daily_loss_limit_usdt'], 2, '.', '')) ?>">
                 </div>
                 <button type="submit" class="btn-save">Salvar</button>
             </form>
