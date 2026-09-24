@@ -207,6 +207,58 @@ function fetchLivePrices(array $symbols): array
     return $prices;
 }
 
+/**
+ * Movimento de um dia (horário de Brasília): quanto foi pago nas compras
+ * feitas no dia, quanto entrou nas vendas feitas no dia e o resultado
+ * (lucro/prejuízo) das vendas do dia. O custo de compra de trade fechado
+ * vem de "valor da venda - pnl_usdt" (mesma conta do trader, que já
+ * desconta a sobra de lote); de posição ainda aberta, de entry_cost_usdt.
+ * Taxas pagas em BNB não entram (não aparecem no ledger).
+ */
+function dailyMovement(array $trades, array $openPositions, DateTimeImmutable $start): array
+{
+    $end = $start->modify('+1 day');
+    $inDay = static function (string $iso) use ($start, $end): bool {
+        try {
+            $t = new DateTimeImmutable($iso);
+        } catch (Exception $e) {
+            return false;
+        }
+        return $t >= $start && $t < $end;
+    };
+
+    $out = ['buys' => 0, 'bought' => 0.0, 'sells' => 0, 'sold' => 0.0, 'pnl' => 0.0, 'wins' => 0];
+    foreach ($trades as $t) {
+        $exitValue = (float) ($t['exit_price'] ?? 0) * (float) ($t['quantity'] ?? 0);
+        $pnl = is_numeric($t['pnl_usdt'] ?? '') ? (float) $t['pnl_usdt'] : 0.0;
+        if ($inDay((string) ($t['entry_time'] ?? ''))) {
+            $out['buys']++;
+            $out['bought'] += $exitValue - $pnl;
+        }
+        if ($inDay((string) ($t['exit_time'] ?? ''))) {
+            $out['sells']++;
+            $out['sold'] += $exitValue;
+            $out['pnl'] += $pnl;
+            if ($pnl > 0) {
+                $out['wins']++;
+            }
+        }
+    }
+    foreach ($openPositions as $p) {
+        if ($inDay((string) ($p['entry_time'] ?? ''))) {
+            $out['buys']++;
+            $out['bought'] += (float) ($p['entry_cost_usdt'] ?? 0);
+        }
+    }
+    return $out;
+}
+
+function usd(float $v, bool $signed = false): string
+{
+    $sign = $signed ? ($v >= 0 ? '+' : '-') : ($v < 0 ? '-' : '');
+    return $sign . '$' . number_format(abs($v), 2, ',', '.');
+}
+
 function liveEnvConfigured(): bool
 {
     return file_exists(LIVE_ENV_FILE);
@@ -486,6 +538,14 @@ foreach ($pnlSeries as $pnl) {
     $cumulative[] = $running;
 }
 $equityCurveSvg = renderEquityCurve($cumulative);
+
+$brt = new DateTimeZone('America/Sao_Paulo');
+$todayStart = new DateTimeImmutable('today', $brt);
+$yesterdayStart = $todayStart->modify('-1 day');
+$dailyRows = [
+    ['label' => 'Ontem', 'date' => $yesterdayStart, 'm' => dailyMovement($allTrades, $openPositions, $yesterdayStart)],
+    ['label' => 'Hoje (até agora)', 'date' => $todayStart, 'm' => dailyMovement($allTrades, $openPositions, $todayStart)],
+];
 $trades = array_slice(array_reverse($allTrades), 0, 20);
 
 // Drawdown atual (mesma fórmula de src/binance_live_circuit_breaker.py, só pra exibição).
@@ -624,6 +684,18 @@ if (file_exists(LOG_FILE)) {
         .highlight-stats > div { display: flex; flex-direction: column; gap: 5px; text-align: right; padding: 4px 0; }
         .highlight-stat-label { color: #b08a8a; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
         .highlight-stat-value { font-size: 17px; font-weight: 700; color: #f2e9e9; }
+
+        .h2-note { font-weight: 400; text-transform: none; letter-spacing: 0; color: #8a6a6a; font-size: 12px; margin-left: 6px; }
+        .daily-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+        .daily-table th { text-align: left; font-size: 11px; color: #b08a8a; text-transform: uppercase; letter-spacing: .6px; font-weight: 600; padding: 0 12px 10px 0; }
+        .daily-table td { padding: 12px 12px 12px 0; border-top: 1px solid #3d2525; font-size: 17px; color: #f2e9e9; vertical-align: top; }
+        .daily-pct { font-size: 14px; font-weight: 600; margin-left: 4px; }
+        .daily-date, .daily-count { display: block; font-size: 12px; color: #b08a8a; margin-top: 3px; font-weight: 400; }
+        @media (max-width: 640px) {
+            .daily-table th:nth-child(2), .daily-table td:nth-child(2),
+            .daily-table th:nth-child(3), .daily-table td:nth-child(3) { font-size: 14px; }
+            .daily-table td { font-size: 15px; padding-right: 8px; }
+        }
 
         .equity-wrapper { width: 100%; position: relative; border-top: 1px solid #3d2525; padding-top: 10px; }
         .equity-curve { display: block; width: 100%; height: auto; }
@@ -796,6 +868,55 @@ if (file_exists(LOG_FILE)) {
             </form>
             <p class="hint">Vende posições abertas de volta pra USDT. Histórico de trades e circuit breaker são preservados - NÃO reativa o breaker.</p>
         </div>
+    </div>
+
+    <div class="card daily-card" style="margin-bottom: 28px;">
+        <h2>Movimento por dia <span class="h2-note">horário de Brasília</span></h2>
+        <table class="daily-table">
+            <thead>
+                <tr>
+                    <th>Dia</th>
+                    <th>Pago em compras</th>
+                    <th>Recebido em vendas</th>
+                    <th>Ganho / perda</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($dailyRows as $row): $m = $row['m']; ?>
+                    <tr>
+                        <td>
+                            <strong><?= h($row['label']) ?></strong>
+                            <span class="daily-date"><?= h($row['date']->format('d/m')) ?></span>
+                        </td>
+                        <td>
+                            <?= usd($m['bought']) ?>
+                            <span class="daily-count"><?= $m['buys'] ?> compra<?= $m['buys'] === 1 ? '' : 's' ?></span>
+                        </td>
+                        <td>
+                            <?= usd($m['sold']) ?>
+                            <span class="daily-count"><?= $m['sells'] ?> venda<?= $m['sells'] === 1 ? '' : 's' ?></span>
+                        </td>
+                        <td>
+                            <strong class="<?= $m['sells'] === 0 ? '' : ($m['pnl'] >= 0 ? 'positive' : 'negative') ?>">
+                                <?= $m['sells'] === 0 ? '-' : usd($m['pnl'], true) ?>
+                                <?php if ($m['sells'] > 0 && $config['baseline_capital_usdt'] > 0): $pct = $m['pnl'] / $config['baseline_capital_usdt'] * 100; ?>
+                                    <span class="daily-pct">(<?= ($pct >= 0 ? '+' : '') . number_format($pct, 2, ',', '.') ?>%)</span>
+                                <?php endif; ?>
+                            </strong>
+                            <?php if ($m['sells'] > 0): ?>
+                                <span class="daily-count"><?= $m['wins'] ?> no lucro, <?= $m['sells'] - $m['wins'] ?> no prejuízo</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <p class="hint">
+            Ganho / perda = resultado das vendas feitas no dia, cada uma comparada com o que foi pago
+            na compra daquela posição (que pode ter sido no dia anterior). A % é sobre o capital
+            investido (capital-base de <?= usd((float) $config['baseline_capital_usdt']) ?>, em Configuração de risco).
+            Taxas pagas em BNB não entram.
+        </p>
     </div>
 
     <div class="top-row">
