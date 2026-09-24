@@ -15,9 +15,10 @@ novo. Este script varre esse saldo e:
 
 Nunca toca ativo de posição aberta no momento (lido de
 binance_live_open_positions.csv) nem USDT. BNB é tratado como
-qualquer outro ativo: se já formar lote válido (>= notional mínimo),
-vende pra USDT; se não formar, fica acumulando pro próximo dia (não
-dá pra "converter BNB em BNB" no endpoint de poeira).
+qualquer outro ativo, mas só o que passar de BNB_KEEP (reserva de
+taxa, nunca vendida): se esse excedente formar lote válido, vende pra
+USDT; se não formar, fica acumulando pro próximo dia (não dá pra
+"converter BNB em BNB" no endpoint de poeira).
 """
 
 from __future__ import annotations
@@ -41,6 +42,12 @@ from binance_live_executor import (  # noqa: E402
 
 OPEN_POSITIONS_FILE = ROOT / "data" / "binance_live_open_positions.csv"
 DUST_LOG = ROOT / "data" / "binance_live_dust_sweep.csv"
+
+# BNB livre é a reserva que paga a taxa com desconto (ver
+# BNB_RESERVE_MIN em binance_live_trader.py). Sem ela a taxa sai no
+# próprio ativo e a venda arredonda abaixo de $5 (CRCLB ficou presa
+# assim em 24/09). Só o que passar disto é tratado como sobra vendável.
+BNB_KEEP = 0.005
 DUST_LOG_FIELDS = [
     "timestamp", "asset", "action", "amount", "value_usdt_est", "ref",
 ]
@@ -78,6 +85,8 @@ def main() -> None:
         if asset == "USDT" or asset in open_bases:
             continue
         free = float((balance.get(asset) or {}).get("free") or 0.0)
+        if asset == "BNB":
+            free = max(0.0, free - BNB_KEEP)
         if free <= 0:
             continue
 
@@ -126,7 +135,7 @@ def main() -> None:
             continue
 
         if asset == "BNB":
-            log(f"[DUST] BNB: sobra de ${value_usdt:.4f} ainda abaixo do lote mínimo (${float(min_notional or 0):.2f}) - acumulando pro próximo dia.")
+            log(f"[DUST] BNB: sobra acima da reserva de {BNB_KEEP} BNB vale ${value_usdt:.4f}, ainda abaixo do lote mínimo (${float(min_notional or 0):.2f}) - acumulando pro próximo dia.")
             continue
 
         convert_candidates.append(asset)
