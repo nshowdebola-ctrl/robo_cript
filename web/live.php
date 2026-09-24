@@ -514,7 +514,7 @@ foreach ($openPositions as &$pos) {
     }
 }
 unset($pos);
-$portfolioTargetPct = 3.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
+$portfolioTargetPct = 2.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
 $portfolioPnlPct = ($portfolioPricedAll && $portfolioEntryCost > 0)
     ? ($portfolioCurrentValue - $portfolioEntryCost) / $portfolioEntryCost * 100.0
     : null;
