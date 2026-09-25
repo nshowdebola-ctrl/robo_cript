@@ -164,6 +164,17 @@ def main() -> None:
     _sell_bnb_excess(exchange, now)
 
 
+def _open_bnb_quantity() -> float:
+    if not OPEN_POSITIONS_FILE.exists():
+        return 0.0
+    with OPEN_POSITIONS_FILE.open(encoding="utf-8") as fh:
+        return sum(
+            float(row.get("quantity") or 0.0)
+            for row in csv.DictReader(fh)
+            if row["symbol"].split("/")[0] == "BNB"
+        )
+
+
 def _sell_bnb_excess(exchange, now: str) -> None:
     """Vende pra USDT o BNB acima de BNB_KEEP, se formar lote válido.
     Roda depois da conversão de poeira pra já contar o BNB que ela gerou
@@ -175,14 +186,20 @@ def _sell_bnb_excess(exchange, now: str) -> None:
     except Exception as exc:
         log(f"[DUST] AVISO: não consegui ler saldo/cotação de BNB ({exc}) - pulando por hoje.")
         return
-    excess = free - BNB_KEEP
+    # BNB que é posição aberta do robô (sinal BNB/USDT) não é excedente.
+    excess = free - BNB_KEEP - _open_bnb_quantity()
     if excess <= 0:
         return
     value_usdt = excess * price
     min_notional = exchange.markets[symbol].get("limits", {}).get("cost", {}).get("min") or 0.0
     quantity = float(exchange.amount_to_precision(symbol, excess))
-    if value_usdt < float(min_notional) or quantity <= 0 or quantity * price < float(min_notional):
-        log(f"[DUST] BNB: sobra acima da reserva de {BNB_KEEP} BNB vale ${value_usdt:.4f}, ainda abaixo do lote mínimo (${float(min_notional):.2f}) - acumulando pro próximo dia.")
+    if quantity <= 0 or quantity * price < float(min_notional):
+        log(
+            f"[DUST] BNB: excedente acima da reserva de {BNB_KEEP} BNB é {excess:.6f} "
+            f"(${value_usdt:.2f}); arredondado ao passo do par dá {quantity} BNB = "
+            f"${quantity * price:.2f}, abaixo do lote mínimo (${float(min_notional):.2f}) - "
+            "acumulando pro próximo dia."
+        )
         return
     try:
         order = place_market_order(exchange, symbol, "sell", quantity)
