@@ -131,9 +131,11 @@ MAX_CHASE_PCT = 0.03
 # Moedas que o live nunca compra: atreladas a dólar/euro/ouro quase não
 # se mexem, nunca chegam ao STOP/TARGET, saem por TIME perdendo a taxa e
 # prendem uma vaga por 24h. O scanner gerou 124 sinais LONG nelas até
-# 24/09 (PAXG já foi comprado: TIME +0,008%).
+# 24/09 (PAXG já foi comprado: TIME +0,008%; U em 25/09). U, RLUSD e XUSD
+# achados pelo preço (variação < 0,2% no histórico do scanner).
 NEVER_BUY = {
     "USDC", "USD1", "FDUSD", "TUSD", "DAI", "USDP", "USDE", "BFUSD",
+    "U", "RLUSD", "XUSD",
     "EUR", "PAXG", "XAUT",
 }
 
