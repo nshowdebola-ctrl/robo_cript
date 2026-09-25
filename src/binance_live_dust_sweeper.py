@@ -14,11 +14,10 @@ novo. Este script varre esse saldo e:
      BNB" da própria Binance, feito exatamente pra esse caso.
 
 Nunca toca ativo de posição aberta no momento (lido de
-binance_live_open_positions.csv) nem USDT. BNB é tratado como
-qualquer outro ativo, mas só o que passar de BNB_KEEP (reserva de
-taxa, nunca vendida): se esse excedente formar lote válido, vende pra
-USDT; se não formar, fica acumulando pro próximo dia (não dá pra
-"converter BNB em BNB" no endpoint de poeira).
+binance_live_open_positions.csv) nem USDT. BNB fica por último:
+depois da conversão de poeira (que gera BNB), o que passar de BNB_KEEP
+(reserva de taxa, nunca vendida) é vendido pra USDT se formar lote
+válido; se não formar, fica acumulando pro próximo dia.
 """
 
 from __future__ import annotations
@@ -47,7 +46,7 @@ DUST_LOG = ROOT / "data" / "binance_live_dust_sweep.csv"
 # BNB_RESERVE_MIN em binance_live_trader.py). Sem ela a taxa sai no
 # próprio ativo e a venda arredonda abaixo de $5 (CRCLB ficou presa
 # assim em 24/09). Só o que passar disto é tratado como sobra vendável.
-BNB_KEEP = 0.005
+BNB_KEEP = 0.0025
 DUST_LOG_FIELDS = [
     "timestamp", "asset", "action", "amount", "value_usdt_est", "ref",
 ]
@@ -84,9 +83,9 @@ def main() -> None:
     for asset, total in balance.get("total", {}).items():
         if asset == "USDT" or asset in open_bases:
             continue
-        free = float((balance.get(asset) or {}).get("free") or 0.0)
         if asset == "BNB":
-            free = max(0.0, free - BNB_KEEP)
+            continue  # tratado em _sell_bnb_excess, depois da conversão de poeira
+        free = float((balance.get(asset) or {}).get("free") or 0.0)
         if free <= 0:
             continue
 
@@ -126,16 +125,12 @@ def main() -> None:
                 # deu pra vender ainda pode virar BNB pela conversão
                 # de poeira abaixo, no mesmo ciclo.
                 leftover = free - filled
-                if leftover > 0 and asset != "BNB":
+                if leftover > 0:
                     convert_candidates.append(asset)
             except OrderStateUnknown as exc:
                 log(f"[DUST] AVISO: estado da venda de {asset} incerto ({exc}) - conferir manualmente antes do próximo run.")
             except Exception as exc:
                 log(f"[DUST] AVISO: venda direta de {asset} falhou ({type(exc).__name__}: {exc}).")
-            continue
-
-        if asset == "BNB":
-            log(f"[DUST] BNB: sobra acima da reserva de {BNB_KEEP} BNB vale ${value_usdt:.4f}, ainda abaixo do lote mínimo (${float(min_notional or 0):.2f}) - acumulando pro próximo dia.")
             continue
 
         convert_candidates.append(asset)
@@ -165,6 +160,45 @@ def main() -> None:
                     })
                 except Exception as exc2:
                     log(f"[DUST] AVISO: {asset} não deu pra converter em BNB ({type(exc2).__name__}: {exc2}) - tenta de novo amanhã.")
+
+    _sell_bnb_excess(exchange, now)
+
+
+def _sell_bnb_excess(exchange, now: str) -> None:
+    """Vende pra USDT o BNB acima de BNB_KEEP, se formar lote válido.
+    Roda depois da conversão de poeira pra já contar o BNB que ela gerou
+    (saldo relido da Binance)."""
+    symbol = "BNB/USDT"
+    try:
+        free = float((exchange.fetch_balance().get("BNB") or {}).get("free") or 0.0)
+        price = float(exchange.fetch_ticker(symbol)["last"])
+    except Exception as exc:
+        log(f"[DUST] AVISO: não consegui ler saldo/cotação de BNB ({exc}) - pulando por hoje.")
+        return
+    excess = free - BNB_KEEP
+    if excess <= 0:
+        return
+    value_usdt = excess * price
+    min_notional = exchange.markets[symbol].get("limits", {}).get("cost", {}).get("min") or 0.0
+    quantity = float(exchange.amount_to_precision(symbol, excess))
+    if value_usdt < float(min_notional) or quantity <= 0 or quantity * price < float(min_notional):
+        log(f"[DUST] BNB: sobra acima da reserva de {BNB_KEEP} BNB vale ${value_usdt:.4f}, ainda abaixo do lote mínimo (${float(min_notional):.2f}) - acumulando pro próximo dia.")
+        return
+    try:
+        order = place_market_order(exchange, symbol, "sell", quantity)
+    except OrderStateUnknown as exc:
+        log(f"[DUST] AVISO: estado da venda de BNB incerto ({exc}) - conferir manualmente antes do próximo run.")
+        return
+    except Exception as exc:
+        log(f"[DUST] AVISO: venda do excedente de BNB falhou ({type(exc).__name__}: {exc}).")
+        return
+    filled = float(order.get("filled") or quantity)
+    log(f"[DUST] Vendeu {filled} BNB -> USDT (excedente acima da reserva de {BNB_KEEP} BNB).")
+    _append_dust_log({
+        "timestamp": now, "asset": "BNB", "action": "sell_usdt",
+        "amount": f"{filled:.12f}", "value_usdt_est": f"{value_usdt:.6f}",
+        "ref": order.get("id", ""),
+    })
 
 
 if __name__ == "__main__":

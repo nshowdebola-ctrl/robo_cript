@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from binance_live_dust_sweeper import BNB_KEEP  # noqa: E402
 from binance_live_executor import ENV_FILE, build_exchange, load_env  # noqa: E402
 
 OPEN_FILE = ROOT / "data" / "binance_live_open_positions.csv"
@@ -72,7 +73,11 @@ def main() -> int:
         else:
             min_cost = (exchange.markets[pair].get("limits", {}).get("cost", {}) or {}).get("min") or 5.0
             if asset == "BNB":
-                status = "reserva de taxa" if value is not None and value < min_cost else "BNB vendável"
+                excess = (leftover - BNB_KEEP) * price if price else 0.0
+                status = (
+                    f"reserva {BNB_KEEP} + excedente ${max(0.0, excess):.2f}"
+                    + (" (vendável)" if excess >= min_cost else " (< lote mínimo)")
+                )
             elif value is not None and value >= min_cost:
                 status = f"VENDÁVEL (>= ${min_cost:.0f})"
             else:
