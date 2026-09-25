@@ -42,6 +42,11 @@ const MIN_MAX_DRAWDOWN_PCT     = 2.0;
 const MAX_MAX_DRAWDOWN_PCT     = 50.0;
 
 const DEFAULT_DAILY_LOSS_LIMIT = 2.0;
+
+// Isenção de IR em cripto (pessoa física): vendas totais no mês até
+// R$ 35 mil -> ganho isento. Conferir a regra vigente com um contador.
+const MONTHLY_EXEMPT_BRL = 35000.0;
+const DUST_LOG_FILE = BASE_DIR . '/data/binance_live_dust_sweep.csv';
 const MIN_DAILY_LOSS_LIMIT     = 0.3;
 const MAX_DAILY_LOSS_LIMIT     = 50.0;
 
@@ -548,6 +553,70 @@ $dailyRows = [
 ];
 $trades = array_slice(array_reverse($allTrades), 0, 20);
 
+// Total vendido no mês (horário de Brasília) - base da isenção de IR.
+// Conta as vendas do robô (ledger) e as vendas diretas da varredura de
+// poeira. Conversão de poeira em BNB não entra (valor não registrado,
+// centavos). Cotação USDT/BRL atual da Binance, não a de cada venda.
+$monthStart = new DateTimeImmutable('first day of this month midnight', $brt);
+$nextMonth = $monthStart->modify('+1 month');
+$monthSalesUsdt = 0.0;
+$monthSalesCount = 0;
+$inMonth = static function (string $iso) use ($monthStart, $nextMonth): bool {
+    try {
+        $t = new DateTimeImmutable($iso);
+    } catch (Exception $e) {
+        return false;
+    }
+    return $t >= $monthStart && $t < $nextMonth;
+};
+foreach ($allTrades as $t) {
+    if ($inMonth((string) ($t['exit_time'] ?? ''))) {
+        $monthSalesUsdt += (float) ($t['exit_price'] ?? 0) * (float) ($t['quantity'] ?? 0);
+        $monthSalesCount++;
+    }
+}
+foreach (readCsvRows(DUST_LOG_FILE) as $d) {
+    if (($d['action'] ?? '') === 'sell_usdt' && $inMonth((string) ($d['timestamp'] ?? ''))) {
+        $monthSalesUsdt += (float) ($d['value_usdt_est'] ?? 0);
+        $monthSalesCount++;
+    }
+}
+$usdtBrl = fetchLivePrices(['USDT/BRL'])['USDTBRL'] ?? null;
+$monthSalesBrl = $usdtBrl !== null ? $monthSalesUsdt * $usdtBrl : null;
+// Projeção: ritmo de vendas dos últimos 7 dias (o live pode ter começado
+// no meio do mês) aplicado aos dias que faltam.
+$nowBrt = new DateTimeImmutable('now', $brt);
+$weekAgo = $nowBrt->modify('-7 days');
+$weekSalesUsdt = 0.0;
+foreach ($allTrades as $t) {
+    try {
+        $exitAt = new DateTimeImmutable((string) ($t['exit_time'] ?? ''));
+    } catch (Exception $e) {
+        continue;
+    }
+    if ($exitAt >= $weekAgo) {
+        $weekSalesUsdt += (float) ($t['exit_price'] ?? 0) * (float) ($t['quantity'] ?? 0);
+    }
+}
+$firstTradeAt = isset($allTrades[0]['exit_time']) ? new DateTimeImmutable((string) $allTrades[0]['exit_time']) : $weekAgo;
+$rateDays = max(1.0 / 24, ($nowBrt->getTimestamp() - max($weekAgo->getTimestamp(), $firstTradeAt->getTimestamp())) / 86400);
+$daysLeft = max(0.0, ($nextMonth->getTimestamp() - $nowBrt->getTimestamp()) / 86400);
+$monthProjectionBrl = $monthSalesBrl !== null
+    ? $monthSalesBrl + $weekSalesUsdt / $rateDays * $daysLeft * $usdtBrl
+    : null;
+$monthPct = $monthSalesBrl !== null ? $monthSalesBrl / MONTHLY_EXEMPT_BRL * 100 : null;
+$projPct = $monthProjectionBrl !== null ? $monthProjectionBrl / MONTHLY_EXEMPT_BRL * 100 : null;
+$taxLevel = $projPct === null ? '' : ($projPct >= 90 ? 'tax-red' : ($projPct >= 70 ? 'tax-yellow' : 'tax-green'));
+
+function brl(float $v): string
+{
+    return 'R$ ' . number_format($v, 2, ',', '.');
+}
+
+$monthNames = [1 => 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho',
+    'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+$monthLabel = $monthNames[(int) $monthStart->format('n')] . '/' . $monthStart->format('Y');
+
 // Drawdown atual (mesma fórmula de src/binance_live_circuit_breaker.py, só pra exibição).
 $cbCutoff = $cbState['baseline_reset_at'] ?? null;
 $cumulativeSinceBaseline = 0.0;
@@ -689,6 +758,18 @@ if (file_exists(LOG_FILE)) {
         .daily-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
         .daily-table th { text-align: left; font-size: 11px; color: #b08a8a; text-transform: uppercase; letter-spacing: .6px; font-weight: 600; padding: 0 12px 10px 0; }
         .daily-table td { padding: 12px 12px 12px 0; border-top: 1px solid #3d2525; font-size: 17px; color: #f2e9e9; vertical-align: top; }
+        .tax-box { margin-top: 18px; border-top: 1px solid #3d2525; padding-top: 16px; }
+        .tax-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+        .tax-title { font-size: 12px; color: #b08a8a; text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
+        .tax-value { font-size: 18px; font-weight: 700; color: #f2e9e9; font-variant-numeric: tabular-nums; }
+        .tax-sub { font-size: 12px; font-weight: 400; color: #b08a8a; }
+        .tax-bar { height: 8px; border-radius: 999px; background: #150a0a; border: 1px solid #3d2525; margin: 10px 0 8px; overflow: hidden; }
+        .tax-fill { height: 100%; border-radius: 999px; background: #65dfa0; }
+        .tax-yellow .tax-fill { background: #ffd27a; }
+        .tax-red .tax-fill { background: #ff778b; }
+        .tax-note { font-size: 12px; color: #b08a8a; margin: 0; line-height: 1.6; }
+        .tax-red .tax-note strong { color: #ff778b; }
+        .tax-yellow .tax-note strong { color: #ffd27a; }
         .daily-pct { font-size: 14px; font-weight: 600; margin-left: 4px; }
         .daily-date, .daily-count { display: block; font-size: 12px; color: #b08a8a; margin-top: 3px; font-weight: 400; }
         @media (max-width: 640px) {
@@ -917,6 +998,34 @@ if (file_exists(LOG_FILE)) {
             investido (capital-base de <?= usd((float) $config['baseline_capital_usdt']) ?>, em Configuração de risco).
             Taxas pagas em BNB não entram.
         </p>
+
+        <div class="tax-box <?= $taxLevel ?>">
+            <div class="tax-head">
+                <span class="tax-title">Vendido em <?= h($monthLabel) ?> <span class="h2-note">limite de isenção de IR: <?= brl(MONTHLY_EXEMPT_BRL) ?>/mês</span></span>
+                <span class="tax-value">
+                    <?php if ($monthSalesBrl !== null): ?>
+                        <?= brl($monthSalesBrl) ?> <span class="tax-sub">(<?= usd($monthSalesUsdt) ?>, <?= $monthSalesCount ?> vendas)</span>
+                    <?php else: ?>
+                        <?= usd($monthSalesUsdt) ?> <span class="tax-sub">(cotação em reais indisponível agora)</span>
+                    <?php endif; ?>
+                </span>
+            </div>
+            <?php if ($monthPct !== null): ?>
+                <div class="tax-bar"><div class="tax-fill" style="width: <?= h(number_format(min(100, $monthPct), 1, '.', '')) ?>%"></div></div>
+                <p class="tax-note">
+                    <?= h(number_format($monthPct, 1, ',', '.')) ?>% do limite usado.
+                    No ritmo dos últimos 7 dias, o mês fecha em <strong><?= brl($monthProjectionBrl) ?></strong>
+                    (<?= h(number_format($projPct, 0, ',', '.')) ?>% do limite).
+                    <?php if ($projPct >= 100): ?>
+                        <strong>Vai passar do limite: o lucro do mês fica sujeito a IR (15%, DARF até o último dia útil do mês seguinte).</strong>
+                    <?php elseif ($projPct >= 70): ?>
+                        <strong>Chegando perto do limite.</strong>
+                    <?php endif; ?>
+                    Cotação USDT/BRL agora: <?= h(number_format((float) $usdtBrl, 4, ',', '.')) ?>.
+                    Regra da isenção deve ser conferida com um contador.
+                </p>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="top-row">
