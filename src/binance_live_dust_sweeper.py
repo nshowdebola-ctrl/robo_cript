@@ -46,7 +46,7 @@ DUST_LOG = ROOT / "data" / "binance_live_dust_sweep.csv"
 # BNB_RESERVE_MIN em binance_live_trader.py). Sem ela a taxa sai no
 # próprio ativo e a venda arredonda abaixo de $5 (CRCLB ficou presa
 # assim em 24/09). Só o que passar disto é tratado como sobra vendável.
-BNB_KEEP = 0.0025
+BNB_KEEP = 0.002
 DUST_LOG_FIELDS = [
     "timestamp", "asset", "action", "amount", "value_usdt_est", "ref",
 ]

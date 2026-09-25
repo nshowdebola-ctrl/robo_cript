@@ -103,7 +103,11 @@ DAILY_LOSS_LIMIT_USDT = 2.0          # P&L realizado do dia (UTC) <= -isto -> se
 # está ligada na conta). Sem BNB livre a Binance cobra a taxa no próprio
 # ativo comprado, o saldo líquido fica ~0,1% menor que o registrado e a
 # venda deixa resto na carteira. Cada trade gasta ~0.0000065 BNB.
-BNB_RESERVE_MIN = 0.002
+# Aviso quando o BNB livre (fora de posição) cai abaixo disto. Fica abaixo
+# da reserva que a varredura mantém (BNB_KEEP em binance_live_dust_sweeper.py,
+# 0.002) pra não avisar logo depois de cada venda do excedente; 0.001 ainda
+# paga ~170 ordens.
+BNB_RESERVE_MIN = 0.001
 
 # Piso de $6, não $5: a Binance recusa ordem abaixo de $5 (inclusive a
 # mercado). Uma posição de $5 que cai 5% no STOP vale $4,75 e a venda de
