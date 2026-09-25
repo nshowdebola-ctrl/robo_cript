@@ -60,6 +60,8 @@ PATTERN_WEEKS = 6          # semanas seguidas na mesma direção pra chamar de p
 MARKET_WEEKS = 10          # quantas semanas de histórico do scanner olhar
 MONTHLY_EXEMPT_BRL = 35000.0
 DIAS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
+# Início do teste "sem compra 14h-18h Brasília" (NO_BUY_HOURS_BRT no trader).
+NO_BUY_TEST_START = datetime(2026, 9, 25, 22, 0, tzinfo=timezone.utc)
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -135,6 +137,24 @@ def trades_section(now: datetime) -> list[str]:
         + (f" | faltam {REVIEW_AT_TRADES - len(rows)} pra 100 (reavaliar regras)"
            if len(rows) < REVIEW_AT_TRADES else " | passou de 100: hora de reavaliar as regras")
     )
+    lines += no_buy_test_lines(rows)
+    return lines
+
+
+def no_buy_test_lines(rows: list[dict]) -> list[str]:
+    """Compara trades abertos antes e depois do bloqueio de 14h-18h."""
+    def stats(sel: list[dict]) -> str:
+        if not sel:
+            return "nenhum"
+        rets = [float(r["gross_return_pct"]) for r in sel]
+        return (f"{len(sel)} trades, média {sum(rets) / len(rets):+.2f}%, "
+                f"acerto {sum(float(r['pnl_usdt']) > 0 for r in sel) / len(sel):.0%}")
+    before = [r for r in rows if (dt(r["entry_time"]) or NO_BUY_TEST_START) < NO_BUY_TEST_START]
+    after = [r for r in rows if (dt(r["entry_time"]) or NO_BUY_TEST_START) >= NO_BUY_TEST_START]
+    in_window = [r for r in after if 14 <= dt(r["entry_time"]).astimezone(BRT).hour <= 18]
+    lines = [f"Teste sem compra 14h-18h: antes {stats(before)} | depois {stats(after)}"]
+    if in_window:
+        lines.append(f"ATENÇÃO: {len(in_window)} compra(s) 14h-18h depois do bloqueio - conferir")
     return lines
 
 
@@ -147,6 +167,7 @@ def protections_section(now: datetime) -> list[str]:
         "meta da carteira": "Carteira bateu meta",
         "circuit breaker": "CIRCUIT BREAKER ATIVO: pulando",
         "compra pulada (+3% desde o sinal)": "pulado - preço",
+        "dias com bloqueio 14h-18h": "Horário sem compra",
         "venda bloqueada/falhou": "venda de fechamento falhou",
         "ordem com estado incerto": "estado incerto",
         "erro no ciclo": "ERRO no ciclo",

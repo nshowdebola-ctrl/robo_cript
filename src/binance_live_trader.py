@@ -42,6 +42,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 import ccxt
@@ -142,6 +143,14 @@ MAX_CHASE_PCT = 0.03
 # prendem uma vaga por 24h. O scanner gerou 124 sinais LONG nelas até
 # 24/09 (PAXG já foi comprado: TIME +0,008%; U em 25/09). U, RLUSD e XUSD
 # achados pelo preço (variação < 0,2% no histórico do scanner).
+# Sem compra nova das 14:00 às 18:59 (Brasília). Teste iniciado em 25/09:
+# em 10 semanas de preço do scanner, 14h/17h/18h caíram em 7-8 de 10
+# semanas e, nos 1.974 sinais simulados, pular esse horário melhorou as
+# duas metades do período (~+0,1pp por sinal). Vendas seguem normais.
+# Reavaliar em 3-4 semanas pela revisão semanal.
+NO_BUY_HOURS_BRT = range(14, 19)
+BRT = ZoneInfo("America/Sao_Paulo")
+
 NEVER_BUY = {
     "USDC", "USD1", "FDUSD", "TUSD", "DAI", "USDP", "USDE", "BFUSD",
     "U", "RLUSD", "XUSD",
@@ -270,6 +279,8 @@ _low_usdt_logged = False
 _stop_cluster_alerted_until: datetime | None = None
 # signal_ids já registrados no log como pulados por MAX_CHASE_PCT.
 _chase_logged: set[str] = set()
+# Dia (Brasília) em que o bloqueio de horário já foi registrado no log.
+_no_buy_hours_logged: str | None = None
 # Dia (UTC) em que o limite de perda diária já foi avisado.
 _daily_limit_alerted_day: str | None = None
 
@@ -596,7 +607,7 @@ def open_new_positions(
     exchange, remaining: list[dict], notional_usdt: float,
     daily_loss_limit_usdt: float = DAILY_LOSS_LIMIT_USDT,
 ) -> list[dict]:
-    global _low_usdt_logged, _stop_cluster_alerted_until, _daily_limit_alerted_day
+    global _low_usdt_logged, _stop_cluster_alerted_until, _daily_limit_alerted_day, _no_buy_hours_logged
     slots = max(0, MAX_POSITIONS_LIVE - len(remaining))
     if slots <= 0:
         return remaining
@@ -615,6 +626,16 @@ def open_new_positions(
             )
             log(msg)
             send_telegram(msg)
+        return remaining
+
+    local = now.astimezone(BRT)
+    if local.hour in NO_BUY_HOURS_BRT:
+        if _no_buy_hours_logged != local.date().isoformat():
+            _no_buy_hours_logged = local.date().isoformat()
+            log(
+                f"[LIVE] Horário sem compra ({NO_BUY_HOURS_BRT.start}:00-"
+                f"{NO_BUY_HOURS_BRT.stop - 1}:59 Brasília) - vendas seguem normais."
+            )
         return remaining
 
     pnl_today = realized_pnl_today(ledger_rows, now)
