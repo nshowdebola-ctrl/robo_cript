@@ -121,6 +121,22 @@ STOP_CLUSTER_PAUSE = timedelta(minutes=90)
 # saiu por STOP 1h depois.
 SYMBOL_COOLDOWN = timedelta(hours=4)
 
+# Não correr atrás do preço: pula o candidato se o preço atual já está
+# mais de 3% acima do preço do sinal. O sinal continua valendo (até 24h)
+# e pode ser comprado num ciclo seguinte se o preço voltar. Na simulação
+# com 20 mil entradas (preço 1h do scanner) comprar após +3% foi pior
+# nas duas metades do período; no live (13 de 64 compras) ficou neutro.
+MAX_CHASE_PCT = 0.03
+
+# Moedas que o live nunca compra: atreladas a dólar/euro/ouro quase não
+# se mexem, nunca chegam ao STOP/TARGET, saem por TIME perdendo a taxa e
+# prendem uma vaga por 24h. O scanner gerou 124 sinais LONG nelas até
+# 24/09 (PAXG já foi comprado: TIME +0,008%).
+NEVER_BUY = {
+    "USDC", "USD1", "FDUSD", "TUSD", "DAI", "USDP", "USDE", "BFUSD",
+    "EUR", "PAXG", "XAUT",
+}
+
 # Limite de perda diária (valor em DAILY_LOSS_LIMIT_USDT / config.json):
 # no paper (1.267 trades, 27/08-24/09) parar de comprar depois de um
 # prejuízo realizado no dia melhorou as duas metades do período sem
@@ -241,6 +257,8 @@ _bnb_reserve_alerted = False
 _low_usdt_logged = False
 # Fim da pausa por STOPs em série já avisada (log/Telegram uma vez por pausa).
 _stop_cluster_alerted_until: datetime | None = None
+# signal_ids já registrados no log como pulados por MAX_CHASE_PCT.
+_chase_logged: set[str] = set()
 # Dia (UTC) em que o limite de perda diária já foi avisado.
 _daily_limit_alerted_day: str | None = None
 
@@ -637,10 +655,28 @@ def open_new_positions(
             break
         if sym in open_symbols or sym.strip().upper() in cooling:
             continue
+        if sym.split("/")[0].strip().upper() in NEVER_BUY:
+            continue
 
         try:
             ticker = call_with_retry(exchange.fetch_ticker, sym)
             price = ticker["last"]
+            signal_price = float(signal.get("entry_price") or 0.0)
+            # Compra incerta pendente desse sinal precisa ser resolvida
+            # (_place_or_resume), nunca pulada.
+            if (
+                signal_price > 0
+                and price / signal_price - 1.0 > MAX_CHASE_PCT
+                and ("buy", signal["signal_id"]) not in _pending_orders
+            ):
+                if signal["signal_id"] not in _chase_logged:
+                    _chase_logged.add(signal["signal_id"])
+                    log(
+                        f"[LIVE] {sym}: pulado - preço {price} já "
+                        f"{(price / signal_price - 1.0):+.1%} acima do sinal "
+                        f"({signal_price}), limite +{MAX_CHASE_PCT:.0%}."
+                    )
+                continue
             raw_amount = notional_usdt / price
             amount = float(exchange.amount_to_precision(sym, raw_amount))
             buy_order = _place_or_resume(
