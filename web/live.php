@@ -986,7 +986,7 @@ if (file_exists(LOG_FILE)) {
                     <?= $portfolioPnlPct === null ? '-' : ($portfolioPnlPct >= 0 ? '+' : '') . number_format($portfolioPnlPct, 2, ',', '.') . '%' ?>
                     <?= $portfolioPnlUsdt === null ? '' : '(' . ($portfolioPnlUsdt >= 0 ? '+' : '') . '$' . number_format($portfolioPnlUsdt, 2, ',', '.') . ')' ?>
                 </strong>
-                de meta <?= h(number_format($portfolioTargetPct, 0, ',', '.')) ?>% pra fechar tudo automaticamente.
+                de meta <?= h(number_format($portfolioTargetPct, 0, ',', '.')) ?>% pra vender automaticamente as posições no lucro (acima de +0,2%) - as demais continuam abertas.
                 <?= $portfolioPricedAll ? '' : ' (algum preço faltou cotar agora - valor pode estar incompleto)' ?>
             </p>
         <?php endif; ?>

@@ -88,7 +88,12 @@ LIVE_LEDGER_FIELDS = [
 LIVE_CONFIG_FILE = DATA / "binance_live_config.json"
 
 MAX_POSITIONS_LIVE = 8
-PORTFOLIO_TARGET_PCT = 0.02          # soma do P&L não realizado de todas as posições abertas >= 2% do custo de entrada delas -> fecha tudo
+PORTFOLIO_TARGET_PCT = 0.02          # soma do P&L não realizado de todas as posições abertas >= 2% do custo de entrada delas -> fecha as que estão no lucro
+# Na meta da carteira só vende quem está acima disto (cobre a taxa de compra
+# + venda, ~0,15% com BNB); as negativas/no zero seguem com STOP/TARGET/TIME.
+# Pedido do usuário em 25/09; na simulação do histórico deu +$0,44 contra
+# +$0,26 de fechar todas.
+PORTFOLIO_MIN_GAIN_PCT = 0.002
 LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
 BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
 MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
@@ -447,7 +452,8 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             log(
                 f"[LIVE] Carteira bateu meta de {PORTFOLIO_TARGET_PCT:.0%} "
                 f"({portfolio_pnl_pct:+.2%} sobre ${total_entry_cost:.2f} "
-                "investido) - fechando todas as posições abertas."
+                f"investido) - vendendo as posições acima de {PORTFOLIO_MIN_GAIN_PCT:+.1%}, "
+                "mantendo as demais."
             )
 
     for index, pos in enumerate(positions):
@@ -469,7 +475,7 @@ def monitor_open_positions(exchange) -> tuple[list[dict], int]:
             reason = "TARGET"
         elif age_hours >= MAX_HOLD_HOURS:
             reason = "TIME"
-        elif portfolio_triggered:
+        elif portfolio_triggered and change > PORTFOLIO_MIN_GAIN_PCT:
             reason = "PORTFOLIO_TARGET"
 
         if not reason:
