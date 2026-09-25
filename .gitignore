@@ -9,3 +9,4 @@ __pycache__/
 .telegram.env
 data/binance_testnet_loop_stdout.log
 data/binance_live_loop_stdout.log
+.admin-password

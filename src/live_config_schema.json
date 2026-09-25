@@ -1,0 +1,66 @@
+{
+  "_doc": "Fonte única dos ajustes do live. Lida pelo robô (binance_live_trader.load_live_config) e pelo portal (web/admin.php). Valor fora de [min, max] é ignorado e vale o default. Percentuais em % (5 = 5%). Os defaults são os valores em uso em 25/09/2026.",
+  "groups": [
+    {
+      "id": "venda",
+      "title": "Venda",
+      "fields": [
+        {"key": "stop_pct", "label": "Stop (vende se cair)", "unit": "%", "type": "float", "default": 5.0, "min": 2.0, "max": 15.0, "step": 0.1, "strategy": true,
+         "help": "Nos testes (walk-forward do paper e 1.971 sinais), 5% com alvo de 6% foi a melhor combinação."},
+        {"key": "target_pct", "label": "Alvo (vende se subir)", "unit": "%", "type": "float", "default": 6.0, "min": 2.0, "max": 30.0, "step": 0.1, "strategy": true,
+         "help": "Alvo menor sobe o acerto mas reduz o ganho médio (testado em 25/09)."},
+        {"key": "max_hold_hours", "label": "Tempo máximo da posição", "unit": "h", "type": "float", "default": 24, "min": 2, "max": 96, "step": 1, "strategy": true,
+         "help": "Menos de 24h piorou nos testes; mais que isso não mostrou ganho confiável."},
+        {"key": "portfolio_target_enabled", "label": "Meta da carteira ligada", "type": "bool", "default": true},
+        {"key": "portfolio_target_pct", "label": "Meta da carteira (média das abertas)", "unit": "%", "type": "float", "default": 2.0, "min": 0.5, "max": 10.0, "step": 0.1, "strategy": true,
+         "help": "Ao bater, vende só as posições acima do mínimo abaixo."},
+        {"key": "portfolio_min_gain_pct", "label": "Mínimo pra vender na meta", "unit": "%", "type": "float", "default": 0.2, "min": 0.0, "max": 3.0, "step": 0.05,
+         "help": "0,2% cobre a taxa de compra + venda."}
+      ]
+    },
+    {
+      "id": "compra",
+      "title": "Compra",
+      "fields": [
+        {"key": "notional_usdt", "label": "Valor por posição", "unit": "USDT", "type": "float", "default": 10.0, "min": 6.0, "max": 100.0, "step": 0.5,
+         "help": "Mínimo $6: abaixo disso a venda no stop fica abaixo dos $5 da Binance. Até ~$12 fica abaixo do limite de isenção de IR."},
+        {"key": "max_positions", "label": "Máximo de posições", "type": "int", "default": 8, "min": 1, "max": 20, "step": 1},
+        {"key": "max_chase_pct", "label": "Subida máxima desde o sinal", "unit": "%", "type": "float", "default": 3.0, "min": 0.5, "max": 50.0, "step": 0.5,
+         "help": "Não compra se o preço já subiu mais que isso desde o sinal."},
+        {"key": "no_buy_enabled", "label": "Horário sem compra ligado", "type": "bool", "default": true},
+        {"key": "no_buy_start_hour", "label": "Sem compra a partir de (Brasília)", "unit": "h", "type": "int", "default": 14, "min": 0, "max": 23, "step": 1},
+        {"key": "no_buy_end_hour", "label": "Sem compra até (inclusive, Brasília)", "unit": "h", "type": "int", "default": 18, "min": 0, "max": 23, "step": 1,
+         "help": "Teste iniciado em 25/09 (14h-18h). Se o início for maior que o fim, o bloqueio atravessa a meia-noite."},
+        {"key": "symbol_cooldown_hours", "label": "Pausa pra recomprar a mesma moeda", "unit": "h", "type": "float", "default": 4, "min": 0, "max": 72, "step": 1},
+        {"key": "never_buy", "label": "Moedas que nunca compra", "type": "list",
+         "default": ["USDC", "USD1", "FDUSD", "TUSD", "DAI", "USDP", "USDE", "BFUSD", "U", "RLUSD", "XUSD", "EUR", "PAXG", "XAUT"],
+         "help": "Separadas por vírgula. Stablecoins e ouro nunca chegam ao stop/alvo."}
+      ]
+    },
+    {
+      "id": "protecoes",
+      "title": "Proteções",
+      "fields": [
+        {"key": "daily_loss_limit_usdt", "label": "Limite de perda diária", "unit": "USDT", "type": "float", "default": 2.0, "min": 0.3, "max": 50.0, "step": 0.1,
+         "help": "Prejuízo realizado no dia (UTC) a partir do qual para de comprar até 00:00 UTC."},
+        {"key": "stop_cluster_min", "label": "Stops em série pra pausar", "type": "int", "default": 2, "min": 2, "max": 10, "step": 1},
+        {"key": "stop_cluster_window_min", "label": "Janela dos stops em série", "unit": "min", "type": "int", "default": 15, "min": 1, "max": 240, "step": 1},
+        {"key": "stop_cluster_pause_min", "label": "Duração da pausa", "unit": "min", "type": "int", "default": 90, "min": 0, "max": 1440, "step": 5},
+        {"key": "max_drawdown_pct", "label": "Circuit breaker (perda acumulada)", "unit": "%", "type": "float", "default": 10.0, "min": 2.0, "max": 50.0, "step": 0.5,
+         "help": "Sobre o capital-base. Ao disparar, só volta a comprar reativando no portal."},
+        {"key": "baseline_capital_usdt", "label": "Capital-base", "unit": "USDT", "type": "float", "default": 500.0, "min": 10.0, "max": 1000000.0, "step": 0.01,
+         "help": "Base do circuit breaker e da % diária no portal. Atualizar após depósito/saque."}
+      ]
+    },
+    {
+      "id": "bnb",
+      "title": "BNB (taxas)",
+      "fields": [
+        {"key": "bnb_keep", "label": "Reserva de BNB que a varredura mantém", "unit": "BNB", "type": "float", "default": 0.002, "min": 0.0005, "max": 0.05, "step": 0.0005,
+         "help": "O excedente é vendido pra USDT quando passa de $5 (lote de 0,001 BNB)."},
+        {"key": "bnb_alert_min", "label": "Avisar no Telegram abaixo de", "unit": "BNB", "type": "float", "default": 0.001, "min": 0.0, "max": 0.05, "step": 0.0005,
+         "help": "Deixe abaixo da reserva, senão avisa logo após cada venda do excedente."}
+      ]
+    }
+  ]
+}

@@ -95,9 +95,10 @@ PORTFOLIO_TARGET_PCT = 0.02          # soma do P&L não realizado de todas as po
 # Pedido do usuário em 25/09; na simulação do histórico deu +$0,44 contra
 # +$0,26 de fechar todas.
 PORTFOLIO_MIN_GAIN_PCT = 0.002
-LIVE_NOTIONAL_USDT = 10.0            # default, usado se config.json faltar/for inválido
-BASELINE_CAPITAL_USDT = 500.0        # placeholder - ajustar conscientemente antes da Fase 4
-MAX_DRAWDOWN_PCT = 10.0              # placeholder - ajustar conscientemente antes da Fase 4
+# Os valores abaixo são só o ponto de partida do módulo: a cada ciclo
+# apply_live_config() sobrescreve com data/binance_live_config.json, cujos
+# campos, faixas e defaults ficam em src/live_config_schema.json (editável
+# pelo portal web/admin.php).
 DAILY_LOSS_LIMIT_USDT = 2.0          # P&L realizado do dia (UTC) <= -isto -> sem compra nova até o dia seguinte
 
 # Reserva mínima de BNB livre pra pagar taxa (a opção "pagar taxa com BNB"
@@ -110,13 +111,9 @@ DAILY_LOSS_LIMIT_USDT = 2.0          # P&L realizado do dia (UTC) <= -isto -> se
 # paga ~170 ordens.
 BNB_RESERVE_MIN = 0.001
 
-# Piso de $6, não $5: a Binance recusa ordem abaixo de $5 (inclusive a
-# mercado). Uma posição de $5 que cai 5% no STOP vale $4,75 e a venda de
-# saída seria recusada, prendendo a posição. Com $6 o STOP sai a $5,70.
-NOTIONAL_BOUNDS = (6.0, 100.0)
-BASELINE_CAPITAL_BOUNDS = (10.0, 1_000_000.0)
-MAX_DRAWDOWN_BOUNDS = (2.0, 50.0)
-DAILY_LOSS_LIMIT_BOUNDS = (0.3, 50.0)
+# Piso de $6 no valor por posição (min do schema), não $5: a Binance recusa
+# ordem abaixo de $5 (inclusive a mercado). Uma posição de $5 que cai 5% no
+# STOP vale $4,75 e a venda de saída seria recusada, prendendo a posição.
 
 # Pausa após queda do mercado: 2+ STOPs com até 15min entre eles ->
 # nenhuma compra nova por 90min contados do último STOP. Em 23/09
@@ -148,7 +145,7 @@ MAX_CHASE_PCT = 0.03
 # semanas e, nos 1.974 sinais simulados, pular esse horário melhorou as
 # duas metades do período (~+0,1pp por sinal). Vendas seguem normais.
 # Reavaliar em 3-4 semanas pela revisão semanal.
-NO_BUY_HOURS_BRT = range(14, 19)
+NO_BUY_HOURS_BRT = frozenset(range(14, 19))
 BRT = ZoneInfo("America/Sao_Paulo")
 
 NEVER_BUY = {
@@ -175,30 +172,79 @@ def _clamped(value, bounds, default):
     return default
 
 
+LIVE_CONFIG_SCHEMA = Path(__file__).resolve().parent / "live_config_schema.json"
+LIVE_CONFIG_HISTORY = DATA / "binance_live_config_history.csv"
+
+
+def config_fields() -> list[dict]:
+    """Campos de src/live_config_schema.json (fonte única, também lida pelo
+    portal web/admin.php)."""
+    schema = json.loads(LIVE_CONFIG_SCHEMA.read_text(encoding="utf-8"))
+    return [f for g in schema["groups"] for f in g["fields"]]
+
+
+def _coerce(field: dict, value):
+    """Valor válido do campo, ou o default se faltar/for inválido/fora da faixa."""
+    default = field["default"]
+    kind = field["type"]
+    if value is None:
+        if kind != "list":
+            return default
+        value = default
+    if kind == "bool":
+        return value if isinstance(value, bool) else default
+    if kind == "list":
+        if isinstance(value, str):
+            value = value.split(",")
+        if not isinstance(value, list):
+            return default
+        return sorted({str(v).strip().upper() for v in value if str(v).strip()})
+    v = _clamped(value, (field["min"], field["max"]), None)
+    if v is None:
+        return default
+    return int(v) if kind == "int" else v
+
+
 def load_live_config() -> dict:
-    defaults = {
-        "notional_usdt": LIVE_NOTIONAL_USDT,
-        "baseline_capital_usdt": BASELINE_CAPITAL_USDT,
-        "max_drawdown_pct": MAX_DRAWDOWN_PCT,
-        "daily_loss_limit_usdt": DAILY_LOSS_LIMIT_USDT,
-    }
     try:
         raw = json.loads(LIVE_CONFIG_FILE.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raw = {}
     except (FileNotFoundError, json.JSONDecodeError):
-        return defaults
-    return {
-        "notional_usdt": _clamped(raw.get("notional_usdt"), NOTIONAL_BOUNDS, defaults["notional_usdt"]),
-        "baseline_capital_usdt": _clamped(
-            raw.get("baseline_capital_usdt"), BASELINE_CAPITAL_BOUNDS, defaults["baseline_capital_usdt"]
-        ),
-        "max_drawdown_pct": _clamped(
-            raw.get("max_drawdown_pct"), MAX_DRAWDOWN_BOUNDS, defaults["max_drawdown_pct"]
-        ),
-        "daily_loss_limit_usdt": _clamped(
-            raw.get("daily_loss_limit_usdt"), DAILY_LOSS_LIMIT_BOUNDS,
-            defaults["daily_loss_limit_usdt"],
-        ),
-    }
+        raw = {}
+    return {f["key"]: _coerce(f, raw.get(f["key"])) for f in config_fields()}
+
+
+def apply_live_config(cfg: dict) -> None:
+    """Aplica a configuração nas constantes que o resto do módulo usa. Roda
+    no começo de cada ciclo: mudança pelo portal vale no ciclo seguinte, sem
+    reiniciar o loop."""
+    global STOP_PCT, TARGET_PCT, MAX_HOLD_HOURS, PORTFOLIO_TARGET_PCT
+    global PORTFOLIO_MIN_GAIN_PCT, MAX_POSITIONS_LIVE, MAX_CHASE_PCT
+    global NO_BUY_HOURS_BRT, SYMBOL_COOLDOWN, NEVER_BUY, BNB_RESERVE_MIN
+    global STOP_CLUSTER_MIN, STOP_CLUSTER_WINDOW, STOP_CLUSTER_PAUSE
+    STOP_PCT = cfg["stop_pct"] / 100.0
+    TARGET_PCT = cfg["target_pct"] / 100.0
+    MAX_HOLD_HOURS = cfg["max_hold_hours"]
+    PORTFOLIO_TARGET_PCT = (
+        cfg["portfolio_target_pct"] / 100.0 if cfg["portfolio_target_enabled"] else float("inf")
+    )
+    PORTFOLIO_MIN_GAIN_PCT = cfg["portfolio_min_gain_pct"] / 100.0
+    MAX_POSITIONS_LIVE = cfg["max_positions"]
+    MAX_CHASE_PCT = cfg["max_chase_pct"] / 100.0
+    start, end = cfg["no_buy_start_hour"], cfg["no_buy_end_hour"]
+    if not cfg["no_buy_enabled"]:
+        NO_BUY_HOURS_BRT = frozenset()
+    elif start <= end:
+        NO_BUY_HOURS_BRT = frozenset(range(start, end + 1))
+    else:  # atravessa a meia-noite, ex.: 22 -> 2
+        NO_BUY_HOURS_BRT = frozenset(list(range(start, 24)) + list(range(0, end + 1)))
+    SYMBOL_COOLDOWN = timedelta(hours=cfg["symbol_cooldown_hours"])
+    NEVER_BUY = set(cfg["never_buy"])
+    BNB_RESERVE_MIN = cfg["bnb_alert_min"]
+    STOP_CLUSTER_MIN = cfg["stop_cluster_min"]
+    STOP_CLUSTER_WINDOW = timedelta(minutes=cfg["stop_cluster_window_min"])
+    STOP_CLUSTER_PAUSE = timedelta(minutes=cfg["stop_cluster_pause_min"])
 
 
 def live_open_ids(open_rows: list[dict]) -> set[str]:
@@ -633,8 +679,8 @@ def open_new_positions(
         if _no_buy_hours_logged != local.date().isoformat():
             _no_buy_hours_logged = local.date().isoformat()
             log(
-                f"[LIVE] Horário sem compra ({NO_BUY_HOURS_BRT.start}:00-"
-                f"{NO_BUY_HOURS_BRT.stop - 1}:59 Brasília) - vendas seguem normais."
+                f"[LIVE] Horário sem compra ({local.hour}h, bloqueio configurado "
+                f"nas horas {sorted(NO_BUY_HOURS_BRT)} de Brasília) - vendas seguem normais."
             )
         return remaining
 
@@ -763,6 +809,7 @@ def run_cycle(exchange) -> tuple[int, int, bool]:
     """Um ciclo completo: monitora/fecha posições (sempre), checa o
     circuit breaker, e só abre posição nova se não estiver travado."""
     cfg = load_live_config()
+    apply_live_config(cfg)
     remaining, closed_now = monitor_open_positions(exchange)
     check_bnb_reserve(exchange, remaining)
 
@@ -789,8 +836,9 @@ def main() -> int:
     print("=" * 100)
     print("AMBIENTE: BINANCE SPOT MAINNET - DINHEIRO REAL")
     print(f"Sinais: {SIGNALS}")
-    print(f"STOP / TARGET / MAX_HOLD: {STOP_PCT:.2%} / {TARGET_PCT:.2%} / {MAX_HOLD_HOURS}h")
     cfg = load_live_config()
+    apply_live_config(cfg)
+    print(f"STOP / TARGET / MAX_HOLD: {STOP_PCT:.2%} / {TARGET_PCT:.2%} / {MAX_HOLD_HOURS}h")
     print(
         f"Notional por posição: ${cfg['notional_usdt']:.2f} | "
         f"Máx. posições: {MAX_POSITIONS_LIVE} | "

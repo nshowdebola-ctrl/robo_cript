@@ -46,7 +46,15 @@ DUST_LOG = ROOT / "data" / "binance_live_dust_sweep.csv"
 # BNB_RESERVE_MIN em binance_live_trader.py). Sem ela a taxa sai no
 # próprio ativo e a venda arredonda abaixo de $5 (CRCLB ficou presa
 # assim em 24/09). Só o que passar disto é tratado como sobra vendável.
-BNB_KEEP = 0.002
+BNB_KEEP = 0.002  # default; o valor efetivo vem de bnb_keep na config do live (portal)
+
+
+def _bnb_keep() -> float:
+    try:
+        from binance_live_trader import load_live_config
+        return float(load_live_config()["bnb_keep"])
+    except Exception:
+        return BNB_KEEP
 DUST_LOG_FIELDS = [
     "timestamp", "asset", "action", "amount", "value_usdt_est", "ref",
 ]
@@ -187,7 +195,8 @@ def _sell_bnb_excess(exchange, now: str) -> None:
         log(f"[DUST] AVISO: não consegui ler saldo/cotação de BNB ({exc}) - pulando por hoje.")
         return
     # BNB que é posição aberta do robô (sinal BNB/USDT) não é excedente.
-    excess = free - BNB_KEEP - _open_bnb_quantity()
+    keep = _bnb_keep()
+    excess = free - keep - _open_bnb_quantity()
     if excess <= 0:
         return
     value_usdt = excess * price
@@ -195,7 +204,7 @@ def _sell_bnb_excess(exchange, now: str) -> None:
     quantity = float(exchange.amount_to_precision(symbol, excess))
     if quantity <= 0 or quantity * price < float(min_notional):
         log(
-            f"[DUST] BNB: excedente acima da reserva de {BNB_KEEP} BNB é {excess:.6f} "
+            f"[DUST] BNB: excedente acima da reserva de {keep} BNB é {excess:.6f} "
             f"(${value_usdt:.2f}); arredondado ao passo do par dá {quantity} BNB = "
             f"${quantity * price:.2f}, abaixo do lote mínimo (${float(min_notional):.2f}) - "
             "acumulando pro próximo dia."
@@ -210,7 +219,7 @@ def _sell_bnb_excess(exchange, now: str) -> None:
         log(f"[DUST] AVISO: venda do excedente de BNB falhou ({type(exc).__name__}: {exc}).")
         return
     filled = float(order.get("filled") or quantity)
-    log(f"[DUST] Vendeu {filled} BNB -> USDT (excedente acima da reserva de {BNB_KEEP} BNB).")
+    log(f"[DUST] Vendeu {filled} BNB -> USDT (excedente acima da reserva de {keep} BNB).")
     _append_dust_log({
         "timestamp": now, "asset": "BNB", "action": "sell_usdt",
         "amount": f"{filled:.12f}", "value_usdt_est": f"{value_usdt:.6f}",

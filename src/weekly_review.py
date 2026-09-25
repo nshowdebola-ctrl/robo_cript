@@ -41,7 +41,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from binance_live_executor import ENV_FILE, build_exchange, load_env  # noqa: E402
-from binance_live_trader import NEVER_BUY  # noqa: E402
+from binance_live_trader import load_live_config  # noqa: E402
 from telegram_notify import send_telegram  # noqa: E402
 
 DATA = ROOT / "data"
@@ -52,6 +52,7 @@ LIVE_LOG = DATA / "binance_live.log"
 CONFIG = DATA / "binance_live_config.json"
 SCANNER_DB = DATA / "crypto_radar.db"
 STATE = DATA / "weekly_review_state.json"
+CONFIG_HISTORY = DATA / "binance_live_config_history.csv"
 REVIEW_LOG = DATA / "weekly_review.log"
 
 BRT = ZoneInfo("America/Sao_Paulo")
@@ -151,11 +152,25 @@ def no_buy_test_lines(rows: list[dict]) -> list[str]:
                 f"acerto {sum(float(r['pnl_usdt']) > 0 for r in sel) / len(sel):.0%}")
     before = [r for r in rows if (dt(r["entry_time"]) or NO_BUY_TEST_START) < NO_BUY_TEST_START]
     after = [r for r in rows if (dt(r["entry_time"]) or NO_BUY_TEST_START) >= NO_BUY_TEST_START]
-    in_window = [r for r in after if 14 <= dt(r["entry_time"]).astimezone(BRT).hour <= 18]
+    cfg = load_live_config()
+    a, b = cfg["no_buy_start_hour"], cfg["no_buy_end_hour"]
+    blocked = set(range(a, b + 1)) if a <= b else set(range(a, 24)) | set(range(0, b + 1))
+    in_window = [r for r in after if dt(r["entry_time"]).astimezone(BRT).hour in blocked] if cfg["no_buy_enabled"] else []
     lines = [f"Teste sem compra 14h-18h: antes {stats(before)} | depois {stats(after)}"]
     if in_window:
         lines.append(f"ATENÇÃO: {len(in_window)} compra(s) 14h-18h depois do bloqueio - conferir")
     return lines
+
+
+def config_changes_section(now: datetime) -> list[str]:
+    """Mudanças de configuração feitas pelo portal nos últimos 7 dias."""
+    rows = [r for r in read_csv(CONFIG_HISTORY) if (dt(r["timestamp"]) or now) >= now - timedelta(days=7)]
+    if not rows:
+        return ["Mudanças de configuração na semana: nenhuma"]
+    parts = [
+        f"{dt(r['timestamp']).astimezone(BRT):%d/%m} {r['key']} {r['old']}→{r['new']}" for r in rows
+    ]
+    return [f"Mudanças de configuração na semana ({len(rows)}): " + "; ".join(parts)]
 
 
 def protections_section(now: datetime) -> list[str]:
@@ -206,6 +221,7 @@ def month_sales_section(now: datetime, rate: float | None) -> list[str]:
 
 
 def market_section(now: datetime) -> list[str]:
+    never_buy = set(load_live_config()["never_buy"])
     con = sqlite3.connect(SCANNER_DB)
     start = now - timedelta(weeks=MARKET_WEEKS)
     px: dict[str, dict[int, float]] = defaultdict(dict)
@@ -224,7 +240,7 @@ def market_section(now: datetime) -> list[str]:
     # moedas: variação na semana (só quem tem preço no começo e no fim)
     moves = []
     for s, ser in px.items():
-        if s in NEVER_BUY:
+        if s in never_buy:
             continue
         a = next((ser[h] for h in range(h_week, h_week + 6) if h in ser), None)
         b = next((ser[h] for h in range(h_now, h_now - 6, -1) if h in ser), None)
@@ -243,7 +259,7 @@ def market_section(now: datetime) -> list[str]:
 
     # cesta: moedas com preço em >= 80% das horas do período
     span = h_now - int(start.timestamp() // 3600)
-    basket = [s for s, ser in px.items() if s not in NEVER_BUY and len(ser) >= 0.8 * span]
+    basket = [s for s, ser in px.items() if s not in never_buy and len(ser) >= 0.8 * span]
     mk: dict[int, float] = {}
     for h in range(h_now - span, h_now):
         v = [math.log(px[s][h + 1] / px[s][h]) * 100 for s in basket if h in px[s] and h + 1 in px[s]]
@@ -320,6 +336,7 @@ def main() -> int:
     else:
         lines.append(f"Conta: não consegui ler o saldo ({err})")
     lines += trades_section(now)
+    lines += config_changes_section(now)
     lines += protections_section(now)
     lines += month_sales_section(now, usdt_brl())
     try:

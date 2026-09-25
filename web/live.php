@@ -9,51 +9,18 @@ declare(strict_types=1);
  * ver src/binance_live_executor.py). Enquanto o arquivo não existir,
  * este portal recusa iniciar o loop mesmo que alguém tente.
  *
- * Autocontido de propósito (não faz `require` de testnet.php) - zero
- * risco de tocar o portal testnet já validado.
+ * Caminhos, controle do loop, configuração e login ficam em lib_live.php
+ * (compartilhado com admin.php). Visualizar é livre; qualquer ação (salvar
+ * config, ligar/desligar loop, vender tudo, reativar breaker) exige login
+ * de administrador.
  */
 
-const BASE_DIR        = __DIR__ . '/..';
-const PYTHON_BIN       = BASE_DIR . '/.venv/bin/python3';
-const LIVE_ENV_FILE    = BASE_DIR . '/.binance-live.env';
-const LOOP_SCRIPT      = BASE_DIR . '/src/binance_live_loop.py';
-const RESET_SCRIPT     = BASE_DIR . '/src/binance_live_reset.py';
-const CB_CLEAR_SCRIPT  = BASE_DIR . '/src/binance_live_circuit_breaker_clear.py';
-const PID_FILE         = BASE_DIR . '/data/binance_live_loop.pid';
-const CONFIG_FILE      = BASE_DIR . '/data/binance_live_config.json';
-const CB_STATE_FILE    = BASE_DIR . '/data/binance_live_circuit_breaker_state.json';
-const OPEN_FILE        = BASE_DIR . '/data/binance_live_open_positions.csv';
-const LEDGER_FILE      = BASE_DIR . '/data/binance_live_trades.csv';
-const LOG_FILE         = BASE_DIR . '/data/binance_live.log';
-const LOOP_LOG         = BASE_DIR . '/data/binance_live_loop_stdout.log';
-
-const DEFAULT_NOTIONAL = 10.0;
-// Piso $6, não $5: a Binance recusa ordem < $5 e um STOP de -5% numa posição
-// de $5 vale $4,75 (venda de saída recusada, posição presa).
-const MIN_NOTIONAL     = 6.0;
-const MAX_NOTIONAL     = 100.0;
-
-const DEFAULT_BASELINE_CAPITAL = 500.0;
-const MIN_BASELINE_CAPITAL     = 10.0;
-const MAX_BASELINE_CAPITAL     = 1000000.0;
-
-const DEFAULT_MAX_DRAWDOWN_PCT = 10.0;
-const MIN_MAX_DRAWDOWN_PCT     = 2.0;
-const MAX_MAX_DRAWDOWN_PCT     = 50.0;
-
-const DEFAULT_DAILY_LOSS_LIMIT = 2.0;
+require __DIR__ . '/lib_live.php';
 
 // Isenção de IR em cripto (pessoa física): vendas totais no mês até
 // R$ 35 mil -> ganho isento. Conferir a regra vigente com um contador.
 const MONTHLY_EXEMPT_BRL = 35000.0;
 const DUST_LOG_FILE = BASE_DIR . '/data/binance_live_dust_sweep.csv';
-const MIN_DAILY_LOSS_LIMIT     = 0.3;
-const MAX_DAILY_LOSS_LIMIT     = 50.0;
-
-function h(mixed $value): string
-{
-    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
 
 function readCsvRows(string $path): array
 {
@@ -264,195 +231,19 @@ function usd(float $v, bool $signed = false): string
     return $sign . '$' . number_format(abs($v), 2, ',', '.');
 }
 
-function liveEnvConfigured(): bool
-{
-    return file_exists(LIVE_ENV_FILE);
-}
-
-function loadConfig(): array
-{
-    $defaults = [
-        'notional_usdt' => DEFAULT_NOTIONAL,
-        'baseline_capital_usdt' => DEFAULT_BASELINE_CAPITAL,
-        'max_drawdown_pct' => DEFAULT_MAX_DRAWDOWN_PCT,
-        'daily_loss_limit_usdt' => DEFAULT_DAILY_LOSS_LIMIT,
-    ];
-    if (!file_exists(CONFIG_FILE)) {
-        return $defaults;
-    }
-    $raw = json_decode((string) file_get_contents(CONFIG_FILE), true);
-    if (!is_array($raw)) {
-        return $defaults;
-    }
-    foreach ($defaults as $key => $default) {
-        if (isset($raw[$key]) && is_numeric($raw[$key])) {
-            $defaults[$key] = (float) $raw[$key];
-        }
-    }
-    return $defaults;
-}
-
-function saveConfig(array $config): void
-{
-    file_put_contents(CONFIG_FILE, json_encode($config, JSON_PRETTY_PRINT));
-}
-
-function loadCbState(): array
-{
-    $defaults = [
-        'tripped' => false, 'tripped_at' => null, 'drawdown_pct_at_trip' => null,
-        'cumulative_pnl_usdt_at_trip' => null, 'baseline_reset_at' => null,
-        'cleared_at' => null, 'cleared_by' => null, 'alerted' => false,
-    ];
-    if (!file_exists(CB_STATE_FILE)) {
-        return $defaults;
-    }
-    $raw = json_decode((string) file_get_contents(CB_STATE_FILE), true);
-    return is_array($raw) ? array_merge($defaults, $raw) : $defaults;
-}
-
-function loopPid(): ?int
-{
-    if (!file_exists(PID_FILE)) {
-        return null;
-    }
-    $pid = trim((string) file_get_contents(PID_FILE));
-    if ($pid === '' || !ctype_digit($pid)) {
-        return null;
-    }
-    return (int) $pid;
-}
-
-function isLoopAlive(int $pid): bool
-{
-    // Sinal primário: o processo existe (equivalente a kill -0). Ao
-    // contrário de checar só /proc/$pid/cmdline (que já causou falso
-    // "morto" neste projeto por corrida de leitura - ver memória do
-    // projeto), a existência do PID nunca é sujeita a essa corrida.
-    exec('kill -0 ' . $pid . ' 2>/dev/null', $unused, $exitCode);
-    if ($exitCode !== 0) {
-        return false;
-    }
-    // /proc/cmdline aqui é só uma confirmação EXTRA pra descartar
-    // reaproveitamento do PID por outro processo - se não der pra ler
-    // (corrida, permissão, kernel sem /proc/pid/cmdline), não trata
-    // como morto: a existência do PID já é suficiente.
-    $cmdlinePath = "/proc/$pid/cmdline";
-    if (!file_exists($cmdlinePath)) {
-        return true;
-    }
-    $cmdline = (string) file_get_contents($cmdlinePath);
-    if ($cmdline === '') {
-        return true;
-    }
-    return str_contains($cmdline, 'binance_live_loop.py');
-}
-
-function loopStatus(): array
-{
-    $pid = loopPid();
-    if ($pid !== null && isLoopAlive($pid)) {
-        return ['running' => true, 'pid' => $pid];
-    }
-    return ['running' => false, 'pid' => null];
-}
-
-function startLoop(): void
-{
-    $status = loopStatus();
-    if ($status['running']) {
-        return;
-    }
-    $cmd = 'nohup ' . escapeshellarg(PYTHON_BIN) . ' ' . escapeshellarg(LOOP_SCRIPT)
-        . ' >> ' . escapeshellarg(LOOP_LOG) . ' 2>&1 & echo $!';
-    exec($cmd);
-    usleep(800000);
-}
-
-function stopLoop(): void
-{
-    $status = loopStatus();
-    if (!$status['running']) {
-        return;
-    }
-    $pid = (int) $status['pid'];
-    exec('kill -TERM ' . $pid);
-
-    // Espera de verdade o processo sair (até 10s) em vez de confiar
-    // num sleep fixo - o loop só checa a flag de parada no topo do
-    // laço externo, então pode continuar rodando um ciclo em
-    // andamento (com retry de rede) bem além de um sleep curto.
-    $deadline = microtime(true) + 10.0;
-    while (microtime(true) < $deadline) {
-        usleep(300000);
-        if (!isLoopAlive($pid)) {
-            return;
-        }
-    }
-
-    // Ainda vivo depois de 10s - força encerramento antes de deixar
-    // quem chamou (ex: resetAll) prosseguir com o mesmo CSV/exchange.
-    exec('kill -KILL ' . $pid);
-    usleep(500000);
-}
-
-function resetAll(): array
-{
-    stopLoop();
-    $cmd = escapeshellarg(PYTHON_BIN) . ' ' . escapeshellarg(RESET_SCRIPT) . ' 2>&1';
-    exec($cmd, $output, $exitCode);
-    return ['ok' => $exitCode === 0, 'output' => implode("\n", $output)];
-}
-
-function clearCircuitBreaker(): array
-{
-    $cmd = escapeshellarg(PYTHON_BIN) . ' ' . escapeshellarg(CB_CLEAR_SCRIPT) . ' portal 2>&1';
-    exec($cmd, $output, $exitCode);
-    return ['ok' => $exitCode === 0, 'output' => implode("\n", $output)];
-}
-
 $message = null;
 $envConfigured = liveEnvConfigured();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$isAdmin = isAdmin();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!$isAdmin || !csrfValid())) {
+    $message = ['type' => 'error', 'text' => $isAdmin
+        ? 'Sessão expirada - recarregue a página e tente de novo.'
+        : 'Ação bloqueada: faça login no Admin primeiro.'];
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
-    if ($action === 'save_risk_config') {
-        $notional = filter_input(INPUT_POST, 'notional_usdt', FILTER_VALIDATE_FLOAT);
-        $baseline = filter_input(INPUT_POST, 'baseline_capital_usdt', FILTER_VALIDATE_FLOAT);
-        $maxDd = filter_input(INPUT_POST, 'max_drawdown_pct', FILTER_VALIDATE_FLOAT);
-        $dailyLimit = filter_input(INPUT_POST, 'daily_loss_limit_usdt', FILTER_VALIDATE_FLOAT);
-
-        if ($notional === false || $notional < MIN_NOTIONAL || $notional > MAX_NOTIONAL) {
-            $message = ['type' => 'error', 'text' => sprintf(
-                'Valor por posição inválido. Use entre %s e %s USDT.',
-                number_format(MIN_NOTIONAL, 2, ',', '.'), number_format(MAX_NOTIONAL, 2, ',', '.')
-            )];
-        } elseif ($baseline === false || $baseline < MIN_BASELINE_CAPITAL || $baseline > MAX_BASELINE_CAPITAL) {
-            $message = ['type' => 'error', 'text' => sprintf(
-                'Capital-base inválido. Use entre %s e %s USDT.',
-                number_format(MIN_BASELINE_CAPITAL, 2, ',', '.'), number_format(MAX_BASELINE_CAPITAL, 2, ',', '.')
-            )];
-        } elseif ($maxDd === false || $maxDd < MIN_MAX_DRAWDOWN_PCT || $maxDd > MAX_MAX_DRAWDOWN_PCT) {
-            $message = ['type' => 'error', 'text' => sprintf(
-                'Limite de drawdown inválido. Use entre %s%% e %s%%.',
-                number_format(MIN_MAX_DRAWDOWN_PCT, 1, ',', '.'), number_format(MAX_MAX_DRAWDOWN_PCT, 1, ',', '.')
-            )];
-        } elseif ($dailyLimit === false || $dailyLimit < MIN_DAILY_LOSS_LIMIT || $dailyLimit > MAX_DAILY_LOSS_LIMIT) {
-            $message = ['type' => 'error', 'text' => sprintf(
-                'Limite de perda diária inválido. Use entre %s e %s USDT.',
-                number_format(MIN_DAILY_LOSS_LIMIT, 2, ',', '.'), number_format(MAX_DAILY_LOSS_LIMIT, 2, ',', '.')
-            )];
-        } else {
-            saveConfig([
-                'notional_usdt' => $notional,
-                'baseline_capital_usdt' => $baseline,
-                'max_drawdown_pct' => $maxDd,
-                'daily_loss_limit_usdt' => $dailyLimit,
-            ]);
-            $message = ['type' => 'ok', 'text' => 'Configuração de risco atualizada.'];
-        }
-    } elseif ($action === 'start_loop') {
+    if ($action === 'start_loop') {
         if (!$envConfigured) {
             $message = ['type' => 'error', 'text' => 'Chave real não configurada (.binance-live.env não existe) - loop não pode ser iniciado.'];
         } else {
@@ -486,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $status = loopStatus();
-$config = loadConfig();
+$config = loadLiveConfig();
 $cbState = loadCbState();
 $openPositions = readCsvRows(OPEN_FILE);
 
@@ -519,7 +310,7 @@ foreach ($openPositions as &$pos) {
     }
 }
 unset($pos);
-$portfolioTargetPct = 2.0; // espelha PORTFOLIO_TARGET_PCT em src/binance_live_trader.py
+$portfolioTargetPct = (float) $config['portfolio_target_pct'];
 $portfolioPnlPct = ($portfolioPricedAll && $portfolioEntryCost > 0)
     ? ($portfolioCurrentValue - $portfolioEntryCost) / $portfolioEntryCost * 100.0
     : null;
@@ -845,7 +636,7 @@ if (file_exists(LOG_FILE)) {
     <div class="header-inner">
         <div class="brand">
             <h1>&#9888; BINANCE MAINNET - PORTAL DE DINHEIRO REAL</h1>
-            <p>Ordens reais, saldo real &middot; <a href="index.php">&larr; dashboard</a> &middot; <a href="testnet.php">testnet (fictício) &rarr;</a></p>
+            <p>Ordens reais, saldo real &middot; <a href="index.php">&larr; dashboard</a> &middot; <a href="testnet.php">testnet (fictício) &rarr;</a> &middot; <a href="admin.php"><?= $isAdmin ? 'Admin (logado)' : 'Admin (login)' ?></a></p>
         </div>
         <div class="status-pill <?= $cbState['tripped'] ? 'halted' : ($status['running'] ? 'on' : 'off') ?>">
             <span class="dot"></span>
@@ -921,9 +712,11 @@ if (file_exists(LOG_FILE)) {
             <h2>Loop automático</h2>
             <form method="post" class="field-row">
                 <?php if ($status['running']): ?>
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="stop_loop">
                     <button type="submit" class="btn-deactivate">Desativar</button>
                 <?php else: ?>
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="start_loop">
                     <button type="submit" class="btn-activate" <?= $envConfigured ? '' : 'disabled' ?>>Ativar</button>
                 <?php endif; ?>
@@ -941,6 +734,7 @@ if (file_exists(LOG_FILE)) {
                 method="post"
                 onsubmit="return document.getElementById('confirm_venda').value === 'VENDER';"
             >
+                <?= csrfField() ?>
                 <input type="hidden" name="action" value="reset_all">
                 <div class="field-row">
                     <input type="text" id="confirm_venda" name="confirm" placeholder="Digite VENDER" autocomplete="off">
@@ -1030,35 +824,18 @@ if (file_exists(LOG_FILE)) {
 
     <div class="top-row">
         <div class="card">
-            <h2>Configuração de risco</h2>
-            <form method="post">
-                <input type="hidden" name="action" value="save_risk_config">
-                <div class="field-row">
-                    <span class="field-label">Valor por posição (USDT)</span>
-                    <input type="number" name="notional_usdt" step="0.01" min="<?= MIN_NOTIONAL ?>" max="<?= MAX_NOTIONAL ?>"
-                        value="<?= h(number_format($config['notional_usdt'], 2, '.', '')) ?>">
-                </div>
-                <div class="field-row">
-                    <span class="field-label">Capital-base (USDT)</span>
-                    <input type="number" name="baseline_capital_usdt" step="0.01" min="<?= MIN_BASELINE_CAPITAL ?>" max="<?= MAX_BASELINE_CAPITAL ?>"
-                        value="<?= h(number_format($config['baseline_capital_usdt'], 2, '.', '')) ?>">
-                </div>
-                <div class="field-row">
-                    <span class="field-label">Limite de drawdown (%)</span>
-                    <input type="number" name="max_drawdown_pct" step="0.1" min="<?= MIN_MAX_DRAWDOWN_PCT ?>" max="<?= MAX_MAX_DRAWDOWN_PCT ?>"
-                        value="<?= h(number_format($config['max_drawdown_pct'], 1, '.', '')) ?>">
-                </div>
-                <div class="field-row">
-                    <span class="field-label">Limite de perda diária (USDT)</span>
-                    <input type="number" name="daily_loss_limit_usdt" step="0.01" min="<?= MIN_DAILY_LOSS_LIMIT ?>" max="<?= MAX_DAILY_LOSS_LIMIT ?>"
-                        value="<?= h(number_format($config['daily_loss_limit_usdt'], 2, '.', '')) ?>">
-                </div>
-                <button type="submit" class="btn-save">Salvar</button>
-            </form>
-            <p class="hint placeholder-warning">
-                Capital-base e limite de drawdown são placeholders (Fase 3) - ajuste conscientemente
-                antes de considerar qualquer chave real (Fase 4).
+            <h2>Ajustes em vigor</h2>
+            <p class="hint" style="margin-top:0">
+                Stop <strong>-<?= h(fmtNum($config['stop_pct'])) ?>%</strong> ·
+                alvo <strong>+<?= h(fmtNum($config['target_pct'])) ?>%</strong> ·
+                tempo <strong><?= h(fmtNum($config['max_hold_hours'])) ?>h</strong> ·
+                meta da carteira <strong><?= $config['portfolio_target_enabled'] ? '+' . h(fmtNum($config['portfolio_target_pct'])) . '%' : 'desligada' ?></strong><br>
+                <?= (int) $config['max_positions'] ?> posições de <strong><?= usd((float) $config['notional_usdt']) ?></strong> ·
+                perda diária <strong>-<?= usd((float) $config['daily_loss_limit_usdt']) ?></strong> ·
+                circuit breaker <strong><?= h(fmtNum($config['max_drawdown_pct'])) ?>%</strong> de <?= usd((float) $config['baseline_capital_usdt']) ?><br>
+                Sem compra: <strong><?= $config['no_buy_enabled'] ? h($config['no_buy_start_hour']) . 'h às ' . h($config['no_buy_end_hour']) . 'h59 (Brasília)' : 'desligado' ?></strong>
             </p>
+            <p class="hint">Pra mudar qualquer ajuste, use o <a href="admin.php">Admin</a>.</p>
         </div>
 
         <div class="card">
@@ -1075,6 +852,7 @@ if (file_exists(LOG_FILE)) {
             </p>
             <?php if ($cbState['tripped']): ?>
                 <form method="post">
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="clear_circuit_breaker">
                     <div class="checkbox-row">
                         <input type="checkbox" id="confirm_cb" name="confirm_cb">
@@ -1095,7 +873,12 @@ if (file_exists(LOG_FILE)) {
                     <?= $portfolioPnlPct === null ? '-' : ($portfolioPnlPct >= 0 ? '+' : '') . number_format($portfolioPnlPct, 2, ',', '.') . '%' ?>
                     <?= $portfolioPnlUsdt === null ? '' : '(' . ($portfolioPnlUsdt >= 0 ? '+' : '') . '$' . number_format($portfolioPnlUsdt, 2, ',', '.') . ')' ?>
                 </strong>
-                de meta <?= h(number_format($portfolioTargetPct, 0, ',', '.')) ?>% pra vender automaticamente as posições no lucro (acima de +0,2%) - as demais continuam abertas.
+                <?php if ($config['portfolio_target_enabled']): ?>
+                    de meta <?= h(fmtNum($portfolioTargetPct)) ?>% pra vender automaticamente as posições no lucro
+                    (acima de +<?= h(fmtNum($config['portfolio_min_gain_pct'])) ?>%) - as demais continuam abertas.
+                <?php else: ?>
+                    (meta da carteira desligada no Admin).
+                <?php endif; ?>
                 <?= $portfolioPricedAll ? '' : ' (algum preço faltou cotar agora - valor pode estar incompleto)' ?>
             </p>
         <?php endif; ?>
