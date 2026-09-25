@@ -73,10 +73,13 @@ def main() -> int:
         else:
             min_cost = (exchange.markets[pair].get("limits", {}).get("cost", {}) or {}).get("min") or 5.0
             if asset == "BNB":
-                excess = (leftover - BNB_KEEP) * price if price else 0.0
+                excess_qty = max(0.0, leftover - BNB_KEEP)
+                excess = excess_qty * price if price else 0.0
+                # mesma conta da varredura: arredonda ao passo do par antes do mínimo
+                sellable = float(exchange.amount_to_precision(pair, excess_qty)) * price if excess_qty else 0.0
                 status = (
-                    f"reserva {BNB_KEEP} + excedente ${max(0.0, excess):.2f}"
-                    + (" (vendável)" if excess >= min_cost else " (< lote mínimo)")
+                    f"reserva {BNB_KEEP} + excedente ${excess:.2f}"
+                    + (" (vendável)" if sellable >= min_cost else f" (arredondado ${sellable:.2f} < lote mínimo)")
                 )
             elif value is not None and value >= min_cost:
                 status = f"VENDÁVEL (>= ${min_cost:.0f})"
