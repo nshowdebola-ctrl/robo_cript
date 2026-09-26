@@ -317,9 +317,9 @@ def market_section(now: datetime) -> list[str]:
     return lines
 
 
-def main() -> int:
-    only_print = "--print" in sys.argv
-    now = datetime.now(timezone.utc)
+def build_review(now: datetime) -> tuple[str, float | None]:
+    """Texto da revisão e o saldo total lido (None se falhou). Só leitura -
+    usado pelo cron (main) e pelo /revisao do bot do Telegram."""
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
 
     total, err = account_value()
@@ -343,8 +343,13 @@ def main() -> int:
         lines += market_section(now)
     except Exception as exc:
         lines.append(f"Mercado: erro na análise ({type(exc).__name__}: {exc})")
+    return "\n".join(lines), total
 
-    text = "\n".join(lines)
+
+def main() -> int:
+    only_print = "--print" in sys.argv
+    now = datetime.now(timezone.utc)
+    text, total = build_review(now)
     print(text)
     if only_print:
         return 0

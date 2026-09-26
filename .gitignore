@@ -10,3 +10,5 @@ __pycache__/
 data/binance_testnet_loop_stdout.log
 data/binance_live_loop_stdout.log
 .admin-password
+data/telegram_bot.log
+data/telegram_bot_state.json
